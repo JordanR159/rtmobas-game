@@ -60,7 +60,7 @@ if(SFML_STATIC_LIBRARIES)
     add_definitions(-DSFML_STATIC)
 endif()
 
-set(SFML_ROOT "C:\\Users\\jorda\\Downloads\\SFML-2.5.0-windows-gcc-7.3.0-mingw-64-bit\\SFML-2.5.0")
+set(SFML_ROOT "C:\\SFML-2.5.0")
 
 # define the list of search paths for headers and libraries
 set(FIND_SFML_PATHS
