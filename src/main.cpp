@@ -1,9 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include <rpmalloc.h>
 
 using namespace sf;
 
 int main()
 {
+    //start of every process for rpmalloc
+    rpmalloc_initialize();
+
     RenderWindow window(VideoMode(800, 600), "rtmobas-game");
     RectangleShape shape;
     shape.setSize(Vector2f(400, 100));
@@ -33,6 +37,9 @@ int main()
             window.display();
         }
     }
+
+    //end of every process for rpmalloc
+    rpmalloc_finalize();
 
     return 0;
 }
