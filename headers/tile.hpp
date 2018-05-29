@@ -28,7 +28,7 @@ private:
 
 public:
     /** Size of tiles, which is the same for all tiles */
-    static const int tile_size = 25;
+    static const int TILE_SIZE = 25;
 
     /** True if an entity can be drawn on top of this tile, false otherwise */
     bool is_passable;
@@ -40,7 +40,7 @@ public:
     int damage_factor;
 
     /** Used in constructor for assigning several properties for each tile type */
-    enum types{
+    enum Types{
         PLAINS, DESERT, MOUNTAIN
     };
 
@@ -62,9 +62,9 @@ public:
 
         /** Corner positions for the rendering box */
         vertices[0].position = Vector2f(xposition, yposition);
-        vertices[1].position = Vector2f(xposition, yposition + tile_size);
-        vertices[2].position = Vector2f(xposition + tile_size, yposition + tile_size);
-        vertices[3].position = Vector2f(xposition + tile_size, yposition);
+        vertices[1].position = Vector2f(xposition, yposition + TILE_SIZE);
+        vertices[2].position = Vector2f(xposition + TILE_SIZE, yposition + TILE_SIZE);
+        vertices[3].position = Vector2f(xposition + TILE_SIZE, yposition);
 
         /** Designates area of the texture that is used */
         vertices[0].texCoords = Vector2f(0, 0);

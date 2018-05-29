@@ -20,10 +20,10 @@ int main()
 
     Text text("rtmobas-game", font, 80);
     text.setFillColor(Color::Green);
-    Tile tiles[window.getSize().y/Tile::tile_size][window.getSize().x/Tile::tile_size];
-    for(int r = 0; r < window.getSize().y/Tile::tile_size; r ++)
-        for(int c = 0; c < window.getSize().x/Tile::tile_size; c ++)
-            tiles[r][c] = Tile(r * Tile::tile_size, c * Tile::tile_size, Tile::PLAINS);
+    Tile tiles[window.getSize().y/Tile::TILE_SIZE][window.getSize().x/Tile::TILE_SIZE];
+    for(int r = 0; r < window.getSize().y/Tile::TILE_SIZE; r ++)
+        for(int c = 0; c < window.getSize().x/Tile::TILE_SIZE; c ++)
+            tiles[r][c] = Tile(r * Tile::TILE_SIZE, c * Tile::TILE_SIZE, Tile::PLAINS);
     while (window.isOpen())
     {
         Event event;
@@ -39,8 +39,8 @@ int main()
             window.clear();
             window.draw(shape);
             window.draw(text);
-            for(int r = 0; r < window.getSize().y/Tile::tile_size; r ++)
-                for(int c = 0; c < window.getSize().x/Tile::tile_size; c ++)
+            for(int r = 0; r < window.getSize().y/Tile::TILE_SIZE; r ++)
+                for(int c = 0; c < window.getSize().x/Tile::TILE_SIZE; c ++)
                     window.draw(tiles[r][c]);
             window.display();
         }
