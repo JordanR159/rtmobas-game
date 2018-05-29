@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <rpmalloc.h>
+#include <tile.hpp>
 
 using namespace sf;
 
@@ -14,11 +15,15 @@ int main()
     shape.setFillColor(Color::Blue);
 
     Font font;
-    if(!font.loadFromFile("../fonts/BadhouseLight.ttf"))
+    if(!font.loadFromFile("../resources/fonts/BadhouseLight.ttf"))
         return -1;
 
     Text text("rtmobas-game", font, 80);
-    text.setFillColor(Color::Black);
+    text.setFillColor(Color::Green);
+    Tile tiles[window.getSize().y/Tile::tile_size][window.getSize().x/Tile::tile_size];
+    for(int r = 0; r < window.getSize().y/Tile::tile_size; r ++)
+        for(int c = 0; c < window.getSize().x/Tile::tile_size; c ++)
+            tiles[r][c] = Tile(r * Tile::tile_size, c * Tile::tile_size, Tile::PLAINS);
     while (window.isOpen())
     {
         Event event;
@@ -34,6 +39,9 @@ int main()
             window.clear();
             window.draw(shape);
             window.draw(text);
+            for(int r = 0; r < window.getSize().y/Tile::tile_size; r ++)
+                for(int c = 0; c < window.getSize().x/Tile::tile_size; c ++)
+                    window.draw(tiles[r][c]);
             window.display();
         }
     }
