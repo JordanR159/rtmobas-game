@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <rpmalloc.h>
-#include <tile.hpp>
+#include <world.hpp>
 
 using namespace sf;
 
@@ -20,10 +20,7 @@ int main()
 
     Text text("rtmobas-game", font, 80);
     text.setFillColor(Color::Green);
-    Tile tiles[window.getSize().y/Tile::TILE_SIZE][window.getSize().x/Tile::TILE_SIZE];
-    for(int r = 0; r < window.getSize().y/Tile::TILE_SIZE; r ++)
-        for(int c = 0; c < window.getSize().x/Tile::TILE_SIZE; c ++)
-            tiles[r][c] = Tile(r * Tile::TILE_SIZE, c * Tile::TILE_SIZE, Tile::PLAINS);
+    World world(50, 50);
     while (window.isOpen())
     {
         Event event;
@@ -31,17 +28,29 @@ int main()
         {
             if (event.type == Event::Closed)
                 window.close();
-
-            //Resizes drawing area of window, rescaling everything inside
-            if (event.type == Event::Resized)
-                window.setSize(Vector2u(event.size.width, event.size.height));
+            if(event.type == Event::KeyPressed) {
+                if (Keyboard::isKeyPressed(Keyboard::Up)) {
+                    world.yoffset -= 10;
+                    world.tiles_modified = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Down)) {
+                    world.yoffset += 10;
+                    world.tiles_modified = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Left)) {
+                    world.xoffset -= 10;
+                    world.tiles_modified = true;
+                }
+                if (Keyboard::isKeyPressed(Keyboard::Right)) {
+                    world.xoffset += 10;
+                    world.tiles_modified = true;
+                }
+            }
 
             window.clear();
+            window.draw(world);
             window.draw(shape);
             window.draw(text);
-            for(int r = 0; r < window.getSize().y/Tile::TILE_SIZE; r ++)
-                for(int c = 0; c < window.getSize().x/Tile::TILE_SIZE; c ++)
-                    window.draw(tiles[r][c]);
             window.display();
         }
     }
