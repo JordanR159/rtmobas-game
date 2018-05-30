@@ -5,12 +5,9 @@
 #ifndef RTMOBAS_GAME_ENTITY_HPP
 #define RTMOBAS_GAME_ENTITY_HPP
 
-#include <SFML/Graphics.hpp>
-#include <string>
+#include <helper.hpp>
 
 using namespace sf;
-using namespace std;
-
 
 class Entity : public Drawable {
 

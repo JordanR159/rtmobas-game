@@ -1,5 +1,4 @@
-#include <SFML/Graphics.hpp>
-#include <rpmalloc.h>
+#include <helper.hpp>
 #include <world.hpp>
 
 using namespace sf;
@@ -11,16 +10,21 @@ int main()
 
     RenderWindow window(VideoMode(800, 600), "rtmobas-game");
     RectangleShape shape;
-    shape.setSize(Vector2f(400, 100));
+    shape.setSize(Vector2f(300, 75));
     shape.setFillColor(Color::Blue);
 
     Font font;
     if(!font.loadFromFile("../resources/fonts/BadhouseLight.ttf"))
         return -1;
 
-    Text text("rtmobas-game", font, 80);
+    Text text("rtmobas-game", font, 60);
     text.setFillColor(Color::Green);
-    World world(50, 50);
+    char *map_path = strdup("../resources/maps/basic.bmp");
+    int *tile_info = readBMP(map_path);
+    World world(tile_info);
+    for(int i = 0; i < (tile_info[0]*tile_info[1]) + 2; i++){
+        printf("%d\n", tile_info[i]);
+    }
     while (window.isOpen())
     {
         Event event;

@@ -4,19 +4,37 @@
 
 #include <world.hpp>
 
+using namespace std;
+
 Tile::Tile() {
-    Tile(0, 0, PLAINS);
+    Tile(0, 0, Types::PLAINS);
 }
 
 Tile::Tile(int xposition, int yposition, int type) {
     switch (type) {
-        case PLAINS:
-            texture.loadFromFile("../resources/textures/pblock.png");
+        case Types::PLAINS:
+            texture.loadFromFile("../resources/textures/plains.png");
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
+        case Types::DESERT:
+            texture.loadFromFile("../resources/textures/desert.png");
+            is_passable = true;
+            movement_multiplier = 0.5;
+            damage_factor = 10;
+            break;
+        case Types::MOUNTAINS:
+            texture.loadFromFile("../resources/textures/mountains.png");
+            is_passable = false;
+            movement_multiplier = 1.0;
+            damage_factor = 0;
+            break;
         default:
+            texture.loadFromFile("../resources/textures/pblock.png");
+            is_passable = true;
+            movement_multiplier = 1.0;
+            damage_factor = INT32_MAX;
             break;
     }
     this->xposition = xposition;
@@ -55,12 +73,25 @@ World::World() {
 }
 
 World::World(int xtiles, int ytiles) {
-    this->ytiles = ytiles;
     this->xtiles = xtiles;
+    this->ytiles = ytiles;
     tiles_size = xtiles * ytiles;
     tiles = new Tile[tiles_size];
     for(int i = 0; i < tiles_size; i++) {
-        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, Tile::PLAINS);
+        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, Tile::Types::PLAINS);
+    }
+    tiles_modified = true;
+    xoffset = 0;
+    yoffset = 0;
+}
+
+World::World(int *tile_info) {
+    this->xtiles = tile_info[0];
+    this->ytiles = tile_info[1];
+    tiles_size = xtiles * ytiles;
+    tiles = new Tile[tiles_size];
+    for(int i = 0; i < tiles_size; i++) {
+        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     }
     tiles_modified = true;
     xoffset = 0;

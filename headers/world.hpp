@@ -5,8 +5,9 @@
 #ifndef RTMOBAS_GAME_TILE_H
 #define RTMOBAS_GAME_TILE_H
 
-#include <SFML/Graphics.hpp>
-#include <entity.hpp>
+#include <helper.hpp>
+
+using namespace sf;
 
 class Tile : public Drawable {
 
@@ -37,8 +38,11 @@ public:
     int damage_factor;
 
     /** Used in constructor for assigning several properties for each tile type */
-    enum Types{
-        PLAINS, DESERT, MOUNTAIN
+    class Types{
+    public:
+        static const int PLAINS = 0x008000;
+        static const int MOUNTAINS = 0x808040;
+        static const int DESERT = 0xC0C000;
     };
 
     /** Constructors */
@@ -75,7 +79,7 @@ public:
     /** Constructors */
     World();
     World(int xtiles, int ytiles);
-    //World(int width, int height, Entity first_entities[]);
+    World(int *tile_info);
 };
 
 

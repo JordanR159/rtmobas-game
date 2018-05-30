@@ -5,10 +5,7 @@
 #ifndef RTMOBAS_GAME_SETTINGS_HPP
 #define RTMOBAS_GAME_SETTINGS_HPP
 
-#include <map>
-#include <string>
-
-#include <SFML/Window/VideoMode.hpp>
+#include <helper.hpp>
 
 namespace settings {
 
