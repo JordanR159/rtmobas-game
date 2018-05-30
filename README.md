@@ -9,7 +9,7 @@ For those who need some assistance on setting up this github repository on their
 ### Windows
 #### 1. Install MinGW x64 and create CLion Toolchain
 #### 2. Download SFML 2.5.0 - MinGW Version *(YOU MUST HAVE THIS VERSION)*
-#### 3. Place SFML 2.5.0 as the Folder "SFML-2.5.0" inside the local repository
+#### 3. Place SFML 2.5.0 as the Folder "SFML" inside the local repository
 #### 4. Download RPMalloc and place the Folder "rpmalloc" inside the local repository
 #### 5. ------------- (Insert STB Download step once integrated)
 #### 6. Set MinGW/bin as a new environmental variable under advanced system settings

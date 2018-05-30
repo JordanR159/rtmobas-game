@@ -8,20 +8,17 @@
 #include <SFML/Graphics.hpp>
 #include <entity.hpp>
 
-using namespace sf;
-using namespace std;
-
 class Tile : public Drawable {
 
 private:
     /** Allows window.draw(Tile) to be used in SFML */
-    virtual void draw(RenderTarget &target, RenderStates states) const;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     /** Position of corners for tile */
-    VertexArray vertices;
+    sf::VertexArray vertices;
 
     /** Path to the texture for the entity */
-    Texture texture;
+    sf::Texture texture;
 public:
     /** Size of tiles, which is the same for all tiles */
     static const int TILE_SIZE = 25;
@@ -55,11 +52,11 @@ class World : public Drawable {
 
 private:
     /** Allows window.draw(World) to be used in SFML */
-    virtual void draw(RenderTarget &target, RenderStates states) const;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 public:
     /** Array of all tiles contained in the world */
-    Tile* tiles = NULL;
+    Tile* tiles = nullptr;
 
     /** Number of tiles in the world */
     int tiles_size;

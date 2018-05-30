@@ -5,14 +5,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB RTMOBAS_HEADERS "headers/*.hpp" "headers/*.h")
 file(GLOB RTMOBAS_SRC "src/*.cpp" "src/*.c")
-add_executable(rtmobas-game rpmalloc/rpmalloc.h rpmalloc/rpmalloc.c ${RTMOBAS_HEADERS} ${RTMOBAS_SRC})
+add_executable(rtmobas-game rpmalloc/rpmalloc.h rpmalloc/rpmalloc.c rpmalloc/malloc.c ${RTMOBAS_HEADERS} ${RTMOBAS_SRC})
 
 include_directories(headers)
 include_directories(rpmalloc)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
+set(SFML_ROOT "${CMAKE_SOURCE_DIR}/SFML")
+
 find_package(SFML REQUIRED graphics system window audio)
 if(SFML_FOUND)
+    message(STATUS "${CMAKE_CURRENT_LIST_DIR} ${SFML_INCLUDE_DIR}")
     include_directories(${SFML_INCLUDE_DIR})
     target_link_libraries(rtmobas-game ${SFML_LIBRARIES})
 endif()

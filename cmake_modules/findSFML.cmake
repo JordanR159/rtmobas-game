@@ -7,14 +7,14 @@
 # When you try to locate the SFML libraries, you must specify which modules you want to use (system, window, graphics, network, audio, main).
 # If none is given, the SFML_LIBRARIES variable will be empty and you'll end up linking to nothing.
 # example:
-#   find_package(SFML COMPONENTS graphics window system) # find the graphics, window and system modules
+#   find_package(SFML COMPONENTS graphics window system) // find the graphics, window and system modules
 #
 # You can enforce a specific version, either MAJOR.MINOR or only MAJOR.
 # If nothing is specified, the version won't be checked (i.e. any version will be accepted).
 # example:
-#   find_package(SFML COMPONENTS ...)     # no specific version required
-#   find_package(SFML 2 COMPONENTS ...)   # any 2.x version
-#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater
+#   find_package(SFML COMPONENTS ...)     // no specific version required
+#   find_package(SFML 2 COMPONENTS ...)   // any 2.x version
+#   find_package(SFML 2.4 COMPONENTS ...) // version 2.4 or greater
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
@@ -54,31 +54,17 @@
 #   include_directories(${SFML_INCLUDE_DIR})
 #   add_executable(myapp ...)
 #   target_link_libraries(myapp ${SFML_LIBRARIES})
-# define the SFML_STATIC macro if static build was chosen
 
+# define the SFML_STATIC macro if static build was chosen
 if(SFML_STATIC_LIBRARIES)
     add_definitions(-DSFML_STATIC)
 endif()
 
-set(SFML_ROOT "${CMAKE_CURRENT_LIST_DIR}/SFML-2.5.0")
-
 # define the list of search paths for headers and libraries
-set(FIND_SFML_PATHS
-        ${SFML_ROOT}
-        $ENV{SFML_ROOT}
-        ~/Library/Frameworks
-        /Library/Frameworks
-        /usr/local
-        /usr
-        /sw
-        /opt/local
-        /opt/csw
-        /opt)
+set(FIND_SFML_PATHS ${SFML_ROOT})
 
 # find the SFML include directory
-find_path(SFML_INCLUDE_DIR SFML/Config.hpp
-        PATH_SUFFIXES include
-        PATHS ${FIND_SFML_PATHS})
+find_path(SFML_INCLUDE_DIR SFML/Config.hpp PATH_SUFFIXES include PATHS ${FIND_SFML_PATHS})
 
 # check the version number
 set(SFML_VERSION_OK TRUE)
@@ -210,6 +196,7 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
         set(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY "")
         set(FIND_SFML_MISSING "${FIND_SFML_MISSING} SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY")
     endif()
+
     # mark as advanced
     MARK_AS_ADVANCED(SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY
             SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_RELEASE
@@ -218,12 +205,14 @@ foreach(FIND_SFML_COMPONENT ${SFML_FIND_COMPONENTS})
             SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_STATIC_DEBUG
             SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DYNAMIC_RELEASE
             SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY_DYNAMIC_DEBUG)
+
     # add to the global list of libraries
     set(SFML_LIBRARIES ${SFML_LIBRARIES} "${SFML_${FIND_SFML_COMPONENT_UPPER}_LIBRARY}")
 endforeach()
 
 # in case of static linking, we must also define the list of all the dependencies of SFML libraries
 if(SFML_STATIC_LIBRARIES)
+
     # detect the OS
     if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         set(FIND_SFML_OS_WINDOWS 1)
@@ -276,29 +265,37 @@ if(SFML_STATIC_LIBRARIES)
         endif()
         set(SFML_DEPENDENCIES ${SFML_NETWORK_DEPENDENCIES} ${SFML_DEPENDENCIES})
     endif()
+
     # sfml-window
     list(FIND SFML_FIND_COMPONENTS "window" FIND_SFML_WINDOW_COMPONENT)
     if(NOT ${FIND_SFML_WINDOW_COMPONENT} EQUAL -1)
+
         # find libraries
         if(FIND_SFML_OS_LINUX OR FIND_SFML_OS_FREEBSD)
             find_sfml_dependency(X11_LIBRARY "X11" X11)
-            find_sfml_dependency(XRANDR_LIBRARY "Xrandr" Xrandr)
+            find_sfml_dependency(LIBXCB_LIBRARIES "XCB" xcb libxcb)
+            find_sfml_dependency(X11_XCB_LIBRARY "X11-xcb" X11-xcb libX11-xcb)
+            find_sfml_dependency(XCB_RANDR_LIBRARY "xcb-randr" xcb-randr libxcb-randr)
+            find_sfml_dependency(XCB_IMAGE_LIBRARY "xcb-image" xcb-image libxcb-image)
         endif()
+
         if(FIND_SFML_OS_LINUX)
             find_sfml_dependency(UDEV_LIBRARIES "UDev" udev libudev)
         endif()
+
         # update the list
         if(FIND_SFML_OS_WINDOWS)
             set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "opengl32" "winmm" "gdi32")
         elseif(FIND_SFML_OS_LINUX)
-            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${XRANDR_LIBRARY} ${UDEV_LIBRARIES})
+            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${LIBXCB_LIBRARIES} ${X11_XCB_LIBRARY} ${XCB_RANDR_LIBRARY} ${XCB_IMAGE_LIBRARY} ${UDEV_LIBRARIES})
         elseif(FIND_SFML_OS_FREEBSD)
-            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${XRANDR_LIBRARY} "usbhid")
+            set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "GL" ${X11_LIBRARY} ${LIBXCB_LIBRARIES} ${X11_XCB_LIBRARY} ${XCB_RANDR_LIBRARY} ${XCB_IMAGE_LIBRARY} "usbhid")
         elseif(FIND_SFML_OS_MACOSX)
             set(SFML_WINDOW_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} "-framework OpenGL -framework Foundation -framework AppKit -framework IOKit -framework Carbon")
         endif()
         set(SFML_DEPENDENCIES ${SFML_WINDOW_DEPENDENCIES} ${SFML_DEPENDENCIES})
     endif()
+
     # sfml-graphics
     list(FIND SFML_FIND_COMPONENTS "graphics" FIND_SFML_GRAPHICS_COMPONENT)
     if(NOT ${FIND_SFML_GRAPHICS_COMPONENT} EQUAL -1)
@@ -306,6 +303,7 @@ if(SFML_STATIC_LIBRARIES)
         # find libraries
         find_sfml_dependency(FREETYPE_LIBRARY "FreeType" freetype)
         find_sfml_dependency(JPEG_LIBRARY "libjpeg" jpeg)
+
         # update the list
         set(SFML_GRAPHICS_DEPENDENCIES ${FREETYPE_LIBRARY} ${JPEG_LIBRARY})
         set(SFML_DEPENDENCIES ${SFML_GRAPHICS_DEPENDENCIES} ${SFML_DEPENDENCIES})
@@ -327,6 +325,7 @@ if(SFML_STATIC_LIBRARIES)
         set(SFML_AUDIO_DEPENDENCIES ${OPENAL_LIBRARY} ${FLAC_LIBRARY} ${VORBISENC_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
         set(SFML_DEPENDENCIES ${SFML_DEPENDENCIES} ${SFML_AUDIO_DEPENDENCIES})
     endif()
+
 endif()
 
 # handle errors
