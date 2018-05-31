@@ -21,7 +21,7 @@ private:
     Texture texture;
 public:
     /** Size of tiles, which is the same for all tiles */
-    static const int TILE_SIZE = 16;
+    static const int TILE_SIZE = 32;
 
     /** Position of top left corner of tile */
     int xposition;
@@ -36,14 +36,12 @@ public:
     /** Amount of damage tile inflicts to units every tick */
     int damage_factor;
 
-    /** Used in constructor for assigning several properties for each tile type */
-    class Types{
-    public:
-        static const int PLAINS = 0x008000;
-        static const int MOUNTAINS = 0x808040;
-        static const int DESERT = 0xC0C000;
-        static const int WATER = 0x004080;
-    };
+    /** Used in constructor for assigning several properties for each tile type
+     * Type is based on the color associated with each tile for the bitmap layouts*/
+    static const int PLAINS = 0x008000;
+    static const int MOUNTAINS = 0x808040;
+    static const int DESERT = 0xC0C000;
+    static const int WATER = 0x004080;
 
     int type;
 
@@ -65,9 +63,9 @@ public:
     Tile* tiles = nullptr;
 
     /** Lists of all entities in the world. Resources rendered first, then structures, then units */
-    list<Resource> resources;
-    list<Structure> structures;
-    list<Unit> units;
+    vector<Resource> resources;
+    vector<Structure> structures;
+    vector<Unit> units;
 
     /** Number of tiles in the world */
     int tiles_size;
@@ -83,8 +81,10 @@ public:
     int xoffset;
     int yoffset;
 
+    /** Constructor */
     World(char *map_path, char *spawn_path);
 
+    /** Spawns initial entities for the world */
     void spawnEntities(char *spawn_path);
 };
 

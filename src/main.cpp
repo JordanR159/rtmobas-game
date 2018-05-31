@@ -48,7 +48,7 @@ int main()
     char *spawn_path = strdup("../resources/maps/basic.txt");
     World world(map_path, spawn_path);
 
-    double speed = 10.0;
+    double speed = 40.0;
 
     //glm::mat4 worldMatrix = glm::rotate(glm::rotate(glm::mat4(1.0), -M_PI / 180 * 45.0, glm::vec3(0, 0, 1)), -M_PI / 180 * 45.0, glm::vec3(0, 1, 0));
     while (settings::window.isOpen())

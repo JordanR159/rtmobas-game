@@ -5,13 +5,13 @@
 #ifndef RTMOBAS_GAME_HELPER_HPP
 #define RTMOBAS_GAME_HELPER_HPP
 
+//#include <gtc/matrix_transform.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-//#include <gtc/matrix_transform.hpp>
+
 
 #include <fstream>
 #include <iostream>
-#include <list>
 #include <map>
 #include <cmath>
 

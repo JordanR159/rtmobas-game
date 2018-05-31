@@ -36,33 +36,14 @@ public:
     /** Maximum lifepoints that the entity can have */
     int max_lifepoints;
 
-    /** Used in constructor for assigning properties to each type of entity */
-    class Types{
-    public:
-        static const int PROD = 1;
-        static const int RSCH = 2;
-        static const int COLL = 3;
-        static const int RSRC = 4;
-        static const int UNIT = 5;
-
-        static const int PROD_CASTLE = 101;
-
-        static const int RSCH_GROUND = 201;
-        static const int RSCH_AIR = 202;
-
-        static const int COLL_FOOD = 301;
-        static const int COLL_GOLD = 302;
-        static const int COLL_WOOD = 303;
-
-        static const int RSRC_FOOD = 401;
-        static const int RSRC_GOLD = 402;
-        static const int RSRC_WOOD = 403;
-
-        static const int UNIT_BUILDER = 501;
-        static const int UNIT_SQUIRE = 502;
-    };
-
+    /** Subtype for the entity, as defined in the subclasses */
     int type;
+
+    static const int PROD = 1;
+    static const int RSCH = 2;
+    static const int COLL = 3;
+    static const int RSRC = 4;
+    static const int UNIT = 5;
 
     void offsetEntity(int xoffset, int yoffset);
 };
@@ -74,6 +55,11 @@ private:
 public:
     /** True if resource can run out, false otherwise */
     bool is_finite;
+
+    /** Resource types */
+    static const int RSRC_FOOD = 401;
+    static const int RSRC_GOLD = 402;
+    static const int RSRC_WOOD = 403;
 
     /** Constructors */
     Resource() = default;
@@ -92,15 +78,23 @@ public:
     bool is_walkable;
 
     /** Resource that building is built on, if it is a collector */
-    Resource *resource;
+    Resource resource;
 
     /** Rally point for the structure, if it is a producer */
     int xrally;
     int yrally;
 
+    /** Building Types */
+    static const int PROD_CASTLE = 101;
+    static const int RSCH_GROUND = 201;
+    static const int RSCH_AIR = 202;
+    static const int COLL_FOOD = 301;
+    static const int COLL_GOLD = 302;
+    static const int COLL_WOOD = 303;
+
     /** Constructors */
     Structure() = default;
-    Structure(int xposition, int yposition, int type);
+    Structure(int xposition, int yposition, int type, Resource *resource = nullptr);
 };
 
 class Unit : public Entity {
@@ -111,7 +105,11 @@ public:
     /** True if unit can fly, thus collision detection doesn't apply to unit, false otherwise*/
     bool is_flying;
 
-    /** Contructors */
+    /** Unit Types */
+    static const int UNIT_BUILDER = 501;
+    static const int UNIT_SQUIRE = 502;
+
+    /** Constructors */
     Unit() = default;
     Unit(int xposition, int yposition, int type);
 };

@@ -8,25 +8,25 @@ using namespace std;
 
 Tile::Tile(int xposition, int yposition, int type) {
     switch (type) {
-        case Types::PLAINS:
+        case PLAINS:
             texture.loadFromFile("../resources/textures/plains.png");
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
-        case Types::DESERT:
+        case DESERT:
             texture.loadFromFile("../resources/textures/desert.png");
             is_passable = true;
             movement_multiplier = 0.5;
             damage_factor = 10;
             break;
-        case Types::MOUNTAINS:
+        case MOUNTAINS:
             texture.loadFromFile("../resources/textures/mountains.png");
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
-        case Types::WATER:
+        case WATER:
             texture.loadFromFile("../resources/textures/water.png");
             is_passable = false;
             movement_multiplier = 1.0;
@@ -68,9 +68,7 @@ World::World(char *map_path, char *spawn_path) {
     for(int i = 0; i < tiles_size; i++) {
         tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     }
-    printf("reached3");
     spawnEntities(spawn_path);
-    printf("reached4");
     tiles_modified = true;
     xoffset = 0;
     yoffset = 0;
@@ -87,17 +85,30 @@ void World::spawnEntities(char *spawn_path) {
         int xposition = atoi(data);
         data = strtok(NULL, ",");
         int yposition = atoi(data);
+        int alt_xposition;
+        int alt_yposition;
         switch(type){
-            case Entity::Types::PROD:
-            case Entity::Types::RSCH:
-            case Entity::Types::COLL:
-                structures.push_front(Structure(xposition, yposition, subtype));
+            case Entity::PROD:
+            case Entity::RSCH:
+            case Entity::COLL:
+                structures.emplace_back(Structure(xposition, yposition, subtype));
+                alt_xposition = xtiles - xposition - (structures.back().xsize / Tile::TILE_SIZE);
+                alt_yposition = ytiles - yposition - (structures.back().ysize / Tile::TILE_SIZE);
+                structures.emplace_back(Structure(alt_xposition, alt_yposition, subtype));
                 break;
-            case Entity::Types::RSRC:
-                resources.push_front(Resource(xposition, yposition, subtype));
+            case Entity::RSRC:
+                resources.emplace_back(Resource(xposition, yposition, subtype));
+                alt_xposition = xtiles - xposition - (resources.back().xsize / Tile::TILE_SIZE);
+                alt_yposition = ytiles - yposition - (resources.back().ysize / Tile::TILE_SIZE);
+                resources.emplace_back(Resource(alt_xposition, alt_yposition, subtype));
                 break;
-            case Entity::Types::UNIT:
-                units.push_front(Unit(xposition, yposition, subtype));
+            case Entity::UNIT:
+                xposition *= Tile::TILE_SIZE;
+                yposition *= Tile::TILE_SIZE;
+                units.emplace_back(Unit(xposition, yposition, subtype));
+                alt_xposition = (xtiles * Tile::TILE_SIZE) - xposition - units.back().xsize;
+                alt_yposition = (ytiles * Tile::TILE_SIZE) - yposition - units.back().ysize;
+                units.emplace_back(Unit(alt_xposition, alt_yposition, subtype));
                 break;
             default:
                 break;

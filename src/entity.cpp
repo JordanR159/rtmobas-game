@@ -18,19 +18,20 @@ void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     target.draw(vertices, states);
 }
 
+/** NOTE - xposition and yposition are in units of tiles */
 Resource::Resource(int xposition, int yposition, int type) {
     switch(type) {
-        case Entity::Types::RSRC_FOOD:
+        case Resource::RSRC_FOOD:
             texture.loadFromFile("../resources/sprites/food_resource.png");
             xsize = 2;
             ysize = 2;
             break;
-        case Entity::Types::RSRC_GOLD:
+        case Resource::RSRC_GOLD:
             texture.loadFromFile("../resources/sprites/gold_resource.png");
             xsize = 2;
             ysize = 1;
             break;
-        case Entity::Types::RSRC_WOOD:
+        case Resource::RSRC_WOOD:
             texture.loadFromFile("../resources/sprites/wood_resource.png");
             xsize = 1;
             ysize = 2;
@@ -47,15 +48,29 @@ Resource::Resource(int xposition, int yposition, int type) {
     vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
 }
 
-Structure::Structure(int xposition, int yposition, int type) {
+/** NOTE - xposition and yposition are in units of tiles */
+Structure::Structure(int xposition, int yposition, int type, Resource *resource) {
     switch(type) {
-        case Entity::Types::PROD_CASTLE:
+        case Structure::PROD_CASTLE:
             texture.loadFromFile("../resources/sprites/castle.png");
             xsize = 3;
             ysize = 3;
+            is_walkable = false;
+            max_lifepoints = 1000;
+            break;
+        case Structure::COLL_FOOD:
+            texture.loadFromFile("../resources/sprites/food_collector.png");
+            xsize = 2;
+            ysize = 2;
+            is_walkable = false;
+            max_lifepoints = 200;
             break;
         default:
             texture.loadFromFile("../resources/sprites/pblock.png");
+            xsize = 1;
+            ysize = 1;
+            is_walkable = true;
+            max_lifepoints = INT32_MAX;
             break;
     }
     this->type = type;
@@ -63,11 +78,21 @@ Structure::Structure(int xposition, int yposition, int type) {
     this->yposition = yposition * Tile::TILE_SIZE;
     xsize *= Tile::TILE_SIZE;
     ysize *= Tile::TILE_SIZE;
+    xrally = xposition;
+    yrally = yposition;
+    curr_lifepoints = max_lifepoints;
     vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
 }
 
+/** NOTE - xposition and yposition are in units of pixels */
 Unit::Unit(int xposition, int yposition, int type) {
     switch(type) {
+        case Unit::UNIT_BUILDER:
+            texture.loadFromFile("../resources/sprites/peasant.png");
+            xsize = 16;
+            ysize = 32;
+            max_lifepoints = INT32_MAX;
+            break;
         default:
             texture.loadFromFile("../resources/sprites/pblock.png");
             break;
@@ -75,5 +100,6 @@ Unit::Unit(int xposition, int yposition, int type) {
     this->type = type;
     this->xposition = xposition;
     this->yposition = yposition;
+    curr_lifepoints = max_lifepoints;
     vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
 }
