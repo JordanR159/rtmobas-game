@@ -36,6 +36,10 @@ public:
     /** Maximum lifepoints that the entity can have */
     int max_lifepoints;
 
+    /** True entity can collide with other ground entities, false otherwise.
+     * Both entities must have this set to true for collision to occur */
+    bool has_ground_collision;
+
     /** Subtype for the entity, as defined in the subclasses */
     int type;
 
@@ -60,6 +64,9 @@ public:
     static const int RSRC_FOOD = 401;
     static const int RSRC_GOLD = 402;
     static const int RSRC_WOOD = 403;
+    static const int RSRC_METAL = 404;
+    static const int RSRC_CRYSTAL = 405;
+    static const int RSRC_OIL = 406;
 
     /** Constructors */
     Resource() = default;
@@ -74,9 +81,6 @@ public:
     /** Units/Research that can be done at the building */
     int *production = nullptr;
 
-    /** True if grounded units can walk on structure, false otherwise */
-    bool is_walkable;
-
     /** Resource that building is built on, if it is a collector */
     Resource resource;
 
@@ -86,11 +90,16 @@ public:
 
     /** Building Types */
     static const int PROD_CASTLE = 101;
+
     static const int RSCH_GROUND = 201;
     static const int RSCH_AIR = 202;
+
     static const int COLL_FOOD = 301;
     static const int COLL_GOLD = 302;
     static const int COLL_WOOD = 303;
+    static const int COLL_METAL = 304;
+    static const int COLL_CRYSTAL = 305;
+    static const int COLL_OIL = 306;
 
     /** Constructors */
     Structure() = default;

@@ -25,16 +25,37 @@ Resource::Resource(int xposition, int yposition, int type) {
             texture.loadFromFile("../resources/sprites/food_resource.png");
             xsize = 2;
             ysize = 2;
+            has_ground_collision = false;
             break;
         case Resource::RSRC_GOLD:
             texture.loadFromFile("../resources/sprites/gold_resource.png");
-            xsize = 2;
+            xsize = 3;
             ysize = 1;
+            has_ground_collision = false;
             break;
         case Resource::RSRC_WOOD:
             texture.loadFromFile("../resources/sprites/wood_resource.png");
             xsize = 1;
+            ysize = 1;
+            has_ground_collision = true;
+            break;
+        case Resource::RSRC_METAL:
+            texture.loadFromFile("../resources/sprites/metal_resource.png");
+            xsize = 2;
             ysize = 2;
+            has_ground_collision = true;
+            break;
+        case Resource::RSRC_CRYSTAL:
+            texture.loadFromFile("../resources/sprites/crystal_resource.png");
+            xsize = 1;
+            ysize = 3;
+            has_ground_collision = true;
+            break;
+        case Resource::RSRC_OIL:
+            texture.loadFromFile("../resources/sprites/oil_resource.png");
+            xsize = 1;
+            ysize = 1;
+            has_ground_collision = false;
             break;
         default:
             texture.loadFromFile("../resources/sprites/pblock.png");
@@ -55,21 +76,21 @@ Structure::Structure(int xposition, int yposition, int type, Resource *resource)
             texture.loadFromFile("../resources/sprites/castle.png");
             xsize = 3;
             ysize = 3;
-            is_walkable = false;
+            has_ground_collision = true;
             max_lifepoints = 1000;
             break;
         case Structure::COLL_FOOD:
             texture.loadFromFile("../resources/sprites/food_collector.png");
             xsize = 2;
             ysize = 2;
-            is_walkable = false;
+            has_ground_collision = true;
             max_lifepoints = 200;
             break;
         default:
             texture.loadFromFile("../resources/sprites/pblock.png");
             xsize = 1;
             ysize = 1;
-            is_walkable = true;
+            has_ground_collision = false;
             max_lifepoints = INT32_MAX;
             break;
     }

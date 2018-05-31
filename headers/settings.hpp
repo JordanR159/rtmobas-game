@@ -97,6 +97,8 @@ namespace settings {
 
     extern sf::RenderWindow window;
 
+    extern sf::View view;
+
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;
 
