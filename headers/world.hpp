@@ -83,9 +83,6 @@ public:
     int xoffset;
     int yoffset;
 
-    /** Constructors */
-    World() = default;
-    World(int xtiles, int ytiles);
     World(char *map_path, char *spawn_path);
 
     void spawnEntities(char *spawn_path);

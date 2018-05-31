@@ -18,38 +18,50 @@ namespace settings {
         virtual char * save();
     };
 
+    class Int : Setting {
+        int value = 0;
+    };
+
+    class UInt : Setting {
+        unsigned int value = 0;
+    };
+
+    class String : Setting {
+        const char * value = nullptr;
+    };
+
     /**
      * Key Object, can have multiple key codes -> one key object.
      * his object allows for handling behaviors inside the game
      */
-    class Key : Setting {
+    class Key {
 
     private:
         //Helps determine if a double press
-        long press_timer = 0L;
+        long long int release_timer = 0L;
 
     public:
 
         /** Count of how many key codes are currently pressed. */
-        int pressed;
+        int pressed = 0;
 
         /** True after release for one tick. */
-        bool clicked;
+        bool clicked = false;
 
         /** True if click occurred within KEY_QUICK_PRESS amount of time and lasts for one tick. */
-        bool quick_pressed;
+        bool quick_pressed = false;
 
         /** Tally of how many successive quick_pressed events have occurred. */
-        int quick_press_count;
+        int quick_press_count = 0;
 
         /** Length of time pressed has stayed TRUE. */
-        long pressed_time;
+        long long int pressed_timer = 0;
 
-        // From Setting Interface
-        void load(char *);
+        /** Used for the Mouse Key Event for determining location of click */
+        int mouse_x = 0;
 
-        // From Setting Interface
-        char * save();
+        /** Used for the Mouse Key Event for determining location of click */
+        int mouse_y = 0;
 
         /** Called whenever any key code was pressed. */
         void press();
@@ -69,44 +81,50 @@ namespace settings {
     };
 
     /** key (integer) -> Key Object for advanced processing */
-    std::map<int, Key> keyboard_mapping;
+    extern std::map<int, Key *> keyboard_mapping;
     /** mouse (integer) -> Key Object for advanced processing */
-    std::map<int, Key> mouse_mapping;
+    extern std::map<int, Key *> mouse_mapping;
+
+    extern std::map<int, Key *> input_mapping;
 
     // /** The monitor that the window is contained in (or at least the top left corner is located inside). */
     // Monitor monitor;
 
+    extern sf::RenderWindow window;
+
     /** Determines what mode the window is, used for switching purposes. */
-    WindowMode window_mode;
+    extern WindowMode window_mode;
 
     /**
      * True when the window mode has changed to a new state and requires the window to
      * either be updated or recreated.
      */
-    bool update_window = false;
+    extern bool update_window;
 
     /** Top left corner of the window */
-    int window_x;
-    int window_y;
+    extern int window_x;
+    extern int window_y;
 
     /** Dimensions of the entire window across all involved monitors. */
-    int window_width;
-    int window_height;
+    extern unsigned int window_width;
+    extern unsigned int window_height;
 
     /** Useful for switching from a Borderless / Fullscreen Window Mode back to the original state of the Windowed. */
-    bool window_maximized = false;
+    extern bool window_maximized;
 
     /** Enable VSYNC (refresh at monitor rate to prevent tearing) */
-    bool enable_vsync = false;
+    extern bool enable_vsync;
 
     /** Used for any settings that is needed to be saved on application shutdown */
-    std::map<char *, Setting> settings;
+    extern std::map<char *, Setting> settings;
 
     void load();
 
     void save();
 
     void init();
+
+    bool update();
 
 }
 

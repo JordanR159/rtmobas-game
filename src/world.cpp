@@ -59,19 +59,6 @@ void Tile::draw(RenderTarget &target, RenderStates states) const {
     target.draw(vertices, states);
 }
 
-World::World(int xtiles, int ytiles) {
-    this->xtiles = xtiles;
-    this->ytiles = ytiles;
-    tiles_size = xtiles * ytiles;
-    tiles = new Tile[tiles_size];
-    for(int i = 0; i < tiles_size; i++) {
-        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, Tile::Types::PLAINS);
-    }
-    tiles_modified = true;
-    xoffset = 0;
-    yoffset = 0;
-}
-
 World::World(char *map_path, char *spawn_path) {
     int *tile_info = readBMP(map_path);
     this->xtiles = tile_info[0];
@@ -81,12 +68,12 @@ World::World(char *map_path, char *spawn_path) {
     for(int i = 0; i < tiles_size; i++) {
         tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     }
+    printf("reached3");
     spawnEntities(spawn_path);
+    printf("reached4");
     tiles_modified = true;
     xoffset = 0;
     yoffset = 0;
-    free(map_path);
-    free(spawn_path);
 }
 
 void World::spawnEntities(char *spawn_path) {
@@ -138,7 +125,6 @@ void World::draw(RenderTarget &target, RenderStates states) const {
             r.offsetEntity(xoffset, yoffset);
             target.draw(r);
             r.offsetEntity(-1 * xoffset, -1 * yoffset);
-            printf("resource detected\n");
         }
     }
     for(Structure s : structures) {
@@ -146,7 +132,6 @@ void World::draw(RenderTarget &target, RenderStates states) const {
             s.offsetEntity(xoffset, yoffset);
             target.draw(s);
             s.offsetEntity(-1 * xoffset, -1 * yoffset);
-            printf("structure detected\n");
         }
     }
     for(Unit u : units) {
@@ -154,7 +139,6 @@ void World::draw(RenderTarget &target, RenderStates states) const {
             u.offsetEntity(xoffset, yoffset);
             target.draw(u);
             u.offsetEntity(-1 * xoffset, -1 * yoffset);
-            printf("unit detected\n");
         }
     }
 }
