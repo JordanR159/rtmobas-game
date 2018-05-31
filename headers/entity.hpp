@@ -43,10 +43,10 @@ public:
     /** Subtype for the entity, as defined in the subclasses */
     int type;
 
-    static const int PROD = 1;
-    static const int RSCH = 2;
-    static const int COLL = 3;
-    static const int RSRC = 4;
+    static const int PRODUCER = 1;
+    static const int RESEARCHER = 2;
+    static const int COLLECTOR = 3;
+    static const int RESOURCE = 4;
     static const int UNIT = 5;
 
     void offsetEntity(int xoffset, int yoffset);
@@ -61,12 +61,12 @@ public:
     bool is_finite;
 
     /** Resource types */
-    static const int RSRC_FOOD = 401;
-    static const int RSRC_GOLD = 402;
-    static const int RSRC_WOOD = 403;
-    static const int RSRC_METAL = 404;
-    static const int RSRC_CRYSTAL = 405;
-    static const int RSRC_OIL = 406;
+    static const int RESOURCE_FOOD = 401;
+    static const int RESOURCE_GOLD = 402;
+    static const int RESOURCE_WOOD = 403;
+    static const int RESOURCE_METAL = 404;
+    static const int RESOURCE_CRYSTAL = 405;
+    static const int RESOURCE_OIL = 406;
 
     /** Constructors */
     Resource() = default;
@@ -89,17 +89,17 @@ public:
     int yrally;
 
     /** Building Types */
-    static const int PROD_CASTLE = 101;
+    static const int PRODUCER_CASTLE = 101;
 
-    static const int RSCH_GROUND = 201;
-    static const int RSCH_AIR = 202;
+    static const int RESEARCHER_GROUND = 201;
+    static const int RESEARCHER_AIR = 202;
 
-    static const int COLL_FOOD = 301;
-    static const int COLL_GOLD = 302;
-    static const int COLL_WOOD = 303;
-    static const int COLL_METAL = 304;
-    static const int COLL_CRYSTAL = 305;
-    static const int COLL_OIL = 306;
+    static const int COLLECTOR_FOOD = 301;
+    static const int COLLECTOR_GOLD = 302;
+    static const int COLLECTOR_WOOD = 303;
+    static const int COLLECTOR_METAL = 304;
+    static const int COLLECTOR_CRYSTAL = 305;
+    static const int COLLECTOR_OIL = 306;
 
     /** Constructors */
     Structure() = default;

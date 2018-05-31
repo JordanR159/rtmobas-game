@@ -41,7 +41,6 @@ namespace settings {
         long long int release_timer = 0L;
 
     public:
-
         /** Count of how many key codes are currently pressed. */
         int pressed = 0;
 

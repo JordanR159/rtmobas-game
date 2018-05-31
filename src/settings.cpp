@@ -113,6 +113,7 @@ namespace settings {
         window.setMouseCursorVisible(true);
         window.setMouseCursorGrabbed(false);
         window.setKeyRepeatEnabled(false);
+        window.setVerticalSyncEnabled(true);
 
         window.setVisible(true);
 
@@ -120,7 +121,7 @@ namespace settings {
 
         view.reset(FloatRect(0, 0, window_width, window_height));
         view.setViewport(FloatRect(0.f, 0.f, 1.f, 1.f));
-        view.rotate(45);
+        view.rotate(0);
         window.setView(view);
     }
 
