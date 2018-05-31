@@ -10,6 +10,12 @@
 const long long int KEY_DOUBLE_PRESS = 1000 / 5;
 
 namespace settings {
+
+    const int Key::SCROLL_UP = 1;
+    const int Key::SCROLL_DOWN = 2;
+    const int Key::SCROLL_LEFT = 3;
+    const int Key::SCROLL_RIGHT = 4;
+
     std::map<int, Key *> keyboard_mapping;
     std::map<int, Key *> mouse_mapping;
     std::map<int, Key *> input_mapping;
