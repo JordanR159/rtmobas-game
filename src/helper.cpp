@@ -7,11 +7,6 @@
 const char * INPUT_SETTINGS_LOCATION = "./inputs.cfg";
 const char * SETTINGS_LOCATION = "./settings.cfg";
 
-const int SCROLL_UP = 1;
-const int SCROLL_DOWN = 2;
-const int SCROLL_LEFT = 3;
-const int SCROLL_RIGHT = 4;
-
 using namespace std;
 
 int *readBMP(char *filename)

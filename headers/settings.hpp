@@ -9,12 +9,12 @@
 
 namespace settings {
 
-    //Interface for any custom setting used within the game
+    /** Interface for any custom setting used within the game. */
     class Setting {
-        //Loads the setting based on the string passed as a parameter.
+        /** Loads the setting based on the string passed as a parameter. */
         virtual void load(char *);
 
-        //Saves the setting into a string that is saved in a config file.
+        /** Saves the setting into a string that is saved in a config file. */
         virtual char * save();
     };
 
@@ -72,6 +72,11 @@ namespace settings {
         void update();
 
         //char * to_string();
+
+        static const int SCROLL_UP ;
+        static const int SCROLL_DOWN;
+        static const int SCROLL_LEFT;
+        static const int SCROLL_RIGHT;
 
     };
 

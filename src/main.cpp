@@ -23,22 +23,22 @@ int main()
     settings::init();
     settings::Key * key;
 
-    if((key = get_set_key(SCROLL_UP)) != nullptr) {
+    if((key = get_set_key(settings::Key::SCROLL_UP)) != nullptr) {
         settings::keyboard_mapping[sf::Keyboard::W] = key;
         settings::keyboard_mapping[sf::Keyboard::Up] = key;
     }
 
-    if((key = get_set_key(SCROLL_DOWN)) != nullptr) {
+    if((key = get_set_key(settings::Key::SCROLL_DOWN)) != nullptr) {
         settings::keyboard_mapping[sf::Keyboard::S] = key;
         settings::keyboard_mapping[sf::Keyboard::Down] = key;
     }
 
-    if((key = get_set_key(SCROLL_LEFT)) != nullptr) {
+    if((key = get_set_key(settings::Key::SCROLL_LEFT)) != nullptr) {
         settings::keyboard_mapping[sf::Keyboard::A] = key;
         settings::keyboard_mapping[sf::Keyboard::Left] = key;
     }
 
-    if((key = get_set_key(SCROLL_RIGHT)) != nullptr) {
+    if((key = get_set_key(settings::Key::SCROLL_RIGHT)) != nullptr) {
         settings::keyboard_mapping[sf::Keyboard::D] = key;
         settings::keyboard_mapping[sf::Keyboard::Right] = key;
     }
@@ -57,20 +57,22 @@ int main()
 
             Vector2f movement = Vector2f(0.0, 0.0);
 
-            if(settings::input_mapping[SCROLL_UP]->pressed) {
+            if(settings::input_mapping[settings::Key::SCROLL_UP]->pressed) {
                 //movement.x += speed;
                 movement.y -= speed;
             }
-            if(settings::input_mapping[SCROLL_DOWN]->pressed) {
+
+            if(settings::input_mapping[settings::Key::SCROLL_DOWN]->pressed) {
                 //movement.x -= speed;
                 movement.y += speed;
             }
-            if(settings::input_mapping[SCROLL_LEFT]->pressed) {
+
+            if(settings::input_mapping[settings::Key::SCROLL_LEFT]->pressed) {
                 movement.x -= speed;
                 //movement.y -= speed;
             }
 
-            if(settings::input_mapping[SCROLL_RIGHT]->pressed) {
+            if(settings::input_mapping[settings::Key::SCROLL_RIGHT]->pressed) {
                 movement.x += speed;
                 //movement.y += speed;
             }
