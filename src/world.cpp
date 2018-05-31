@@ -68,23 +68,6 @@ void Tile::draw(RenderTarget &target, RenderStates states) const {
     target.draw(vertices, states);
 }
 
-World::World() {
-    World(50, 50);
-}
-
-World::World(int xtiles, int ytiles) {
-    this->xtiles = xtiles;
-    this->ytiles = ytiles;
-    tiles_size = xtiles * ytiles;
-    tiles = new Tile[tiles_size];
-    for(int i = 0; i < tiles_size; i++) {
-        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, Tile::Types::PLAINS);
-    }
-    tiles_modified = true;
-    xoffset = 0;
-    yoffset = 0;
-}
-
 World::World(int *tile_info) {
     this->xtiles = tile_info[0];
     this->ytiles = tile_info[1];

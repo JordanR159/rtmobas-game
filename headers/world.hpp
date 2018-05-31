@@ -76,9 +76,6 @@ public:
     int xoffset;
     int yoffset;
 
-    /** Constructors */
-    World();
-    World(int xtiles, int ytiles);
     World(int *tile_info);
 };
 
