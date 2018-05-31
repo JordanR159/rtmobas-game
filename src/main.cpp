@@ -1,5 +1,4 @@
-#include <helper.hpp>
-#include <world.hpp>
+#include "helper.hpp"
 
 using namespace sf;
 
@@ -20,11 +19,8 @@ int main()
     Text text("rtmobas-game", font, 60);
     text.setFillColor(Color::Green);
     char *map_path = strdup("../resources/maps/basic.bmp");
-    int *tile_info = readBMP(map_path);
-    World world(tile_info);
-    for(int i = 0; i < (tile_info[0]*tile_info[1]) + 2; i++){
-        printf("%d\n", tile_info[i]);
-    }
+    char *spawn_path = strdup("../resources/maps/basic.txt");
+    World world(map_path, spawn_path);
     while (window.isOpen())
     {
         Event event;
@@ -34,19 +30,19 @@ int main()
                 window.close();
             if(event.type == Event::KeyPressed) {
                 if (Keyboard::isKeyPressed(Keyboard::Up)) {
-                    world.yoffset -= 10;
+                    world.yoffset -= 20;
                     world.tiles_modified = true;
                 }
                 if (Keyboard::isKeyPressed(Keyboard::Down)) {
-                    world.yoffset += 10;
+                    world.yoffset += 20;
                     world.tiles_modified = true;
                 }
                 if (Keyboard::isKeyPressed(Keyboard::Left)) {
-                    world.xoffset -= 10;
+                    world.xoffset -= 20;
                     world.tiles_modified = true;
                 }
                 if (Keyboard::isKeyPressed(Keyboard::Right)) {
-                    world.xoffset += 10;
+                    world.xoffset += 20;
                     world.tiles_modified = true;
                 }
             }

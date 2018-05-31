@@ -5,9 +5,8 @@
 #ifndef RTMOBAS_GAME_TILE_H
 #define RTMOBAS_GAME_TILE_H
 
-#include <helper.hpp>
-
 using namespace sf;
+using namespace std;
 
 class Tile : public Drawable {
 
@@ -16,13 +15,13 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     /** Position of corners for tile */
-    sf::VertexArray vertices;
+    VertexArray vertices;
 
     /** Path to the texture for the entity */
-    sf::Texture texture;
+    Texture texture;
 public:
     /** Size of tiles, which is the same for all tiles */
-    static const int TILE_SIZE = 25;
+    static const int TILE_SIZE = 16;
 
     /** Position of top left corner of tile */
     int xposition;
@@ -43,10 +42,13 @@ public:
         static const int PLAINS = 0x008000;
         static const int MOUNTAINS = 0x808040;
         static const int DESERT = 0xC0C000;
+        static const int WATER = 0x004080;
     };
 
+    int type;
+
     /** Constructors */
-    Tile();
+    Tile() = default;
     Tile(int xposition, int yposition, int type);
 
     void offsetTile(int xoffset, int yoffset);
@@ -61,6 +63,11 @@ private:
 public:
     /** Array of all tiles contained in the world */
     Tile* tiles = nullptr;
+
+    /** Lists of all entities in the world. Resources rendered first, then structures, then units */
+    list<Resource> resources;
+    list<Structure> structures;
+    list<Unit> units;
 
     /** Number of tiles in the world */
     int tiles_size;
@@ -77,9 +84,11 @@ public:
     int yoffset;
 
     /** Constructors */
-    World();
+    World() = default;
     World(int xtiles, int ytiles);
-    World(int *tile_info);
+    World(char *map_path, char *spawn_path);
+
+    void spawnEntities(char *spawn_path);
 };
 
 

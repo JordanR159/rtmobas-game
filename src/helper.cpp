@@ -2,7 +2,7 @@
 // Created by jorda on 5/30/2018.
 //
 
-#include <helper.hpp>
+#include "helper.hpp"
 
 using namespace std;
 
@@ -48,4 +48,27 @@ int *readBMP(char *filename)
 
     fclose(f);
     return tile_info;
+}
+
+VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture) {
+    VertexArray vertices = VertexArray(Quads, 4);
+
+    /** Corner positions for the rendering box */
+    vertices[0].position = Vector2f(xposition, yposition);
+    vertices[1].position = Vector2f(xposition, yposition + ysize);
+    vertices[2].position = Vector2f(xposition + xsize, yposition + ysize);
+    vertices[3].position = Vector2f(xposition + xsize, yposition);
+
+    /** Designates area of the texture that is used */
+    vertices[0].texCoords = Vector2f(0, 0);
+    vertices[1].texCoords = Vector2f(0, texture.getSize().y);
+    vertices[2].texCoords = Vector2f(texture.getSize().x, texture.getSize().y);
+    vertices[3].texCoords = Vector2f(texture.getSize().x, 0);
+
+    return vertices;
+}
+
+bool isOnScreen(Entity entity, int startx, int starty, int endx, int endy) {
+    return (entity.xposition + entity.xsize > startx * Tile::TILE_SIZE) && (entity.xposition < endx * Tile::TILE_SIZE) &&
+            (entity.yposition + entity.ysize > starty * Tile::TILE_SIZE) && (entity.yposition < endy * Tile::TILE_SIZE);
 }

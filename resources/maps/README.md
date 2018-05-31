@@ -8,4 +8,10 @@ tiles should be represented on these maps. Entities should be spawned separately
 
 Enter all color codes here
 
-RGB(0, 255, 0) - PLAINS
+RGB(0, 128, 0) - PLAINS
+
+RGB(192, 192, 0) - DESERT
+
+RGB(128, 128, 64) - MOUNTAINS
+
+RGB(0, 64, 128) - WATER
