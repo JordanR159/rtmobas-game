@@ -9,7 +9,7 @@
 
 namespace resources {
 
-    extern std::map<int, sf::Texture *> textures;
+    extern std::map<const char *, sf::Texture *> textures;
 
     extern const char * PLAINS_TEXTURE;
     extern const char * DESERT_TEXTURE;

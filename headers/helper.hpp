@@ -29,7 +29,7 @@ extern const char * SETTINGS_LOCATION;
 
 int* readBMP(char* filename);
 
-VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize);
+VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture);
 
 bool isOnScreen(Entity entity, int startx, int starty, int endx, int endy);
 
