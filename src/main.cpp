@@ -16,7 +16,6 @@ settings::Key * get_set_key(const int key_value) {
 
 int main()
 {
-
     //start of every process for rpmalloc
     rpmalloc_initialize();
     settings::load();
@@ -49,40 +48,47 @@ int main()
     char *spawn_path = strdup("../resources/maps/basic.txt");
     World world(map_path, spawn_path);
 
-
-    double speed = 20.0;
+    double speed = 40.0;
 
     //glm::mat4 worldMatrix = glm::rotate(glm::rotate(glm::mat4(1.0), -M_PI / 180 * 45.0, glm::vec3(0, 0, 1)), -M_PI / 180 * 45.0, glm::vec3(0, 1, 0));
     while (settings::window.isOpen())
     {
-        settings::update();
+        if(settings::update()) {
 
-        Vector2f movement = Vector2f(0.0, 0.0);
+            Vector2f movement = Vector2f(0.0, 0.0);
 
-        if(settings::input_mapping[settings::Key::SCROLL_UP]->pressed)
-            movement.y -= speed;
+            if(settings::input_mapping[settings::Key::SCROLL_UP]->pressed) {
+                //movement.x += speed;
+                movement.y -= speed;
+            }
 
-        if(settings::input_mapping[settings::Key::SCROLL_DOWN]->pressed)
-            movement.y += speed;
+            if(settings::input_mapping[settings::Key::SCROLL_DOWN]->pressed) {
+                //movement.x -= speed;
+                movement.y += speed;
+            }
 
-        if(settings::input_mapping[settings::Key::SCROLL_LEFT]->pressed)
-            movement.x -= speed;
+            if(settings::input_mapping[settings::Key::SCROLL_LEFT]->pressed) {
+                movement.x -= speed;
+                //movement.y -= speed;
+            }
 
-        if(settings::input_mapping[settings::Key::SCROLL_RIGHT]->pressed)
-            movement.x += speed;
+            if(settings::input_mapping[settings::Key::SCROLL_RIGHT]->pressed) {
+                movement.x += speed;
+                //movement.y += speed;
+            }
 
-        if(fabs(movement.x) + fabs(movement.y) > speed)
-            movement.y *= .7071067;
+            if(fabs(movement.x) + fabs(movement.y) > speed)
+                movement.y *= .7071067;
 
-        world.xoffset += movement.x;
+            //world.xoffset += movement.x;
+            //world.yoffset += movement.y;
+            settings::view.move(movement.x, movement.y);
+            settings::window.setView(settings::view);
 
-        world.yoffset += movement.y;
-
-        settings::window.clear();
-
-        settings::window.draw(world);
-
-        settings::window.display();
+            settings::window.clear();
+            settings::window.draw(world);
+            settings::window.display();
+        }
     }
 
     //end of every process for rpmalloc

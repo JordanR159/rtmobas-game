@@ -21,37 +21,37 @@ void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 /** NOTE - xposition and yposition are in units of tiles */
 Resource::Resource(int xposition, int yposition, int type) {
     switch(type) {
-        case Resource::RSRC_FOOD:
+        case Resource::RESOURCE_FOOD:
             texture.loadFromFile("../resources/sprites/food_resource.png");
             xsize = 2;
             ysize = 2;
             has_ground_collision = false;
             break;
-        case Resource::RSRC_GOLD:
+        case Resource::RESOURCE_GOLD:
             texture.loadFromFile("../resources/sprites/gold_resource.png");
             xsize = 3;
             ysize = 1;
             has_ground_collision = false;
             break;
-        case Resource::RSRC_WOOD:
+        case Resource::RESOURCE_WOOD:
             texture.loadFromFile("../resources/sprites/wood_resource.png");
             xsize = 1;
             ysize = 1;
             has_ground_collision = true;
             break;
-        case Resource::RSRC_METAL:
+        case Resource::RESOURCE_METAL:
             texture.loadFromFile("../resources/sprites/metal_resource.png");
             xsize = 2;
             ysize = 2;
             has_ground_collision = true;
             break;
-        case Resource::RSRC_CRYSTAL:
+        case Resource::RESOURCE_CRYSTAL:
             texture.loadFromFile("../resources/sprites/crystal_resource.png");
             xsize = 1;
             ysize = 3;
             has_ground_collision = true;
             break;
-        case Resource::RSRC_OIL:
+        case Resource::RESOURCE_OIL:
             texture.loadFromFile("../resources/sprites/oil_resource.png");
             xsize = 1;
             ysize = 1;
@@ -72,14 +72,14 @@ Resource::Resource(int xposition, int yposition, int type) {
 /** NOTE - xposition and yposition are in units of tiles */
 Structure::Structure(int xposition, int yposition, int type, Resource *resource) {
     switch(type) {
-        case Structure::PROD_CASTLE:
+        case Structure::PRODUCER_CASTLE:
             texture.loadFromFile("../resources/sprites/castle.png");
             xsize = 3;
             ysize = 3;
             has_ground_collision = true;
             max_lifepoints = 1000;
             break;
-        case Structure::COLL_FOOD:
+        case Structure::COLLECTOR_FOOD:
             texture.loadFromFile("../resources/sprites/food_collector.png");
             xsize = 2;
             ysize = 2;

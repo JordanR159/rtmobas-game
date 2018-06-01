@@ -91,15 +91,15 @@ void World::spawnEntities(char *spawn_path) {
         int alt_xposition;
         int alt_yposition;
         switch(type){
-            case Entity::PROD:
-            case Entity::RSCH:
-            case Entity::COLL:
+            case Entity::PRODUCER:
+            case Entity::RESEARCHER:
+            case Entity::COLLECTOR:
                 structures.emplace_back(Structure(xposition, yposition, subtype));
                 alt_xposition = xtiles - xposition - (structures.back().xsize / Tile::TILE_SIZE);
                 alt_yposition = ytiles - yposition - (structures.back().ysize / Tile::TILE_SIZE);
                 structures.emplace_back(Structure(alt_xposition, alt_yposition, subtype));
                 break;
-            case Entity::RSRC:
+            case Entity::RESOURCE:
                 resources.emplace_back(Resource(xposition, yposition, subtype));
                 alt_xposition = xtiles - xposition - (resources.back().xsize / Tile::TILE_SIZE);
                 alt_yposition = ytiles - yposition - (resources.back().ysize / Tile::TILE_SIZE);
@@ -118,7 +118,7 @@ void World::spawnEntities(char *spawn_path) {
         }
     }
 }
-
+/*
 void World::draw(RenderTarget &target, RenderStates states) const {
     int startx = max((xoffset / Tile::TILE_SIZE) - 1, 0);
     int starty = max((yoffset / Tile::TILE_SIZE) - 1, 0);
@@ -126,33 +126,47 @@ void World::draw(RenderTarget &target, RenderStates states) const {
     int tempy = yoffset + target.getSize().y;
     int endx = min((tempx / Tile::TILE_SIZE) + 1, xtiles);
     int endy = min((tempy / Tile::TILE_SIZE) + 1, ytiles);
-    for(int x = startx; x < endx; x++) {
-        for(int y = starty; y < endy; y++) {
+    for (int x = startx; x < endx; x++) {
+        for (int y = starty; y < endy; y++) {
             Tile selected = tiles[x + y * xtiles];
             selected.offsetTile(xoffset, yoffset);
             target.draw(selected);
             selected.offsetTile(-1 * xoffset, -1 * yoffset);
         }
     }
-    for(Resource r : resources) {
-        if(isOnScreen(r, startx, starty, endx, endy)) {
+    for (Resource r : resources) {
+        if (isOnScreen(r, startx, starty, endx, endy)) {
             r.offsetEntity(xoffset, yoffset);
             target.draw(r);
             r.offsetEntity(-1 * xoffset, -1 * yoffset);
         }
     }
-    for(Structure s : structures) {
-        if(isOnScreen(s, startx, starty, endx, endy)) {
+    for (Structure s : structures) {
+        if (isOnScreen(s, startx, starty, endx, endy)) {
             s.offsetEntity(xoffset, yoffset);
             target.draw(s);
             s.offsetEntity(-1 * xoffset, -1 * yoffset);
         }
     }
-    for(Unit u : units) {
-        if(isOnScreen(u, startx, starty, endx, endy)) {
+    for (Unit u : units) {
+        if (isOnScreen(u, startx, starty, endx, endy)) {
             u.offsetEntity(xoffset, yoffset);
             target.draw(u);
             u.offsetEntity(-1 * xoffset, -1 * yoffset);
         }
+    }
+}*/
+void World::draw(RenderTarget &target, RenderStates states) const {
+    for (int i = 0; i < tiles_size; i++) {
+        target.draw(tiles[i]);
+    }
+    for (Resource r : resources) {
+        target.draw(r);
+    }
+    for (Structure s : structures) {
+        target.draw(s);
+    }
+    for (Unit u : units) {
+        target.draw(u);
     }
 }
