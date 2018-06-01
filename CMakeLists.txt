@@ -4,7 +4,7 @@ project(rtmobas-game)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB RTMOBAS_HEADERS "headers/*.hpp" "headers/*.h" "glm/*.hpp")
-file(GLOB RTMOBAS_SRC "src/*.cpp" "src/*.c")
+file(GLOB RTMOBAS_SRC "src/*.cpp" "src/*.c" "src/*/*.cpp" "src/*/*.c")
 add_executable(rtmobas-game rpmalloc/rpmalloc.h rpmalloc/rpmalloc.c rpmalloc/malloc.c ${RTMOBAS_HEADERS} ${RTMOBAS_SRC})
 
 include_directories(headers)

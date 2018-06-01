@@ -5,37 +5,38 @@
 #include "helper.hpp"
 
 using namespace std;
+using namespace resources;
 
 Tile::Tile(int xposition, int yposition, int type) {
     this->tile_type = type;
     Texture *texture;
     switch (type) {
         case PLAINS:
-            texture = resources::textures[resources::PLAINS_TEXTURE];
+            texture = textures[terrain::PLAINS_TEXTURE];
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case DESERT:
-            texture = resources::textures[resources::DESERT_TEXTURE];
+            texture = textures[terrain::DESERT_TEXTURE];
             is_passable = true;
             movement_multiplier = 0.5;
             damage_factor = 10;
             break;
         case MOUNTAINS:
-            texture = resources::textures[resources::MOUNTAINS_TEXTURE];
+            texture = textures[terrain::MOUNTAINS_TEXTURE];
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case WATER:
-            texture = resources::textures[resources::WATER_TEXTURE];
+            texture = textures[terrain::WATER_TEXTURE];
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         default:
-            texture = resources::textures[resources::WATER_TEXTURE];
+            texture = textures[terrain::WATER_TEXTURE];
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = INT32_MAX;
@@ -60,10 +61,22 @@ void Tile::draw(RenderTarget &target, RenderStates states) const {
 }
 
 World::World(char *map_path, char *spawn_path) {
-    resources::load(resources::PLAINS_TEXTURE);
-    resources::load(resources::DESERT_TEXTURE);
-    resources::load(resources::MOUNTAINS_TEXTURE);
-    resources::load(resources::WATER_TEXTURE);
+    load(terrain::PLAINS_TEXTURE);
+    load(terrain::DESERT_TEXTURE);
+    load(terrain::MOUNTAINS_TEXTURE);
+    load(terrain::WATER_TEXTURE);
+
+    load(structure::CASTLE_TEXTURE);
+    load(structure::FARM_TEXTURE);
+
+    load(resource::FOOD_TEXTURE);
+    load(resource::GOLD_TEXTURE);
+    load(resource::TREE_TEXTURE);
+    load(resource::METAL_TEXTURE);
+    load(resource::CRYSTAL_TEXTURE);
+    load(resource::OIL_TEXTURE);
+
+    load(unit::PEASANT_TEXTURE);
 
     int *tile_info = readBMP(map_path);
 
@@ -81,6 +94,25 @@ World::World(char *map_path, char *spawn_path) {
 
     xoffset = 0;
     yoffset = 0;
+}
+
+World::~World() {
+    flush(terrain::PLAINS_TEXTURE);
+    flush(terrain::DESERT_TEXTURE);
+    flush(terrain::MOUNTAINS_TEXTURE);
+    flush(terrain::WATER_TEXTURE);
+
+    flush(structure::CASTLE_TEXTURE);
+    flush(structure::FARM_TEXTURE);
+
+    flush(resource::FOOD_TEXTURE);
+    flush(resource::GOLD_TEXTURE);
+    flush(resource::TREE_TEXTURE);
+    flush(resource::METAL_TEXTURE);
+    flush(resource::CRYSTAL_TEXTURE);
+    flush(resource::OIL_TEXTURE);
+
+    flush(unit::PEASANT_TEXTURE);
 }
 
 void World::spawnEntities(char *spawn_path) {
@@ -163,28 +195,28 @@ void World::draw(RenderTarget &target, RenderStates states) const {
     }
 }*/
 void World::draw(RenderTarget &target, RenderStates states) const {
-    states.texture = resources::textures[resources::PLAINS_TEXTURE];
+    states.texture = textures[terrain::PLAINS_TEXTURE];
 
     for (int i = 0; i < tiles_size; i++) {
         if(this->tiles[i].tile_type == Tile::PLAINS)
             target.draw(tiles[i], states);
     }
 
-    states.texture = resources::textures[resources::DESERT_TEXTURE];
+    states.texture = textures[terrain::DESERT_TEXTURE];
 
     for (int i = 0; i < tiles_size; i++) {
         if(this->tiles[i].tile_type == Tile::DESERT)
             target.draw(tiles[i], states);
     }
 
-    states.texture = resources::textures[resources::MOUNTAINS_TEXTURE];
+    states.texture = textures[terrain::MOUNTAINS_TEXTURE];
 
     for (int i = 0; i < tiles_size; i++) {
         if(this->tiles[i].tile_type == Tile::MOUNTAINS)
             target.draw(tiles[i], states);
     }
 
-    states.texture = resources::textures[resources::WATER_TEXTURE];
+    states.texture = textures[terrain::WATER_TEXTURE];
 
     for (int i = 0; i < tiles_size; i++) {
         if(this->tiles[i].tile_type == Tile::WATER)

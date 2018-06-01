@@ -173,7 +173,7 @@ namespace settings {
             events = true;
 
             if(event.type == sf::Event::Closed) {
-std::cout << "Closed" << std::endl;
+                std::cout << "Closed" << std::endl;
                 window.close();
             }
 
@@ -199,6 +199,14 @@ std::cout << "Closed" << std::endl;
                 key->release();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+            }
+
+            if(event.type == sf::Event::MouseMoved) {
+
+            }
+
+            if(event.type == sf::Event::MouseWheelScrolled) {
+
             }
         }
 
