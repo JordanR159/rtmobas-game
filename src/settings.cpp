@@ -127,7 +127,7 @@ namespace settings {
 
         view.reset(FloatRect(0, 0, window_width, window_height));
         view.setViewport(FloatRect(0.f, 0.f, 1.f, 1.f));
-        view.rotate(0);
+        view.rotate(45);
         window.setView(view);
     }
 
