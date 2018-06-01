@@ -22,13 +22,14 @@
 #include "entity.hpp"
 #include "world.hpp"
 #include "settings.hpp"
+#include "resource_manager.hpp"
 
 extern const char * INPUT_SETTINGS_LOCATION;
 extern const char * SETTINGS_LOCATION;
 
 int* readBMP(char* filename);
 
-VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture);
+VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize);
 
 bool isOnScreen(Entity entity, int startx, int starty, int endx, int endy);
 

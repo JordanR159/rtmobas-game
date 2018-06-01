@@ -7,42 +7,37 @@
 using namespace std;
 
 Tile::Tile(int xposition, int yposition, int type) {
+    this->tile_type = type;
     switch (type) {
         case PLAINS:
-            texture.loadFromFile("../resources/textures/plains.png");
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case DESERT:
-            texture.loadFromFile("../resources/textures/desert.png");
             is_passable = true;
             movement_multiplier = 0.5;
             damage_factor = 10;
             break;
         case MOUNTAINS:
-            texture.loadFromFile("../resources/textures/mountains.png");
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case WATER:
-            texture.loadFromFile("../resources/textures/water.png");
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         default:
-            texture.loadFromFile("../resources/textures/pblock.png");
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = INT32_MAX;
             break;
     }
-    this->type = type;
     this->xposition = xposition;
     this->yposition = yposition;
-    vertices = generateVertices(this->xposition, this->yposition, TILE_SIZE, TILE_SIZE, texture);
+    vertices = generateVertices(this->xposition, this->yposition, TILE_SIZE, TILE_SIZE);
 }
 
 void Tile::offsetTile(int xoffset, int yoffset) {
@@ -55,21 +50,29 @@ void Tile::offsetTile(int xoffset, int yoffset) {
 }
 
 void Tile::draw(RenderTarget &target, RenderStates states) const {
-    states.texture = &texture;
     target.draw(vertices, states);
 }
 
 World::World(char *map_path, char *spawn_path) {
+    resources::load(resources::PLAINS_TEXTURE);
+    resources::load(resources::DESERT_TEXTURE);
+    resources::load(resources::MOUNTAINS_TEXTURE);
+    resources::load(resources::WATER_TEXTURE);
+
     int *tile_info = readBMP(map_path);
-    this->xtiles = tile_info[0];
-    this->ytiles = tile_info[1];
-    tiles_size = xtiles * ytiles;
-    tiles = new Tile[tiles_size];
+
+    this->world_width = tile_info[0];
+    this->world_height = tile_info[1];
+
+    this->tiles_size = this->world_width * this->world_height;
+    this->tiles = new Tile[tiles_size];
+
     for(int i = 0; i < tiles_size; i++) {
-        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, tile_info[i + 2]);
+        this->tiles[i] = Tile((i % this->world_width) * Tile::TILE_SIZE, (i / this->world_height) * Tile::TILE_SIZE, tile_info[i + 2]);
     }
+
     spawnEntities(spawn_path);
-    tiles_modified = true;
+
     xoffset = 0;
     yoffset = 0;
 }

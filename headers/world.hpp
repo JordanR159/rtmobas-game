@@ -16,12 +16,11 @@ private:
 
     /** Position of corners for tile */
     VertexArray vertices;
-
-    /** Path to the texture for the entity */
-    Texture texture;
 public:
     /** Size of tiles, which is the same for all tiles */
     static const int TILE_SIZE = 32;
+
+    int tile_type;
 
     /** Position of top left corner of tile */
     int xposition;
@@ -42,8 +41,6 @@ public:
     static const int MOUNTAINS = 0x808040;
     static const int DESERT = 0xC0C000;
     static const int WATER = 0x004080;
-
-    int type;
 
     /** Constructors */
     Tile() = default;
@@ -70,12 +67,9 @@ public:
     /** Number of tiles in the world */
     int tiles_size;
 
-    /** Keeps track of whether or not a tile was modified */
-    bool tiles_modified;
-
     /** Dimensions of the world, in units of tiles */
-    int xtiles;
-    int ytiles;
+    int world_width;
+    int world_height;
 
     /** Offset of where to start rendering world */
     int xoffset;

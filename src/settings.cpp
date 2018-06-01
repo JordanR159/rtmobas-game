@@ -124,6 +124,8 @@ namespace settings {
 
         window.requestFocus();
 
+        window.setVerticalSyncEnabled(true);
+
         view.reset(FloatRect(0, 0, window_width, window_height));
         view.setViewport(FloatRect(0.f, 0.f, 1.f, 1.f));
         view.rotate(45);
