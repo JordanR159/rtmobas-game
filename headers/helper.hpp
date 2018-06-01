@@ -17,7 +17,12 @@
 
 
 #include <rpmalloc.h>
+
+#ifdef IS_UNIX
+#include <string.h>
+#else
 #include <mem.h>
+#endif
 
 #include "entity.hpp"
 #include "world.hpp"
