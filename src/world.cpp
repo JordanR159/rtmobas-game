@@ -7,71 +7,70 @@
 using namespace std;
 
 Tile::Tile(int xposition, int yposition, int type) {
+    this->tile_type = type;
+    Texture *texture;
     switch (type) {
         case PLAINS:
-            texture.loadFromFile("../resources/textures/plains.png");
+            texture = resources::textures[resources::PLAINS_TEXTURE];
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case DESERT:
-            texture.loadFromFile("../resources/textures/desert.png");
+            texture = resources::textures[resources::DESERT_TEXTURE];
             is_passable = true;
             movement_multiplier = 0.5;
             damage_factor = 10;
             break;
         case MOUNTAINS:
-            texture.loadFromFile("../resources/textures/mountains.png");
+            texture = resources::textures[resources::MOUNTAINS_TEXTURE];
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         case WATER:
-            texture.loadFromFile("../resources/textures/water.png");
+            texture = resources::textures[resources::WATER_TEXTURE];
             is_passable = false;
             movement_multiplier = 1.0;
             damage_factor = 0;
             break;
         default:
-            texture.loadFromFile("../resources/textures/pblock.png");
+            texture = resources::textures[resources::WATER_TEXTURE];
             is_passable = true;
             movement_multiplier = 1.0;
             damage_factor = INT32_MAX;
             break;
     }
-    this->type = type;
     this->xposition = xposition;
     this->yposition = yposition;
-    vertices = generateVertices(this->xposition, this->yposition, TILE_SIZE, TILE_SIZE, texture);
-}
-
-void Tile::offsetTile(int xoffset, int yoffset) {
-    xposition -= xoffset;
-    yposition -= yoffset;
-    vertices[0].position = Vector2f(xposition, yposition);
-    vertices[1].position = Vector2f(xposition, yposition + TILE_SIZE);
-    vertices[2].position = Vector2f(xposition + TILE_SIZE, yposition + TILE_SIZE);
-    vertices[3].position = Vector2f(xposition + TILE_SIZE, yposition);
+    vertices = generateVertices(this->xposition, this->yposition, TILE_SIZE, TILE_SIZE, *texture);
 }
 
 void Tile::draw(RenderTarget &target, RenderStates states) const {
-    states.texture = &texture;
     target.draw(vertices, states);
 }
 
 World::World(char *map_path, char *spawn_path) {
+    resources::load(resources::PLAINS_TEXTURE);
+    resources::load(resources::DESERT_TEXTURE);
+    resources::load(resources::MOUNTAINS_TEXTURE);
+    resources::load(resources::WATER_TEXTURE);
+
     int *tile_info = readBMP(map_path);
-    this->xtiles = tile_info[0];
-    this->ytiles = tile_info[1];
-    tiles_size = xtiles * ytiles;
-    tiles = new Tile[tiles_size];
+
+    this->world_width_tiles = tile_info[0];
+    this->world_height_tiles = tile_info[1];
+    this->world_height = this->world_height_tiles * Tile::TILE_SIZE;
+    this->world_width = this->world_width_tiles * Tile::TILE_SIZE;
+
+    this->tiles_size = this->world_width_tiles * this->world_height_tiles;
+    this->tiles = new Tile[tiles_size];
+
     for(int i = 0; i < tiles_size; i++) {
-        tiles[i] = Tile((i % xtiles) * Tile::TILE_SIZE, (i / xtiles) * Tile::TILE_SIZE, tile_info[i + 2]);
+        this->tiles[i] = Tile((i % this->world_width_tiles) * Tile::TILE_SIZE, (i / this->world_height_tiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     }
+
     spawnEntities(spawn_path);
-    tiles_modified = true;
-    xoffset = 0;
-    yoffset = 0;
 }
 
 void World::spawnEntities(char *spawn_path) {
@@ -92,22 +91,22 @@ void World::spawnEntities(char *spawn_path) {
             case Entity::RESEARCHER:
             case Entity::COLLECTOR:
                 structures.emplace_back(Structure(xposition, yposition, subtype));
-                alt_xposition = xtiles - xposition - (structures.back().xsize / Tile::TILE_SIZE);
-                alt_yposition = ytiles - yposition - (structures.back().ysize / Tile::TILE_SIZE);
+                alt_xposition = this->world_width_tiles - xposition - (structures.back().xsize / Tile::TILE_SIZE);
+                alt_yposition = this->world_height_tiles - yposition - (structures.back().ysize / Tile::TILE_SIZE);
                 structures.emplace_back(Structure(alt_xposition, alt_yposition, subtype));
                 break;
             case Entity::RESOURCE:
                 resources.emplace_back(Resource(xposition, yposition, subtype));
-                alt_xposition = xtiles - xposition - (resources.back().xsize / Tile::TILE_SIZE);
-                alt_yposition = ytiles - yposition - (resources.back().ysize / Tile::TILE_SIZE);
+                alt_xposition = this->world_width_tiles - xposition - (resources.back().xsize / Tile::TILE_SIZE);
+                alt_yposition = this->world_height_tiles - yposition - (resources.back().ysize / Tile::TILE_SIZE);
                 resources.emplace_back(Resource(alt_xposition, alt_yposition, subtype));
                 break;
             case Entity::UNIT:
                 xposition *= Tile::TILE_SIZE;
                 yposition *= Tile::TILE_SIZE;
                 units.emplace_back(Unit(xposition, yposition, subtype));
-                alt_xposition = (xtiles * Tile::TILE_SIZE) - xposition - units.back().xsize;
-                alt_yposition = (ytiles * Tile::TILE_SIZE) - yposition - units.back().ysize;
+                alt_xposition = (this->world_width_tiles * Tile::TILE_SIZE) - xposition - units.back().xsize;
+                alt_yposition = (this->world_height_tiles * Tile::TILE_SIZE) - yposition - units.back().ysize;
                 units.emplace_back(Unit(alt_xposition, alt_yposition, subtype));
                 break;
             default:
@@ -154,9 +153,34 @@ void World::draw(RenderTarget &target, RenderStates states) const {
     }
 }*/
 void World::draw(RenderTarget &target, RenderStates states) const {
+    states.texture = resources::textures[resources::PLAINS_TEXTURE];
+
     for (int i = 0; i < tiles_size; i++) {
-        target.draw(tiles[i]);
+        if(this->tiles[i].tile_type == Tile::PLAINS)
+            target.draw(tiles[i], states);
     }
+
+    states.texture = resources::textures[resources::DESERT_TEXTURE];
+
+    for (int i = 0; i < tiles_size; i++) {
+        if(this->tiles[i].tile_type == Tile::DESERT)
+            target.draw(tiles[i], states);
+    }
+
+    states.texture = resources::textures[resources::MOUNTAINS_TEXTURE];
+
+    for (int i = 0; i < tiles_size; i++) {
+        if(this->tiles[i].tile_type == Tile::MOUNTAINS)
+            target.draw(tiles[i], states);
+    }
+
+    states.texture = resources::textures[resources::WATER_TEXTURE];
+
+    for (int i = 0; i < tiles_size; i++) {
+        if(this->tiles[i].tile_type == Tile::WATER)
+            target.draw(tiles[i], states);
+    }
+
     for (Resource r : resources) {
         target.draw(r);
     }

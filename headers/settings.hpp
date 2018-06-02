@@ -5,8 +5,6 @@
 #ifndef RTMOBAS_GAME_SETTINGS_HPP
 #define RTMOBAS_GAME_SETTINGS_HPP
 
-#include "helper.hpp"
-
 namespace settings {
 
     /** Interface for any custom setting used within the game. */
@@ -96,7 +94,8 @@ namespace settings {
 
     extern sf::RenderWindow window;
 
-    extern sf::View view;
+    extern sf::View world_view;
+    extern sf::View ui_view;
 
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;
@@ -114,6 +113,9 @@ namespace settings {
     /** Dimensions of the entire window across all involved monitors. */
     extern unsigned int window_width;
     extern unsigned int window_height;
+
+    /** Zoom multiplier for the window */
+    extern float window_zoom;
 
     /** Useful for switching from a Borderless / Fullscreen Window Mode back to the original state of the Windowed. */
     extern bool window_maximized;

@@ -70,8 +70,3 @@ VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize,
 
     return vertices;
 }
-
-bool isOnScreen(Entity entity, int startx, int starty, int endx, int endy) {
-    return (entity.xposition + entity.xsize > startx * Tile::TILE_SIZE) && (entity.xposition < endx * Tile::TILE_SIZE) &&
-            (entity.yposition + entity.ysize > starty * Tile::TILE_SIZE) && (entity.yposition < endy * Tile::TILE_SIZE);
-}

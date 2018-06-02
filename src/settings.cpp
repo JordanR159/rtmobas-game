@@ -2,10 +2,7 @@
 // Created by Killian Le Clainche on 5/30/2018.
 //
 
-#include <settings.hpp>
-#include <chrono>
-#include <sys/stat.h>
-#include <sstream>
+#include "helper.hpp"
 
 const long long int KEY_DOUBLE_PRESS = 1000 / 5;
 
@@ -21,12 +18,14 @@ namespace settings {
     std::map<int, Key *> input_mapping;
 
     sf::RenderWindow window;
-    sf::View view;
+    sf::View world_view;
+    sf::View ui_view;
 
     bool update_window = false;
 
     unsigned int window_width = 800;
     unsigned int window_height = 600;
+    float window_zoom = 1.f;
 
     void Key::press() {
 
@@ -122,13 +121,14 @@ namespace settings {
         window.setVerticalSyncEnabled(true);
 
         window.setVisible(true);
-
         window.requestFocus();
 
-        view.reset(FloatRect(0, 0, window_width, window_height));
-        view.setViewport(FloatRect(0.f, 0.f, 1.f, 1.f));
-        view.rotate(45);
-        window.setView(view);
+        world_view.reset(FloatRect(0, 0, window_width * window_zoom, window_height * window_zoom * 2));
+        world_view.setViewport(FloatRect(0.f, 0.f, 1.f, 0.75f));
+        world_view.rotate(45);
+
+        ui_view.reset(FloatRect(0, 0, window_width, window_height * 0.25f));
+        ui_view.setViewport(FloatRect(0.f, 0.75f, 1.f, 0.25f));
     }
 
     void save() {
@@ -188,6 +188,7 @@ std::cout << "Closed" << std::endl;
                 key->press();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+                printf("Mouse button pressed\n");
             }
 
             if(event.type == sf::Event::MouseButtonReleased && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
@@ -197,6 +198,28 @@ std::cout << "Closed" << std::endl;
                 key->release();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+            }
+
+            /** Translates mouse wheel scroll into a zoom for the world view */
+            if(event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == Mouse::VerticalWheel) {
+
+                window_zoom -= event.mouseWheelScroll.delta * 0.15;
+                if(window_zoom < 0.25) {
+                    window_zoom = 0.25;
+                }
+                else if(window_zoom > 1.5) {
+                    window_zoom = 1.5;
+                }
+            }
+
+            /** Resizes view so that the size of individual objects is unchanged, and instead a different
+             * number of objects is shown on the world view
+             */
+            if(event.type == sf::Event::Resized){
+
+                window_width = event.size.width;
+                window_height = event.size.height;
+                printf("%d\n", event.size.width);
             }
         }
 

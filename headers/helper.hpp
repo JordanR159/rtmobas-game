@@ -13,8 +13,11 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <list>
 #include <cmath>
-
+#include <chrono>
+#include <sstream>
+#include <sys/stat.h>
 
 #include <rpmalloc.h>
 #include <mem.h>
@@ -22,6 +25,8 @@
 #include "entity.hpp"
 #include "world.hpp"
 #include "settings.hpp"
+#include "resource_manager.hpp"
+#include "interface_panels.hpp"
 
 extern const char * INPUT_SETTINGS_LOCATION;
 extern const char * SETTINGS_LOCATION;
@@ -29,7 +34,5 @@ extern const char * SETTINGS_LOCATION;
 int* readBMP(char* filename);
 
 VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture);
-
-bool isOnScreen(Entity entity, int startx, int starty, int endx, int endy);
 
 #endif //RTMOBAS_GAME_HELPER_HPP
