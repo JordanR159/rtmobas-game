@@ -171,7 +171,7 @@ namespace settings {
             events = true;
 
             if(event.type == sf::Event::Closed) {
-std::cout << "Closed" << std::endl;
+                std::cout << "Closed" << std::endl;
                 window.close();
             }
 
@@ -215,11 +215,15 @@ std::cout << "Closed" << std::endl;
             /** Resizes view so that the size of individual objects is unchanged, and instead a different
              * number of objects is shown on the world view
              */
-            if(event.type == sf::Event::Resized){
+            if(event.type == sf::Event::Resized) {
 
                 window_width = event.size.width;
                 window_height = event.size.height;
                 printf("%d\n", event.size.width);
+            }
+
+            if(event.type == sf::Event::MouseMoved) {
+
             }
         }
 

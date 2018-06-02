@@ -4,6 +4,8 @@
 
 #include "helper.hpp"
 
+using namespace resources;
+
 void Entity::offsetEntity(int xoffset, int yoffset) {
     xposition -= xoffset;
     yposition -= yoffset;
@@ -14,51 +16,51 @@ void Entity::offsetEntity(int xoffset, int yoffset) {
 }
 
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.texture = &texture;
     target.draw(vertices, states);
 }
 
 /** NOTE - xposition and yposition are in units of tiles */
 Resource::Resource(int xposition, int yposition, int type) {
+    Texture * texture;
     switch(type) {
         case Resource::RESOURCE_FOOD:
-            texture.loadFromFile("../resources/sprites/food_resource.png");
+            texture = textures[resource::FOOD_TEXTURE];
             xsize = 2;
             ysize = 2;
             has_ground_collision = false;
             break;
         case Resource::RESOURCE_GOLD:
-            texture.loadFromFile("../resources/sprites/gold_resource.png");
+            texture = textures[resource::GOLD_TEXTURE];
             xsize = 3;
             ysize = 1;
             has_ground_collision = false;
             break;
         case Resource::RESOURCE_WOOD:
-            texture.loadFromFile("../resources/sprites/wood_resource.png");
+            texture = textures[resource::TREE_TEXTURE];
             xsize = 1;
             ysize = 1;
             has_ground_collision = true;
             break;
         case Resource::RESOURCE_METAL:
-            texture.loadFromFile("../resources/sprites/metal_resource.png");
+            texture = textures[resource::METAL_TEXTURE];
             xsize = 2;
             ysize = 2;
             has_ground_collision = true;
             break;
         case Resource::RESOURCE_CRYSTAL:
-            texture.loadFromFile("../resources/sprites/crystal_resource.png");
+            texture = textures[resource::CRYSTAL_TEXTURE];
             xsize = 1;
             ysize = 3;
             has_ground_collision = true;
             break;
         case Resource::RESOURCE_OIL:
-            texture.loadFromFile("../resources/sprites/oil_resource.png");
+            texture = textures[resource::OIL_TEXTURE];
             xsize = 1;
             ysize = 1;
             has_ground_collision = false;
             break;
         default:
-            texture.loadFromFile("../resources/sprites/pblock.png");
+            texture = textures[resource::OIL_TEXTURE];
             break;
     }
     this->type = type;
@@ -66,61 +68,26 @@ Resource::Resource(int xposition, int yposition, int type) {
     this->yposition = yposition * Tile::TILE_SIZE;
     xsize *= Tile::TILE_SIZE;
     ysize *= Tile::TILE_SIZE;
-    vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
-}
-
-/** NOTE - xposition and yposition are in units of tiles */
-Structure::Structure(int xposition, int yposition, int type, Resource *resource) {
-    switch(type) {
-        case Structure::PRODUCER_CASTLE:
-            texture.loadFromFile("../resources/sprites/castle.png");
-            xsize = 3;
-            ysize = 3;
-            has_ground_collision = true;
-            max_lifepoints = 1000;
-            break;
-        case Structure::COLLECTOR_FOOD:
-            texture.loadFromFile("../resources/sprites/food_collector.png");
-            xsize = 2;
-            ysize = 2;
-            has_ground_collision = true;
-            max_lifepoints = 200;
-            break;
-        default:
-            texture.loadFromFile("../resources/sprites/pblock.png");
-            xsize = 1;
-            ysize = 1;
-            has_ground_collision = false;
-            max_lifepoints = INT32_MAX;
-            break;
-    }
-    this->type = type;
-    this->xposition = xposition * Tile::TILE_SIZE;
-    this->yposition = yposition * Tile::TILE_SIZE;
-    xsize *= Tile::TILE_SIZE;
-    ysize *= Tile::TILE_SIZE;
-    xrally = xposition;
-    yrally = yposition;
-    curr_lifepoints = max_lifepoints;
-    vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
+    vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, *texture);
 }
 
 /** NOTE - xposition and yposition are in units of pixels */
 Unit::Unit(int xposition, int yposition, int type) {
+    Texture * texture;
     switch(type) {
         case Unit::UNIT_BUILDER:
-            texture.loadFromFile("../resources/sprites/peasant.png");
+            texture = textures[unit::PEASANT_TEXTURE];
             xsize = 16;
             ysize = 32;
             max_lifepoints = INT32_MAX;
             break;
         default:
-            texture.loadFromFile("../resources/sprites/pblock.png");
+            texture = textures[unit::PEASANT_TEXTURE];
             break;
     }
     this->type = type;
     this->xposition = xposition;
     this->yposition = yposition;
     curr_lifepoints = max_lifepoints;
-    vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, texture);
+    vertices = generateVertices(this->xposition, this->yposition, xsize, ysize, *texture);
 }

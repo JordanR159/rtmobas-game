@@ -17,9 +17,6 @@ protected:
     /** Position of corners for entity, only needs to change just before rendering */
     VertexArray vertices;
 
-    /** Texture that entity is rendered with */
-    Texture texture;
-
 public:
 
     /** Position of entity on the map */
@@ -103,7 +100,11 @@ public:
 
     /** Constructors */
     Structure() = default;
-    Structure(int xposition, int yposition, int type, Resource *resource = nullptr);
+    Structure(int xposition, int yposition, int type);
+};
+
+class Collector : public Structure {
+    Collector(int xposition, int yposition, int type);
 };
 
 class Unit : public Entity {

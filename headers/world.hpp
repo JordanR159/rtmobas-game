@@ -76,6 +76,8 @@ public:
     /** Constructor */
     World(char *map_path, char *spawn_path);
 
+    ~World();
+
     /** Spawns initial entities for the world */
     void spawnEntities(char *spawn_path);
 };
