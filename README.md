@@ -5,6 +5,7 @@ A game that can be played in RTS style or MOBA style
 For those who need some assistance on setting up this github repository on their local machine:
 
 ### Windows
+
 1. Install MinGW x64 and create CLion Toolchain
 2. Download SFML 2.5.0 - MinGW Version *(YOU MUST HAVE THIS VERSION)*
 3. Place SFML 2.5.0 as the Folder "SFML" inside the local repository
@@ -15,6 +16,7 @@ For those who need some assistance on setting up this github repository on their
 8. You are ready to go
 
 ### Linux
+
 1. Install SFML, if possible (the bash script will grab a copy, but it's not optimal).
     - On Ubuntu or Debian: `sudo apt install libsfml-dev build-essential`
     - On Fedora: `sudo dnf install SFML-devel`
@@ -23,5 +25,5 @@ For those who need some assistance on setting up this github repository on their
 
 ## Libraries
 
-[Rampant Pixels Memory Allocator (rpmalloc)](https://github.com/rampantpixels/rpmalloc)
-[Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML)
+ * [Rampant Pixels Memory Allocator (rpmalloc)](https://github.com/rampantpixels/rpmalloc)
+ * [Simple and Fast Multimedia Library (SFML)](https://github.com/SFML/SFML)
