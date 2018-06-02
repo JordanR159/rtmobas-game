@@ -23,7 +23,6 @@ endif()
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DIS_UNIX")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ldl")
+    target_link_libraries(rtmobas-game pthread dl)
 endif(UNIX)
 
