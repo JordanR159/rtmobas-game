@@ -20,6 +20,7 @@ namespace settings {
     sf::RenderWindow window;
     sf::View world_view;
     sf::View ui_view;
+    sf::View minimap_view;
 
     bool update_window = false;
 

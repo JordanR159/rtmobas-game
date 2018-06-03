@@ -96,6 +96,7 @@ namespace settings {
 
     extern sf::View world_view;
     extern sf::View ui_view;
+    extern sf::View minimap_view;
 
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;

@@ -35,4 +35,6 @@ int* readBMP(char* filename);
 
 VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture);
 
+Vector2f rotatePoint(int x, int y, double angle);
+
 #endif //RTMOBAS_GAME_HELPER_HPP

@@ -49,6 +49,13 @@ int main()
     World world(map_path, spawn_path);
     InterfacePanels interfaces(int(settings::ui_view.getSize().x), int(settings::ui_view.getSize().y));
 
+    settings::minimap_view.reset(FloatRect(interfaces.minimap.xposition, interfaces.minimap.yposition,
+                                           interfaces.minimap.panel_size, interfaces.minimap.panel_size));
+    settings::minimap_view.setViewport(FloatRect(float(interfaces.minimap.xposition)/settings::window_width,
+                                            0.75f + float(interfaces.minimap.yposition)/settings::window_height,
+                                            float(interfaces.minimap.panel_size)/settings::window_width,
+                                            float(interfaces.minimap.panel_size)/settings::window_height));
+
     double speed = 20.0;
 
     //glm::mat4 worldMatrix = glm::rotate(glm::rotate(glm::mat4(1.0), -M_PI / 180 * 45.0, glm::vec3(0, 0, 1)), -M_PI / 180 * 45.0, glm::vec3(0, 1, 0));
@@ -93,6 +100,9 @@ int main()
         /** Set the zoom on the world view */
         settings::world_view.setSize(settings::window_width * settings::window_zoom,
                                settings::window_height * settings::window_zoom * 2);
+        interfaces.minimap.updateReticle(int(settings::world_view.getCenter().x), int(settings::world_view.getCenter().y),
+            int(settings::world_view.getSize().x*2), int(settings::world_view.getSize().y),
+            int(world.world_width), int(world.world_height));
 
         settings::window.clear();
 
@@ -102,6 +112,9 @@ int main()
 
         settings::window.setView(settings::ui_view);
         settings::window.draw(interfaces);
+
+        settings::window.setView(settings::minimap_view);
+        settings::window.draw(interfaces.minimap);
 
         settings::window.display();
     }
