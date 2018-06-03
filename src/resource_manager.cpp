@@ -36,7 +36,7 @@ namespace resources {
         if(resource == nullptr)
             return nullptr;
 
-        char * end_type = strrchr(resource, '.');
+        const char * end_type = strrchr(resource, '.');
 
         if(end_type != nullptr) {
             if(strcmp(end_type, ".png") == 0) {
@@ -64,7 +64,7 @@ namespace resources {
         if(resource == nullptr)
             return;
 
-        char * end_type = strrchr(resource, '.');
+        const char * end_type = strrchr(resource, '.');
 
         if(end_type != nullptr) {
             if(strcmp(end_type, ".png") == 0 && textures.find(resource) != textures.end()) {

@@ -21,3 +21,8 @@ if(SFML_FOUND)
     target_link_libraries(rtmobas-game ${SFML_LIBRARIES})
 endif()
 
+if(UNIX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DIS_UNIX")
+    target_link_libraries(rtmobas-game pthread dl)
+endif(UNIX)
+
