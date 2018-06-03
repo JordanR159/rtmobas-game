@@ -20,7 +20,12 @@
 #include <sys/stat.h>
 
 #include <rpmalloc.h>
+
+#ifdef IS_UNIX
+#include <string.h>
+#else
 #include <mem.h>
+#endif
 
 #include "entity.hpp"
 #include "tile_entity.hpp"
@@ -40,5 +45,7 @@ extern const char * SETTINGS_LOCATION;
 int* readBMP(char* filename);
 
 VertexArray generateVertices(float, float, float, float, Texture texture);
+
+Vector2f rotatePoint(int x, int y, double angle);
 
 #endif //RTMOBAS_GAME_HELPER_HPP

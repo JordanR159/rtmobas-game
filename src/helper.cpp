@@ -70,3 +70,7 @@ VertexArray generateVertices(float xposition, float yposition, float xsize, floa
 
     return vertices;
 }
+
+Vector2f rotatePoint(int x, int y, double angle) {
+    return Vector2f(int(x * cos(angle) - y * sin(angle)), int(x * sin(angle) + y * cos(angle)));
+}

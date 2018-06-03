@@ -102,12 +102,12 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     Texture texture;
-
     Texture map_layout;
+    Texture camera_reticle;
 
     VertexArray vertices;
-
     VertexArray vertices_map;
+    VertexArray vertices_reticle;
 public:
     /** Position of the panel on the ui view */
     int xposition;

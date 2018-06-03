@@ -118,6 +118,7 @@ namespace settings {
 
     /** Non-moving view (lense) that allows the player to see the displayed UI. */
     extern sf::View ui_view;
+    extern sf::View minimap_view;
 
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;
