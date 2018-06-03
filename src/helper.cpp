@@ -53,7 +53,7 @@ int *readBMP(char *filename)
     return tile_info;
 }
 
-VertexArray generateVertices(int xposition, int yposition, int xsize, int ysize, Texture texture) {
+VertexArray generateVertices(float xposition, float yposition, float xsize, float ysize, Texture texture) {
     VertexArray vertices = VertexArray(Quads, 4);
 
     /** Corner positions for the rendering box */

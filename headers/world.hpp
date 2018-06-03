@@ -5,46 +5,55 @@
 #ifndef RTMOBAS_GAME_TILE_H
 #define RTMOBAS_GAME_TILE_H
 
+#include "helper.hpp"
+
+/** Size of tiles, which is the same for all tiles */
+#define TILE_SIZE 32
+
+#define NUMBER_OF_TERRAIN_TYPES 4
+#define NUMBER_OF_TERRAIN_VARIATIONS 4
+
+#define TERRAIN_PLAINS 0
+#define TERRAIN_MOUNTAINS 1
+#define TERRAIN_DESERT 2
+#define TERRAIN_WATER 3
+
+/** Used in constructor for assigning several properties for each tile type
+ * Type is based on the color associated with each tile for the bitmap layouts*/
+#define TERRAIN_PLAINS_COLOR 0x008000
+#define TERRAIN_MOUNTAINS_COLOR 0x808040
+#define TERRAIN_DESERT_COLOR 0xC0C000
+#define TERRAIN_WATER_COLOR 0x004080
+
 using namespace sf;
 using namespace std;
 
 class Tile : public Drawable {
 
 private:
+
+    /** Vertex Array Buffer that defines the render procedure (Vertices, Tex Coords, etc.)*/
+    VertexArray vao;
+
+    void create_vao();
+
     /** Allows window.draw(Tile) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-    /** Position of corners for tile */
-    VertexArray vertices;
 public:
-    /** Size of tiles, which is the same for all tiles */
-    static const int TILE_SIZE = 32;
 
     int tile_type;
 
-    /** Position of top left corner of tile */
-    int xposition;
-    int yposition;
+    /** Index within the world->tiles 2-D array */
+    int x_coord;
+    /** Index within the world->tiles 2-D array */
+    int y_coord;
 
-    /** True if an entity can be drawn on top of this tile, false otherwise */
-    bool is_passable;
-
-    /** Modifier the the speed that entities move over this tile. Standard is 1.0 */
-    double movement_multiplier;
-
-    /** Amount of damage tile inflicts to units every tick */
-    int damage_factor;
-
-    /** Used in constructor for assigning several properties for each tile type
-     * Type is based on the color associated with each tile for the bitmap layouts*/
-    static const int PLAINS = 0x008000;
-    static const int MOUNTAINS = 0x808040;
-    static const int DESERT = 0xC0C000;
-    static const int WATER = 0x004080;
+    Structure * structure;
+    Resource * resource;
 
     /** Constructors */
     Tile() = default;
-    Tile(int xposition, int yposition, int type);
+    Tile(int x, int y, int type);
 };
 
 class World : public Drawable {
@@ -54,24 +63,20 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 public:
+
     /** Array of all tiles contained in the world */
-    Tile* tiles = nullptr;
+    Tile *** tiles = nullptr;
 
     /** Lists of all entities in the world. Resources rendered first, then structures, then units */
-    vector<Resource> resources;
-    vector<Structure> structures;
-    vector<Unit> units;
-
-    /** Number of tiles in the world */
-    int tiles_size;
-
-    /** Dimensions of the world, in units of pixels */
-    int world_width;
-    int world_height;
+    vector<Resource *> resources;
+    vector<Structure *> structures;
+    vector<Unit *> units;
 
     /** Dimensions of the world, in units of tiles */
     int world_width_tiles;
     int world_height_tiles;
+
+    static Structure * held_entity;
 
     /** Constructor */
     World(char *map_path, char *spawn_path);
@@ -79,7 +84,9 @@ public:
     ~World();
 
     /** Spawns initial entities for the world */
-    void spawnEntities(char *spawn_path);
+    void spawn_entities(char *spawn_path);
+
+    void update();
 };
 
 

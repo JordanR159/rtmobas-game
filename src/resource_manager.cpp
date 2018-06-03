@@ -7,7 +7,20 @@
 namespace resources {
     std::map<const char *, sf::Texture *> textures;
 
+    namespace ui {
+        const char * PANEL_TEXTURE = "../resources/textures/interface_panels.png";
+
+        const char * BACK_COMMAND_TEXTURE = "../resources/textures/back_command.png";
+
+        const char * BUILD_COLLECTORS_TEXTURE = "../resources/textures/build_collectors.png";
+        const char * BUILD_FARM_TEXTURE = "../resources/textures/build_farm.png";
+
+        const char * MOVE_COMMAND_TEXTURE = "../resources/textures/move_command.png";
+    }
+
     namespace terrain {
+        const char * TERRAIN_TEXTURES = "../resources/textures/terrain.png";
+
         const char * PLAINS_TEXTURE = "../resources/textures/plains.png";
         const char * DESERT_TEXTURE = "../resources/textures/desert.png";
         const char * MOUNTAINS_TEXTURE = "../resources/textures/mountains.png";
@@ -77,5 +90,14 @@ namespace resources {
 
             }
         }
+    }
+
+    void flush() {
+        for(auto &iter : textures) {
+            iter.second->~Texture();
+            rpfree(iter.second);
+        }
+
+        textures.clear();
     }
 }

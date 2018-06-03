@@ -2,18 +2,6 @@
 
 using namespace sf;
 
-settings::Key * get_set_key(const int key_value) {
-    if(settings::input_mapping.find(key_value) == settings::input_mapping.end()) {
-        void * mem = rpmalloc(sizeof(settings::Key));
-        settings::Key * key = new(mem) settings::Key();
-
-        settings::input_mapping[key_value] = key;
-
-        return key;
-    }
-    return nullptr;
-}
-
 int main()
 {
     //start of every process for rpmalloc
@@ -21,27 +9,7 @@ int main()
     settings::load();
 
     settings::init();
-    settings::Key * key;
 
-    if((key = get_set_key(settings::Key::SCROLL_UP)) != nullptr) {
-        settings::keyboard_mapping[sf::Keyboard::W] = key;
-        settings::keyboard_mapping[sf::Keyboard::Up] = key;
-    }
-
-    if((key = get_set_key(settings::Key::SCROLL_DOWN)) != nullptr) {
-        settings::keyboard_mapping[sf::Keyboard::S] = key;
-        settings::keyboard_mapping[sf::Keyboard::Down] = key;
-    }
-
-    if((key = get_set_key(settings::Key::SCROLL_LEFT)) != nullptr) {
-        settings::keyboard_mapping[sf::Keyboard::A] = key;
-        settings::keyboard_mapping[sf::Keyboard::Left] = key;
-    }
-
-    if((key = get_set_key(settings::Key::SCROLL_RIGHT)) != nullptr) {
-        settings::keyboard_mapping[sf::Keyboard::D] = key;
-        settings::keyboard_mapping[sf::Keyboard::Right] = key;
-    }
     settings::save();
 
     char *map_path = strdup("../resources/maps/basic.bmp");
@@ -83,18 +51,21 @@ int main()
         /** Prevent world view from going too far off of the world */
         if(settings::world_view.getCenter().x < 0)
             settings::world_view.setCenter(0, settings::world_view.getCenter().y);
-        if(settings::world_view.getCenter().x > world.world_width)
-            settings::world_view.setCenter(world.world_width, settings::world_view.getCenter().y);
+        if(settings::world_view.getCenter().x > world.world_width_tiles * TILE_SIZE)
+            settings::world_view.setCenter(world.world_width_tiles * TILE_SIZE, settings::world_view.getCenter().y);
         if(settings::world_view.getCenter().y < 0)
             settings::world_view.setCenter(settings::world_view.getCenter().x, 0);
-        if(settings::world_view.getCenter().y > world.world_height)
-            settings::world_view.setCenter(settings::world_view.getCenter().x, world.world_height);
+        if(settings::world_view.getCenter().y > world.world_height_tiles * TILE_SIZE)
+            settings::world_view.setCenter(settings::world_view.getCenter().x, world.world_height_tiles * TILE_SIZE);
 
         /** Set the zoom on the world view */
         settings::world_view.setSize(settings::window_width * settings::window_zoom,
                                settings::window_height * settings::window_zoom * 2);
 
         settings::window.clear();
+
+        world.update();
+        interfaces.update();
 
         /** Switch to and draw every viewport for the window */
         settings::window.setView(settings::world_view);

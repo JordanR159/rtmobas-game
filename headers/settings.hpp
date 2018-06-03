@@ -16,14 +16,23 @@ namespace settings {
         virtual char * save();
     };
 
+    /**
+     * Setting that uses an int to represent data.
+     */
     class Int : Setting {
         int value = 0;
     };
 
+    /**
+     * Setting that uses an unsigned int to represent data.
+     */
     class UInt : Setting {
         unsigned int value = 0;
     };
 
+    /**
+     * Setting that uses a char string to represent data.
+     */
     class String : Setting {
         const char * value = nullptr;
     };
@@ -35,7 +44,7 @@ namespace settings {
     class Key {
 
     private:
-        //Helps determine if a double press
+        /** Helps determine if a double press*/
         long long int release_timer = 0L;
 
     public:
@@ -71,10 +80,19 @@ namespace settings {
 
         //char * to_string();
 
+        //Movement around the world
         static const int SCROLL_UP ;
         static const int SCROLL_DOWN;
         static const int SCROLL_LEFT;
         static const int SCROLL_RIGHT;
+
+        //Mouse interactions
+        static const int CLICK;
+
+        //Hotkeys for UI
+        static const int HOTKEY_BACK_COMMAND;
+        static const int HOTKEY_BUILD_COLLECTORS;
+        static const int HOTKEY_BUILD_FARM;
 
     };
 
@@ -92,9 +110,13 @@ namespace settings {
     // /** The monitor that the window is contained in (or at least the top left corner is located inside). */
     // Monitor monitor;
 
+    /** The window object used by SFML, initialized by settings::init() */
     extern sf::RenderWindow window;
 
+    /** The view (lense) that the player sees the world through. */
     extern sf::View world_view;
+
+    /** Non-moving view (lense) that allows the player to see the displayed UI. */
     extern sf::View ui_view;
 
     /** Determines what mode the window is, used for switching purposes. */
@@ -126,12 +148,16 @@ namespace settings {
     /** Used for any settings that is needed to be saved on application shutdown */
     extern std::map<char *, Setting> settings;
 
+    /** Loads all previously saved data inside the two cfg files and creates the base content for them. */
     void load();
 
+    /** Saves any changes made to the settings into the two cfg files. */
     void save();
 
+    /** Initializes the game, including the window, views, inputs, and other important start-up functions. */
     void init();
 
+    /** Processes the new inputs and updates states of mappings. */
     bool update();
 
 }

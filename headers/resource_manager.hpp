@@ -5,11 +5,27 @@
 #ifndef RTMOBAS_GAME_RESOURCE_MANAGER_HPP
 #define RTMOBAS_GAME_RESOURCE_MANAGER_HPP
 
+#include "helper.hpp"
+
 namespace resources {
 
     extern std::map<const char *, sf::Texture *> textures;
 
+    namespace ui {
+        extern const char * PANEL_TEXTURE;
+
+        extern const char * BACK_COMMAND_TEXTURE;
+
+        extern const char * BUILD_COLLECTORS_TEXTURE;
+        extern const char * BUILD_FARM_TEXTURE;
+
+        extern const char * MOVE_COMMAND_TEXTURE;
+    }
+
     namespace terrain {
+
+        extern const char * TERRAIN_TEXTURES;
+
         extern const char * PLAINS_TEXTURE;
         extern const char * DESERT_TEXTURE;
         extern const char * MOUNTAINS_TEXTURE;
@@ -37,6 +53,8 @@ namespace resources {
     Texture * load(const char *);
 
     void flush(const char *);
+
+    void flush();
 
 }
 

@@ -1,17 +1,10 @@
 //
-// Created by Killian Le Clainche on 5/30/2018.
+// Created by Killian Le Clainche on 6/2/2018.
 //
 
 #include "helper.hpp"
 
-const long long int KEY_DOUBLE_PRESS = 1000 / 5;
-
 namespace settings {
-
-    const int Key::SCROLL_UP = 1;
-    const int Key::SCROLL_DOWN = 2;
-    const int Key::SCROLL_LEFT = 3;
-    const int Key::SCROLL_RIGHT = 4;
 
     std::map<int, Key *> keyboard_mapping;
     std::map<int, Key *> mouse_mapping;
@@ -27,52 +20,7 @@ namespace settings {
     unsigned int window_height = 600;
     float window_zoom = 1.f;
 
-    void Key::press() {
-
-        std::cout << "pressed" << std::endl;
-        this->pressed ++;
-
-        if(this->pressed == 1) {
-            this->quick_pressed = false;
-
-            long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-            if(ms - this->release_timer < KEY_DOUBLE_PRESS)
-                this->quick_press_count ++;
-
-            this->pressed_timer = ms;
-        }
-    }
-
-    void Key::release() {
-        this->pressed --;
-        std::cout << "released" << std::endl;
-
-        if(this->pressed == 0) {
-            this->clicked = true;
-
-            long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-            if(ms - this->pressed_timer < KEY_DOUBLE_PRESS)
-                this->quick_pressed = true;
-
-            this->release_timer = ms;
-        }
-    }
-
-    void Key::update() {
-        this->clicked = false;
-        this->quick_pressed = false;
-
-        if(this->quick_press_count > 0) {
-            long long int ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-            if(ms - this->release_timer > KEY_DOUBLE_PRESS)
-                this->quick_press_count = 0;
-        }
-    }
-
-    void setInput(const std::string &key_string, const std::string &value_string, std::map<int, Key *> * mapping) {
+    void set_input(const std::string &key_string, const std::string &value_string, std::map<int, Key *> * mapping) {
         void * mem = rpmalloc(sizeof(Key));
         Key * key = new(mem) Key();
 
@@ -93,7 +41,7 @@ namespace settings {
     }
 
     void load() {
-        struct stat buffer{};
+        /*struct stat buffer{};
 
         if(!stat(INPUT_SETTINGS_LOCATION, &buffer)) {
             std::ifstream input(INPUT_SETTINGS_LOCATION);
@@ -106,10 +54,29 @@ namespace settings {
                 if(key == "MOUSE_INPUT")
                     mapping = &mouse_mapping;
                 else
-                    setInput(key, value, mapping);
+                    set_input(key, value, mapping);
             }
             input.close();
+        }*/
+    }
+
+    Key * get_set_key(const int key_value) {
+        if(input_mapping.find(key_value) == input_mapping.end()) {
+            void * mem = rpmalloc(sizeof(settings::Key));
+            Key * key = new(mem) Key();
+
+            input_mapping[key_value] = key;
+
+            return key;
         }
+        return nullptr;
+    }
+
+    void set_key(const int key_value, std::map<int, Key *> * mapping, int code) {
+        Key * key = get_set_key(key_value);
+
+        if(key != nullptr)
+            (*mapping)[code] = key;
     }
 
     void init() {
@@ -129,10 +96,43 @@ namespace settings {
 
         ui_view.reset(FloatRect(0, 0, window_width, window_height * 0.25f));
         ui_view.setViewport(FloatRect(0.f, 0.75f, 1.f, 0.25f));
+
+        /*
+         * Creates all non-loaded key bindings (their defaults are assigned).
+         */
+
+        Key * key;
+
+        if((key = get_set_key(Key::SCROLL_UP)) != nullptr) {
+            keyboard_mapping[sf::Keyboard::W] = key;
+            keyboard_mapping[sf::Keyboard::Up] = key;
+        }
+
+        if((key = get_set_key(Key::SCROLL_DOWN)) != nullptr) {
+            keyboard_mapping[sf::Keyboard::S] = key;
+            keyboard_mapping[sf::Keyboard::Down] = key;
+        }
+
+        if((key = get_set_key(Key::SCROLL_LEFT)) != nullptr) {
+            keyboard_mapping[sf::Keyboard::A] = key;
+            keyboard_mapping[sf::Keyboard::Left] = key;
+        }
+
+        if((key = get_set_key(Key::SCROLL_RIGHT)) != nullptr) {
+            keyboard_mapping[sf::Keyboard::D] = key;
+            keyboard_mapping[sf::Keyboard::Right] = key;
+        }
+
+        set_key(Key::CLICK, &mouse_mapping, sf::Mouse::Left);
+
+        set_key(Key::HOTKEY_BACK_COMMAND, &keyboard_mapping, sf::Keyboard::B);
+        set_key(Key::HOTKEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
+        set_key(Key::HOTKEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
+
     }
 
     void save() {
-        std::ofstream output;
+        /*std::ofstream output;
         output.open(INPUT_SETTINGS_LOCATION);
 
         for (auto &iter : input_mapping) {
@@ -159,13 +159,21 @@ namespace settings {
             }
 
             output << std::endl;
-        }
+        }*/
     }
 
     bool update() {
         sf::Event event{};
 
         bool events = false;
+
+        for(auto &iter : keyboard_mapping) {
+            iter.second->update();
+        }
+
+        for(auto &iter : mouse_mapping) {
+            iter.second->update();
+        }
 
         while(window.pollEvent(event)) {
             events = true;
@@ -200,7 +208,7 @@ namespace settings {
                 key->mouse_y = event.mouseButton.y;
             }
 
-            /** Translates mouse wheel scroll into a zoom for the world view */
+            /* Translates mouse wheel scroll into a zoom for the world view */
             if(event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == Mouse::VerticalWheel) {
 
                 window_zoom -= event.mouseWheelScroll.delta * 0.15;
@@ -212,7 +220,8 @@ namespace settings {
                 }
             }
 
-            /** Resizes view so that the size of individual objects is unchanged, and instead a different
+            /*
+             * Resizes view so that the size of individual objects is unchanged, and instead a different
              * number of objects is shown on the world view
              */
             if(event.type == sf::Event::Resized) {
@@ -225,14 +234,6 @@ namespace settings {
             if(event.type == sf::Event::MouseMoved) {
 
             }
-        }
-
-        for(auto &iter : keyboard_mapping) {
-            iter.second->update();
-        }
-
-        for(auto &iter : mouse_mapping) {
-            iter.second->update();
         }
 
         return events;
