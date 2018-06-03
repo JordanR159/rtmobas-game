@@ -71,6 +71,10 @@ private:
     Texture texture;
 
     VertexArray vertices;
+
+protected:
+    World * world;
+
 public:
     /** Position of the panel on the ui view */
     int xposition;
@@ -90,7 +94,7 @@ public:
 
     /** Constructors */
     EntityPanel() = default;
-    EntityPanel(int xposition, int yposition, int size, int type);
+    EntityPanel(int xposition, int yposition, int size, int type, World * world);
 
     void update();
 
@@ -108,6 +112,11 @@ private:
     VertexArray vertices;
     VertexArray vertices_map;
     VertexArray vertices_reticle;
+
+protected:
+
+    World * world;
+
 public:
     /** Position of the panel on the ui view */
     int xposition;
@@ -121,7 +130,7 @@ public:
 
     /** Constructors */
     MinimapPanel() = default;
-    MinimapPanel(int xposition, int yposition, int size);
+    MinimapPanel(int xposition, int yposition, int size, World * world);
 
     void update();
 };
@@ -133,6 +142,11 @@ private:
 
     VertexArray vertices;
 
+    Texture * texture;
+
+protected:
+    World * world;
+
 public:
     MinimapPanel minimap;
     EntityPanel entity_panel;
@@ -143,7 +157,7 @@ public:
 
     /** Constructors */
     InterfacePanels() = default;
-    InterfacePanels(int width, int height);
+    InterfacePanels(int width, int height, World * world);
 
     ~InterfacePanels();
 

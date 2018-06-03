@@ -6,9 +6,9 @@
 
 using namespace resources;
 
-InterfacePanels::InterfacePanels(int width, int height) {
+InterfacePanels::InterfacePanels(int width, int height, World * world) {
 
-    Texture * texture = load(ui::PANEL_TEXTURE);
+    this->texture = load(ui::PANEL_TEXTURE);
 
     load(ui::BACK_COMMAND_TEXTURE);
 
@@ -17,12 +17,14 @@ InterfacePanels::InterfacePanels(int width, int height) {
 
     load(ui::MOVE_COMMAND_TEXTURE);
 
+    this->world = world;
+
     //texture.loadFromFile("../resources/textures/interface_panels.png");
     interface_width = width;
     interface_height = height;
-    entity_panel = EntityPanel(531, 11, 128, EntityPanel::BASE);
-    minimap = MinimapPanel(11, 11, 128);
-    vertices = generateVertices(0, 0, interface_width, interface_height, *texture);
+    entity_panel = EntityPanel(531, 11, 128, EntityPanel::BASE, this->world);
+    minimap = MinimapPanel(11, 11, 128, this->world);
+    vertices = generateVertices(0, 0, interface_width, interface_height, *this->texture);
 }
 
 InterfacePanels::~InterfacePanels() {
@@ -42,7 +44,7 @@ void InterfacePanels::update() {
 }
 
 void InterfacePanels::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.texture = textures[ui::PANEL_TEXTURE];
+    states.texture = this->texture;
     target.draw(vertices, states);
     target.draw(minimap);
     target.draw(entity_panel);

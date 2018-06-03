@@ -109,7 +109,6 @@ public:
 
     /** Constructors */
     Structure() = default;
-    Structure(int, int, int, int, int, Texture *, Tile ***);
 
     /** Deconstructor */
     ~Structure();

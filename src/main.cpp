@@ -15,14 +15,14 @@ int main()
     char *map_path = strdup("../resources/maps/basic.bmp");
     char *spawn_path = strdup("../resources/maps/basic.txt");
     World world(map_path, spawn_path);
-    InterfacePanels interfaces(int(settings::ui_view.getSize().x), int(settings::ui_view.getSize().y));
+    InterfacePanels interfaces(static_cast<int>(settings::ui_view.getSize().x), static_cast<int>(settings::ui_view.getSize().y), &world);
 
     settings::minimap_view.reset(FloatRect(interfaces.minimap.xposition, interfaces.minimap.yposition,
                                            interfaces.minimap.panel_size, interfaces.minimap.panel_size));
-    settings::minimap_view.setViewport(FloatRect(float(interfaces.minimap.xposition)/settings::window_width,
-                                            0.75f + float(interfaces.minimap.yposition)/settings::window_height,
-                                            float(interfaces.minimap.panel_size)/settings::window_width,
-                                            float(interfaces.minimap.panel_size)/settings::window_height));
+    settings::minimap_view.setViewport(FloatRect(static_cast<float>(interfaces.minimap.xposition)/settings::window_width,
+                                            0.75f + static_cast<float>(interfaces.minimap.yposition)/settings::window_height,
+                                                 static_cast<float>(interfaces.minimap.panel_size)/settings::window_width,
+                                                 static_cast<float>(interfaces.minimap.panel_size)/settings::window_height));
 
     double speed = 20.0;
 
@@ -68,9 +68,6 @@ int main()
         /** Set the zoom on the world view */
         settings::world_view.setSize(settings::window_width * settings::window_zoom,
                                settings::window_height * settings::window_zoom * 2);
-        interfaces.minimap.updateReticle(int(settings::world_view.getCenter().x), int(settings::world_view.getCenter().y),
-            int(settings::world_view.getSize().x*2), int(settings::world_view.getSize().y),
-            int(world.world_width), int(world.world_height));
 
         settings::window.clear();
 
