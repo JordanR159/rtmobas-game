@@ -20,7 +20,7 @@ For those who need some assistance on setting up this github repository on their
 1. Install SFML, if possible (the bash script will grab a copy, but it's not optimal).
     - On Ubuntu or Debian: `sudo apt install libsfml-dev build-essential`
     - On Fedora: `sudo dnf install SFML-devel`
-    - on openSUSE: `sudo zypper install sfml2-devel`
+    - On openSUSE: `sudo zypper install sfml2-devel`
 2. Execute: `./build.sh`
 
 ## Libraries
