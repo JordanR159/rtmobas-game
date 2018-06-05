@@ -105,11 +105,9 @@ private:
     /** Allows window.draw(EntityPanel) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-    Texture texture;
-    Texture map_layout;
-    Texture camera_reticle;
+    Texture * map_layout;
+    Texture * camera_reticle;
 
-    VertexArray vertices;
     VertexArray vertices_map;
     VertexArray vertices_reticle;
 
@@ -118,6 +116,10 @@ protected:
     World * world;
 
 public:
+
+    Texture * texture;
+    VertexArray vertices;
+
     /** Position of the panel on the ui view */
     int xposition;
     int yposition;

@@ -67,6 +67,8 @@ public:
     /** Array of all tiles contained in the world */
     Tile *** tiles = nullptr;
 
+    char * map_layout_path;
+
     /** Lists of all entities in the world. Resources rendered first, then structures, then units */
     vector<Resource *> resources;
     vector<Structure *> structures;

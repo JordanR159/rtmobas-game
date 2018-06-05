@@ -22,6 +22,7 @@ World::World(char *map_path, char *spawn_path) {
 
     load(unit::PEASANT_TEXTURE);
 
+    this->map_layout_path = map_path;
     int *tile_info = readBMP(map_path);
 
     this->world_width_tiles = tile_info[0];

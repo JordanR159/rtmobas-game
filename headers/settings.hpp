@@ -63,11 +63,11 @@ namespace settings {
         /** Length of time pressed has stayed TRUE. */
         long long int pressed_timer = 0;
 
-        /** Used for the Mouse Key Event for determining location of click */
+        /** Used for the Mouse Key Event for determining location during click */
         int mouse_x = 0;
-
-        /** Used for the Mouse Key Event for determining location of click */
         int mouse_y = 0;
+
+        bool dragging = false;
 
         /** Called whenever any key code was pressed. */
         void press();
@@ -79,6 +79,8 @@ namespace settings {
         void update();
 
         //char * to_string();
+
+        static const int MOUSE_DRAG_TOLERANCE;
 
         //Movement around the world
         static const int SCROLL_UP ;
@@ -113,12 +115,15 @@ namespace settings {
     /** The window object used by SFML, initialized by settings::init() */
     extern sf::RenderWindow window;
 
-    /** The view (lense) that the player sees the world through. */
+    /** The view (lens) that the player sees the world through. */
     extern sf::View world_view;
 
-    /** Non-moving view (lense) that allows the player to see the displayed UI. */
+    /** Non-moving view (lens) that allows the player to see the displayed UI. */
     extern sf::View ui_view;
     extern sf::View minimap_view;
+
+    /** Non-moving view (lens) that is used to draw mouse feedback */
+    extern sf::View mouse_view;
 
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;
@@ -132,6 +137,9 @@ namespace settings {
     /** Top left corner of the window */
     extern int window_x;
     extern int window_y;
+
+    extern Texture * select_texture;
+    extern VertexArray select_box;
 
     /** Dimensions of the entire window across all involved monitors. */
     extern unsigned int window_width;

@@ -33,6 +33,7 @@ int main()
 
         Vector2f movement = Vector2f(0.0, 0.0);
 
+        /** Allows scrolling of world view */
         if(settings::input_mapping[settings::Key::SCROLL_UP]->pressed) {
             movement.x += speed;
             movement.y -= speed;
@@ -51,6 +52,28 @@ int main()
         if(settings::input_mapping[settings::Key::SCROLL_RIGHT]->pressed) {
             movement.x += speed;
             movement.y += speed;
+        }
+
+        if(settings::mouse_mapping[sf::Mouse::Left]->pressed) {
+            settings::Key *mouse = settings::mouse_mapping[sf::Mouse::Left];
+            int curr_x = Mouse::getPosition(settings::window).x;
+            int curr_y = Mouse::getPosition(settings::window).y;
+            if(!mouse->dragging)
+            {
+                int diff_x = abs(mouse->mouse_x - curr_x);
+                int diff_y = abs(mouse->mouse_y - curr_y);
+                if(sqrt(pow(diff_x, 2) + pow(diff_y, 2)) > settings::Key::MOUSE_DRAG_TOLERANCE)
+                    mouse->dragging = true;
+            }
+            int point_x = min(mouse->mouse_x, curr_x);
+            int point_y = min(mouse->mouse_y, curr_y);
+            int length_x = abs(mouse->mouse_x - curr_x);
+            int length_y = abs(mouse->mouse_y - curr_y);
+            Vector2f *points = rotateRectangle(point_x, point_y, 0, 0, length_x, length_y, M_PI_4);
+            settings::select_box[0].position = points[0];
+            settings::select_box[1].position = points[1];
+            settings::select_box[2].position = points[2];
+            settings::select_box[3].position = points[3];
         }
 
         settings::world_view.move(movement.x, movement.y);
@@ -78,9 +101,15 @@ int main()
         settings::window.setView(settings::world_view);
         settings::window.draw(world);
 
+        if(settings::mouse_mapping[sf::Mouse::Left]->dragging) {
+            RenderStates states(settings::select_texture);
+            settings::window.draw(settings::select_box, states);
+        }
+
         settings::window.setView(settings::ui_view);
         settings::window.draw(interfaces);
 
+        /** Minimap has its own viewport drawn to prevent reticle from clipping into ui */
         settings::window.setView(settings::minimap_view);
         settings::window.draw(interfaces.minimap);
 

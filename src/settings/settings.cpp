@@ -4,6 +4,8 @@
 
 #include "helper.hpp"
 
+using namespace resources;
+
 namespace settings {
 
     std::map<int, Key *> keyboard_mapping;
@@ -14,6 +16,10 @@ namespace settings {
     sf::View world_view;
     sf::View ui_view;
     sf::View minimap_view;
+    sf::View mouse_view;
+
+    Texture * select_texture;
+    VertexArray select_box;
 
     bool update_window = false;
 
@@ -97,6 +103,12 @@ namespace settings {
 
         ui_view.reset(FloatRect(0, 0, window_width, window_height * 0.25f));
         ui_view.setViewport(FloatRect(0.f, 0.75f, 1.f, 0.25f));
+
+        mouse_view.reset(FloatRect(0, 0, window_width, window_height * 0.75f));
+        mouse_view.setViewport(FloatRect(0.f, 0.f, 1.f, 0.75f));
+
+        select_texture = resources::load(ui::SELECT_BOX_TEXTURE);
+        select_box = generateVertices(0, 0, 1, 1, *select_texture);
 
         /*
          * Creates all non-loaded key bindings (their defaults are assigned).
@@ -197,7 +209,6 @@ namespace settings {
                 key->press();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
-                printf("Mouse button pressed\n");
             }
 
             if(event.type == sf::Event::MouseButtonReleased && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
@@ -207,6 +218,7 @@ namespace settings {
                 key->release();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+                key->dragging = false;
             }
 
             /* Translates mouse wheel scroll into a zoom for the world view */
@@ -229,7 +241,6 @@ namespace settings {
 
                 window_width = event.size.width;
                 window_height = event.size.height;
-                printf("%d\n", event.size.width);
             }
 
             if(event.type == sf::Event::MouseMoved) {

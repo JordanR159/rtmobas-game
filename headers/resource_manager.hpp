@@ -12,7 +12,9 @@ namespace resources {
     extern std::map<const char *, sf::Texture *> textures;
 
     namespace ui {
-        extern const char * PANEL_TEXTURE;
+        extern const char * INTERFACE_TEXTURE;
+        extern const char * ENTITY_PANEL_TEXTURE;
+        extern const char * MINIMAP_PANEL_TEXTURE;
 
         extern const char * BACK_COMMAND_TEXTURE;
 
@@ -20,6 +22,9 @@ namespace resources {
         extern const char * BUILD_FARM_TEXTURE;
 
         extern const char * MOVE_COMMAND_TEXTURE;
+
+        extern const char * SELECT_BOX_TEXTURE;
+        extern const char * MINIMAP_RETICLE_TEXTURE;
     }
 
     namespace terrain {

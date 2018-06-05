@@ -8,15 +8,19 @@ using namespace resources;
 
 MinimapPanel::MinimapPanel(int xposition, int yposition, int size, World * world) {
     this->world = world;
-    this->xposition = xposition;
-    this->yposition = yposition;
-    this->panel_size = size;
-    texture.loadFromFile("../resources/textures/entity_panel.png");
-    map_layout.loadFromFile("../resources/maps/basic.bmp");
-    camera_reticle.loadFromFile("../resources/textures/reticle.png");
-    vertices = generateVertices(this->xposition, this->yposition, panel_size, panel_size, texture);
-    vertices_map = generateVertices(this->xposition + 2, this->yposition + 2, panel_size - 4, panel_size - 4, map_layout);
-    vertices_reticle = generateVertices(this->xposition, this->yposition, panel_size, panel_size, camera_reticle);
+    this->xposition = xposition + 2;
+    this->yposition = yposition + 2;
+    this->panel_size = size - 4;
+
+    texture = textures[ui::MINIMAP_PANEL_TEXTURE];
+    camera_reticle = textures[ui::MINIMAP_RETICLE_TEXTURE];
+    vertices = generateVertices(this->xposition - 2, this->yposition - 2, panel_size + 4, panel_size + 4, *texture);
+    vertices_reticle = generateVertices(this->xposition, this->yposition, panel_size, panel_size, *camera_reticle);
+
+    void *mem = rpmalloc(sizeof(Texture));
+    map_layout = new(mem) Texture();
+    (*map_layout).loadFromFile(world->map_layout_path);
+    vertices_map = generateVertices(this->xposition, this->yposition, panel_size, panel_size, *map_layout);
 }
 
 void MinimapPanel::update() {
@@ -35,23 +39,16 @@ void MinimapPanel::update() {
     int map_y = static_cast<int>(vertices_map[0].position.y + ((new_y_position - new_y_view / 2.0f) / (world_height / map_length_y)));
     int map_xsize = static_cast<int>(new_x_view / (world_width / map_length_x));
     int map_ysize = static_cast<int>(new_y_view / (world_height / map_length_y));
-    int x = map_xsize / 2;
-    int y = map_ysize / 2;
-    Vector2f top_left = rotatePoint(-x, -y, M_PI_4);
-    Vector2f top_right = rotatePoint(x, -y, M_PI_4);
-    Vector2f bot_right = rotatePoint(x, y, M_PI_4);
-    Vector2f bot_left = rotatePoint(-x, y, M_PI_4);
-    vertices_reticle[0].position = Vector2f(map_x + x + top_left.x, map_y + y + top_left.y);
-    vertices_reticle[1].position = Vector2f(map_x + x + top_right.x, map_y + y + top_right.y);
-    vertices_reticle[2].position = Vector2f(map_x + x + bot_right.x, map_y + y + bot_right.y);
-    vertices_reticle[3].position = Vector2f(map_x + x + bot_left.x, map_y + y + bot_left.y);
+    Vector2f *points = rotateRectangle(map_x, map_y, -map_xsize/2, -map_ysize/2, map_xsize/2, map_ysize/2, M_PI_4);
+    vertices_reticle[0].position = points[0];
+    vertices_reticle[1].position = points[1];
+    vertices_reticle[2].position = points[2];
+    vertices_reticle[3].position = points[3];
 }
 
 void MinimapPanel::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.texture = &texture;
-    target.draw(vertices, states);
-    states.texture = &map_layout;
+    states.texture = map_layout;
     target.draw(vertices_map, states);
-    states.texture = &camera_reticle;
+    states.texture = camera_reticle;
     target.draw(vertices_reticle, states);
 }

@@ -8,7 +8,9 @@ namespace resources {
     std::map<const char *, sf::Texture *> textures;
 
     namespace ui {
-        const char * PANEL_TEXTURE = "../resources/textures/interface_panels.png";
+        const char * INTERFACE_TEXTURE = "../resources/textures/interface_panels.png";
+        const char * ENTITY_PANEL_TEXTURE = "../resources/textures/entity_panel.png";
+        const char * MINIMAP_PANEL_TEXTURE = "../resources/textures/minimap_panel.png";
 
         const char * BACK_COMMAND_TEXTURE = "../resources/textures/back_command.png";
 
@@ -16,6 +18,9 @@ namespace resources {
         const char * BUILD_FARM_TEXTURE = "../resources/textures/build_farm.png";
 
         const char * MOVE_COMMAND_TEXTURE = "../resources/textures/move_command.png";
+
+        const char * SELECT_BOX_TEXTURE = "../resources/textures/select_box.png";
+        const char * MINIMAP_RETICLE_TEXTURE = "../resources/textures/reticle.png";
     }
 
     namespace terrain {
