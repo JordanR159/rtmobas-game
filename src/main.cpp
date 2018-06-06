@@ -1,6 +1,7 @@
 #include "helper.hpp"
 
 using namespace sf;
+using namespace settings;
 
 int main()
 {
@@ -54,6 +55,9 @@ int main()
             movement.y += speed;
         }
 
+        /** Note: selection boxes are currently sized correctly, however positioning is incorrect due to
+         * complications created by the isomatric design of the world
+         */
         if(settings::mouse_mapping[sf::Mouse::Left]->pressed) {
             settings::Key *mouse = settings::mouse_mapping[sf::Mouse::Left];
             int curr_x = Mouse::getPosition(settings::window).x;
@@ -65,15 +69,37 @@ int main()
                 if(sqrt(pow(diff_x, 2) + pow(diff_y, 2)) > settings::Key::MOUSE_DRAG_TOLERANCE)
                     mouse->dragging = true;
             }
-            int point_x = min(mouse->mouse_x, curr_x);
-            int point_y = min(mouse->mouse_y, curr_y);
-            int length_x = abs(mouse->mouse_x - curr_x);
-            int length_y = abs(mouse->mouse_y - curr_y);
-            Vector2f *points = rotateRectangle(point_x, point_y, 0, 0, length_x, length_y, M_PI_4);
-            settings::select_box[0].position = points[0];
-            settings::select_box[1].position = points[1];
-            settings::select_box[2].position = points[2];
-            settings::select_box[3].position = points[3];
+            if(mouse->dragging) {
+                /** Scaling accomadates for fact that world view height does not match window height */
+                float height_scale = world_view.getSize().y / (window_height * 0.75f);
+
+                /** The pivot point for when the selection box is rotated. Always location of initial click */
+                int start_x = int(mouse->mouse_x + mouse->select_start.x - world_view.getSize().x/2);
+                int start_y = int(mouse->mouse_y * height_scale + mouse->select_start.y - world_view.getSize().y / (2 * height_scale));
+
+                /** Calculated to find the top left point of the box */
+                int end_x = int(curr_x + world_view.getCenter().x - world_view.getSize().x/2);
+                int end_y = int(curr_y * height_scale + world_view.getCenter().y - world_view.getSize().y / (2 * height_scale));
+
+                /** Offset (top left point) for the selection box so that it appears in the correct area */
+                int point_x = min(start_x, end_x);
+                int point_y = min(start_y, end_y);
+
+                int pivot_x = start_x - point_x;
+                int pivot_y = start_y - point_y;
+
+                /** Length of the box, adjusted to account for scaling differences */
+                int length_x = abs(mouse->mouse_x - curr_x);
+                int length_y = int(abs(mouse->mouse_y - curr_y) * height_scale);
+
+                /** Rotates and scales a box about the pivot to match orientation of window */
+                Vector2f *points = rotateRectangle(point_x, point_y, pivot_x, pivot_y, pivot_x - length_x,
+                                                   pivot_y - length_y, 5 * M_PI_4);
+                settings::select_box[0].position = points[0];
+                settings::select_box[1].position = points[1];
+                settings::select_box[2].position = points[2];
+                settings::select_box[3].position = points[3];
+            }
         }
 
         settings::world_view.move(movement.x, movement.y);
