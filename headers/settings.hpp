@@ -66,7 +66,6 @@ namespace settings {
         /** Used for the Mouse Key Event for determining location during click */
         int mouse_x = 0;
         int mouse_y = 0;
-        Vector2f select_start;
 
         bool dragging = false;
 

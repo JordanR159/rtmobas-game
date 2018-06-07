@@ -210,7 +210,7 @@ namespace settings {
                 key->press();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
-                key->select_start = world_view.getCenter();
+                key->dragging = false;
             }
 
             if(event.type == sf::Event::MouseButtonReleased && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
