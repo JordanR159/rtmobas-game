@@ -6,7 +6,7 @@
 
 using namespace resources;
 
-Collector::Collector(int x, int y, int type, Tile *** tiles) {
+Collector::Collector(World * world, int type, int x, int y) {
     Texture * texture;
 
     int w, h;
@@ -21,5 +21,5 @@ Collector::Collector(int x, int y, int type, Tile *** tiles) {
             this->max_lifepoints = 1000;
     }
 
-    this->create_structure(x, y, w, h, type, texture, tiles);
+    this->create_structure(world, type, x, y, w, h, texture);
 }

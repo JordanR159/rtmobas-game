@@ -4,7 +4,7 @@
 
 #include "helper.hpp"
 
-Castle::Castle(int x, int y, Tile *** tiles) {
-    this->create_structure(x, y, 3, 3, PRODUCER_CASTLE, resources::textures[resources::structure::CASTLE_TEXTURE], tiles);
+Castle::Castle(World * world, int type, int x, int y) {
+    this->create_structure(world, type, x, y, 3, 3, resources::textures[resources::structure::CASTLE_TEXTURE]);
 
 }

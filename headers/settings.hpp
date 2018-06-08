@@ -67,6 +67,11 @@ namespace settings {
         int mouse_x = 0;
         int mouse_y = 0;
 
+        /**
+         * Used for the Mouse Key Event for determining if the mouse has moved
+         * a large distance away from initial pressing anytime during the press
+         * state.
+         */
         bool dragging = false;
 
         /** Called whenever any key code was pressed. */

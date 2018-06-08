@@ -27,11 +27,12 @@
 #include <mem.h>
 #endif
 
+#include "resource_manager.hpp"
+#include "settings.hpp"
+
 #include "entity.hpp"
 #include "tile_entity.hpp"
 #include "world.hpp"
-#include "settings.hpp"
-#include "resource_manager.hpp"
 #include "interface_panels.hpp"
 
 #define TOKENIZE(string, token, delimiter, index) \

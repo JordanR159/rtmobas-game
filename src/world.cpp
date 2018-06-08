@@ -128,6 +128,29 @@ void World::spawn_entities(char *spawn_path) {
 
             team1_y = stoi(token);
 
+            switch(type / TILE_ENTITY_START_VALUE) {
+                case TileEntity::TILE_ENTITY:
+                    switch((type - TILE_ENTITY_START_VALUE) / TILE_ENTITY_TYPE_DIFF) {
+                        case TileEntity::RESOURCE:
+                            mem = rpmalloc(sizeof(Resource));
+
+                            this->resources.emplace_back(new(mem) Resource(this, type, team1_x, team1_y));
+
+                            team2_x = this->world_width_tiles - team1_x - (resources.back()->width);
+                            team2_y = this->world_height_tiles - team1_y - (resources.back()->height);
+
+                            mem = rpmalloc(sizeof(Resource));
+
+                            this->resources.emplace_back(new(mem) Resource(this, type, team2_x, team2_y));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             switch(type / 100) {
                 case Entity::PRODUCER:
                     switch(type) {
@@ -135,35 +158,34 @@ void World::spawn_entities(char *spawn_path) {
                             break;*/
                         default:
                             mem = rpmalloc(sizeof(Castle));
-                            this->structures.emplace_back(new (mem) Castle(team1_x, team1_y, this->tiles));
+
+                            this->structures.emplace_back(new (mem) Castle(this, type, team1_x, team1_y));
+
+                            team2_x = this->world_width_tiles - team1_x - (this->structures.back()->width);
+                            team2_y = this->world_height_tiles - team1_y - (this->structures.back()->height);
+
+                            mem = rpmalloc(sizeof(Castle));
+
+                            this->structures.emplace_back(new(mem) Castle(this, type, team2_x, team2_y));
                     }
                     break;
                 case Entity::RESEARCHER:
                 case Entity::COLLECTOR:
-                    mem = rpmalloc(sizeof(Structure));
+                    mem = rpmalloc(sizeof(Collector));
 
                     std::cout << type << std::endl;
 
-                    this->structures.emplace_back(new(mem) Collector(team1_x, team1_y, type, this->tiles));
+                    this->structures.emplace_back(new(mem) Collector(this, type, team1_x, team1_y));
 
-                    /*team2_x = this->world_width_tiles - team1_x - (structures.back()->width / TILE_SIZE);
-                    team2_y = this->world_height_tiles - team1_y - (structures.back()->height / TILE_SIZE);
+                    team2_x = this->world_width_tiles - team1_x - (this->structures.back()->width);
+                    team2_y = this->world_height_tiles - team1_y - (this->structures.back()->height);
 
-                    mem = rpmalloc(sizeof(Structure));
+                    mem = rpmalloc(sizeof(Collector));
 
-                    this->structures.emplace_back(new(mem) Collector(team2_x, team2_y, type, this->tiles));*/
+                    this->structures.emplace_back(new(mem) Collector(this, type, team2_x, team2_y));
                     break;
                 case Entity::RESOURCE:
-                    mem = rpmalloc(sizeof(Resource));
 
-                    this->resources.emplace_back(new(mem) Resource(team1_x, team1_y, type, this->tiles));
-
-                    /*team2_x = this->world_width_tiles - team1_x - (resources.back()->width);
-                    team2_y = this->world_height_tiles - team1_y - (resources.back()->height);
-
-                    mem = rpmalloc(sizeof(Resource));
-
-                    this->resources.emplace_back(new(mem) Resource(team2_x, team2_y, type, this->tiles));*/
                 // case Entity::UNIT: default shall replace this case
                 default:
                     break;

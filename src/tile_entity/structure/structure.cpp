@@ -10,7 +10,8 @@ Structure::~Structure() {
 
 }
 
-void Structure::create_structure(int x, int y, int w, int h, int type, Texture * texture, Tile *** tiles) {
+void Structure::create_structure(World * world, int type, int x, int y, int w, int h, Texture * texture) {
+    this->world = world;
     this->tile_entity_type = type;
 
     this->x_coord = x;
@@ -24,7 +25,7 @@ void Structure::create_structure(int x, int y, int w, int h, int type, Texture *
     this->owned_tiles = (Tile ***) rpmalloc(w * sizeof(Tile **));
 
     for(int i = 0; i < w; i ++) {
-        this->owned_tiles[i] = tiles[x + i] + y * sizeof(Tile *);
+        this->owned_tiles[i] = world->tiles[x + i] + y;
 
         for(int j = 0; j < h; j++) {
             this->owned_tiles[i][j]->structure = this;

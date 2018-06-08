@@ -4,14 +4,17 @@
 
 #include "helper.hpp"
 
-using namespace resources;
+Resource::textures
 
 /** NOTE - xposition and yposition are in units of tiles */
-Resource::Resource(int x, int y, int type, Tile *** tiles) {
+Resource::Resource(World * world, int type, int x, int y) {
+    this->world = world;
     this->tile_entity_type = type;
 
     int w = WIDTH_OF_RESOURCE;
     int h = HEIGHT_OF_RESOURCE;
+
+    this->texture = textures[type - RESOURCE_START_VALUE];
 
     switch(type) {
         case Resource::RESOURCE_GOLD:
@@ -45,7 +48,7 @@ Resource::Resource(int x, int y, int type, Tile *** tiles) {
     this->owned_tiles = (Tile ***) rpmalloc(w * sizeof(Tile **));
 
     for(int i = 0; i < w; i ++) {
-        this->owned_tiles[i] = tiles[x + i] + y * sizeof(Tile *);
+        this->owned_tiles[i] = world->tiles[x + i] + y;
 
         for(int j = 0; j < h; j++) {
             this->owned_tiles[i][j]->resource = this;

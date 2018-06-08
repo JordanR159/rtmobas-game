@@ -7,12 +7,25 @@
 
 #include "helper.hpp"
 
+#define TILE_ENTITY_START_VALUE 10000
+#define TILE_ENTITY_TYPE_DIFF 1000
+#define PRODUCER_START_VALUE 11000
+#define RESEARCHER_START_VALUE 12000
+#define COLLECTOR_START_VALUE 13000
+#define RESOURCE_START_VALUE 14000
+#define PRODUCER_VALUE_CALC(value) 11000 + value
+#define RESEARCHER_VALUE_CALC(value) 12000 + value
+#define COLLECTOR_VALUE_CALC(value) 13000 + value
+#define RESOURCE_VALUE_CALC(value) 14000 + value
+
 #define WIDTH_OF_RESOURCE 3
 #define HEIGHT_OF_RESOURCE 3
 #define WIDTH_OF_WOOD 1
 #define HEIGHT_OF_WOOD 1
 
 #define STRUCTURE_COLLECTOR_FARM 301
+
+class World;
 
 class TileEntity : public Drawable {
 private:
@@ -28,6 +41,8 @@ protected:
     Texture * texture;
 
 public:
+
+    World * world;
 
     Tile *** owned_tiles;
 
@@ -48,6 +63,8 @@ public:
     /** Subtype for the entity, as defined in the subclasses */
     int tile_entity_type;
 
+    static const int TILE_ENTITY = 1;
+
     static const int PRODUCER = 1;
     static const int RESEARCHER = 2;
     static const int COLLECTOR = 3;
@@ -55,36 +72,42 @@ public:
 };
 
 class Resource : public TileEntity {
-
 private:
 
     void create_vao();
 
 public:
 
-    /** True if resource can run out, false otherwise */
-    bool is_finite;
+    static Texture * textures[6] = {
+            resources::textures[resources::resource::FOOD_TEXTURE],
+            resources::textures[resources::resource::GOLD_TEXTURE],
+            resources::textures[resources::resource::TREE_TEXTURE],
+            resources::textures[resources::resource::METAL_TEXTURE],
+            resources::textures[resources::resource::CRYSTAL_TEXTURE],
+            resources::textures[resources::resource::OIL_TEXTURE]
+    };
 
     /** Resource types */
-    static const int RESOURCE_FOOD = 401;
-    static const int RESOURCE_GOLD = 402;
-    static const int RESOURCE_WOOD = 403;
-    static const int RESOURCE_METAL = 404;
-    static const int RESOURCE_CRYSTAL = 405;
-    static const int RESOURCE_OIL = 406;
+    static const int RESOURCE_FOOD = RESOURCE_VALUE_CALC(0);
+    static const int RESOURCE_GOLD = RESOURCE_VALUE_CALC(1);
+    static const int RESOURCE_WOOD = RESOURCE_VALUE_CALC(2);
+    static const int RESOURCE_METAL = RESOURCE_VALUE_CALC(3);
+    static const int RESOURCE_CRYSTAL = RESOURCE_VALUE_CALC(4);
+    static const int RESOURCE_OIL = RESOURCE_VALUE_CALC(5);
 
     /** Constructors */
     Resource() = default;
-    Resource(int, int, int, Tile ***);
+    Resource(World *, int, int, int);
 
     /** Deconstructor */
     ~Resource();
+
 };
 
 class Structure : public TileEntity {
 protected:
 
-    void create_structure(int, int, int, int, int, Texture *, Tile ***);
+    void create_structure(World *, int, int, int, int, int, Texture *);
 
 public:
     /** Units/Research that can be done at the building */
@@ -100,13 +123,6 @@ public:
     static const int RESEARCHER_GROUND = 201;
     static const int RESEARCHER_AIR = 202;
 
-    static const int COLLECTOR_FOOD = 301;
-    static const int COLLECTOR_GOLD = 302;
-    static const int COLLECTOR_WOOD = 303;
-    static const int COLLECTOR_METAL = 304;
-    static const int COLLECTOR_CRYSTAL = 305;
-    static const int COLLECTOR_OIL = 306;
-
     /** Constructors */
     Structure() = default;
 
@@ -119,13 +135,20 @@ class Collector : public Structure {
 public:
     Resource * resource;
 
-    Collector(int, int, int, Tile ***);
+    static const int COLLECTOR_FOOD = COLLECTOR_VALUE_CALC(0);
+    static const int COLLECTOR_GOLD = COLLECTOR_VALUE_CALC(1);
+    static const int COLLECTOR_WOOD = COLLECTOR_VALUE_CALC(2);
+    static const int COLLECTOR_METAL = COLLECTOR_VALUE_CALC(3);
+    static const int COLLECTOR_CRYSTAL = COLLECTOR_VALUE_CALC(4);
+    static const int COLLECTOR_OIL = COLLECTOR_VALUE_CALC(5);
+
+    Collector(World *, int, int, int);
 };
 
 class Castle : public Structure {
 
 public:
-    Castle(int, int, Tile ***);
+    Castle(World *, int, int, int);
 };
 
 #endif //RTMOBAS_GAME_TILE_ENTITY_HPP
