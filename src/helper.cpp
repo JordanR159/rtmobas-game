@@ -71,12 +71,12 @@ VertexArray generateVertices(float xposition, float yposition, float xsize, floa
     return vertices;
 }
 
-Vector2f rotatePoint(int x, int y, double angle) {
+Vector2f rotatePoint(float x, float y, double angle) {
     return Vector2f(int(x * cos(angle) - y * sin(angle)), int(x * sin(angle) + y * cos(angle)));
 }
 
-Vector2f * rotateRectangle(int point_x, int point_y, int left, int top, int right, int bottom, double angle) {
-    Vector2f *points = (Vector2f*)rpmalloc(sizeof(Vector2f) * 4);
+Vector2f * rotateRectangle(float point_x, float point_y, float left, float top, float right, float bottom, double angle) {
+    auto *points = (Vector2f*)rpmalloc(sizeof(Vector2f) * 4);
     Vector2f top_left = rotatePoint(left, top, angle);
     Vector2f top_right = rotatePoint(right, top, angle);
     Vector2f bot_right = rotatePoint(right, bottom, angle);

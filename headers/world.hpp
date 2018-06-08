@@ -32,14 +32,13 @@ class Tile : public Drawable {
 
 private:
 
-    /** Vertex Array Buffer that defines the render procedure (Vertices, Tex Coords, etc.)*/
-    VertexArray vao;
-
     void create_vao();
 
     /** Allows window.draw(Tile) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 public:
+    /** Vertex Array Buffer that defines the render procedure (Vertices, Tex Coords, etc.)*/
+    VertexArray vao;
 
     int tile_type;
 
@@ -84,6 +83,8 @@ public:
     World(char *map_path, char *spawn_path);
 
     ~World();
+
+    void select_entity(Vector2f point);
 
     /** Spawns initial entities for the world */
     void spawn_entities(char *spawn_path);

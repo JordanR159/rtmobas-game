@@ -20,6 +20,7 @@ namespace settings {
 
     Texture * select_texture;
     VertexArray select_box;
+    Vector2f select_start;
 
     bool update_window = false;
 
@@ -209,6 +210,7 @@ namespace settings {
                 key->press();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+                key->dragging = false;
             }
 
             if(event.type == sf::Event::MouseButtonReleased && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
