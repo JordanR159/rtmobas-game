@@ -5,8 +5,6 @@
 #ifndef RTMOBAS_GAME_TILE_ENTITY_HPP
 #define RTMOBAS_GAME_TILE_ENTITY_HPP
 
-#include "helper.hpp"
-
 #define WIDTH_OF_RESOURCE 3
 #define HEIGHT_OF_RESOURCE 3
 #define WIDTH_OF_WOOD 1
@@ -22,12 +20,11 @@ private:
 
 protected:
 
-    /** Position of corners for entity, only needs to change just before rendering */
-    VertexArray vao;
-
     Texture * texture;
 
 public:
+    /** Position of corners for entity, only needs to change just before rendering */
+    VertexArray vao;
 
     Tile *** owned_tiles;
 
@@ -47,6 +44,8 @@ public:
 
     /** Subtype for the entity, as defined in the subclasses */
     int tile_entity_type;
+
+    bool selected;
 
     static const int PRODUCER = 1;
     static const int RESEARCHER = 2;

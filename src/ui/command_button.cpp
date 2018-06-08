@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 CommandButton::CommandButton(int xposition, int yposition, int size, int type) {
     this->type = type;
 

@@ -4,9 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace std;
-using namespace resources;
-
 World::World(char *map_path, char *spawn_path) {
     // TODO better loading so as not required to pre-load each individual.
     load(terrain::TERRAIN_TEXTURES);
@@ -21,6 +18,8 @@ World::World(char *map_path, char *spawn_path) {
     load(resource::OIL_TEXTURE);
 
     load(unit::PEASANT_TEXTURE);
+
+    load(pblock::pblocktexture);
 
     this->map_layout_path = map_path;
     int *tile_info = readBMP(map_path);
@@ -53,7 +52,7 @@ World::World(char *map_path, char *spawn_path) {
         this->tiles[i] = Tile((i % this->world_width_tiles) * Tile::TILE_SIZE, (i / this->world_height_tiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     } */
 
-    spawn_entities(spawn_path);
+    spawnEntities(spawn_path);
 }
 
 World::~World() {
@@ -97,38 +96,47 @@ World::~World() {
     flush();
 }
 
-void World::select_entity(Vector2f point) {
-    int tile_x = int(point.x / TILE_SIZE);
-    int tile_y = int(point.y / TILE_SIZE);
-    if(tile_x < 0)
-        tile_x = 0;
-    if(tile_y < 0)
-        tile_y = 0;
-    if(tile_x > world_width_tiles)
-        tile_x = world_width_tiles - 1;
-    if(tile_y > world_height_tiles)
-        tile_y = world_height_tiles - 1;
-
-    tiles[tile_x][tile_y]->tile_type = TERRAIN_MOUNTAINS;
-    Texture * texture = textures[terrain::TERRAIN_TEXTURES];
-
-    int random = rand() % (4);
-
-    int x_tex1 = texture->getSize().x / NUMBER_OF_TERRAIN_VARIATIONS;
-    int x_tex2 = x_tex1 * (random + 1);
-    x_tex1 = x_tex2 - x_tex1;
-
-    int y_tex1 = texture->getSize().y / NUMBER_OF_TERRAIN_TYPES;
-    int y_tex2 = y_tex1 * (tiles[tile_x][tile_y]->tile_type + 1);
-    y_tex1 = y_tex2 - y_tex1;
-
-    tiles[tile_x][tile_y]->vao[0].texCoords = Vector2f(x_tex1, y_tex1);
-    tiles[tile_x][tile_y]->vao[1].texCoords = Vector2f(x_tex1, y_tex2);
-    tiles[tile_x][tile_y]->vao[2].texCoords = Vector2f(x_tex2, y_tex2);
-    tiles[tile_x][tile_y]->vao[3].texCoords = Vector2f(x_tex2, y_tex1);
+void World::selectEntity(Vector2f point) {
+    for(auto &entity : selector->selected_tile_entities) {
+        entity->selected = false;
+    }
+    selector->selected_tile_entities.clear();
+    for(auto &structure : structures) {
+        if (intersectPointRect(point, &structure->vao)) {
+            selector->selected_tile_entities.emplace_back(structure);
+            structure->selected = true;
+            return;
+        }
+    }
+    for(auto &resource : resources) {
+        if (intersectPointRect(point, &resource->vao)) {
+            selector->selected_tile_entities.emplace_back(resource);
+            resource->selected = true;
+            return;
+        }
+    }
 }
 
-void World::spawn_entities(char *spawn_path) {
+void World::selectEntities(VertexArray points) {
+    for(auto &entity : selector->selected_tile_entities) {
+        entity->selected = false;
+    }
+    selector->selected_tile_entities.clear();
+    for(auto &structure : structures) {
+        if (intersectRectRect(&points, &structure->vao)) {
+            selector->selected_tile_entities.emplace_back(structure);
+            structure->selected = true;
+        }
+    }
+    for(auto &resource : resources) {
+        if (intersectRectRect(&points, &resource->vao)) {
+            selector->selected_tile_entities.emplace_back(resource);
+            resource->selected = true;
+        }
+    }
+}
+
+void World::spawnEntities(char *spawn_path) {
     // TODO simplify
 
     std::string line;

@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 InterfacePanels::InterfacePanels(int width, int height, World * world) {
 
     texture = load(ui::INTERFACE_TEXTURE);

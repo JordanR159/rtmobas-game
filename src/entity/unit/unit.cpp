@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 /** NOTE - xposition and yposition are in units of pixels */
 Unit::Unit(double x, double y, int type) {
     Texture * texture;

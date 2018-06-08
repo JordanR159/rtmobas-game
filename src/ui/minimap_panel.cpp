@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 MinimapPanel::MinimapPanel(int xposition, int yposition, int size, World * world) {
     this->world = world;
     this->xposition = xposition + 2;
@@ -37,9 +35,10 @@ void MinimapPanel::update() {
 
     auto map_x = static_cast<int>(vertices_map[0].position.x + ((new_x_position - new_x_view / 2.0f) / (world_width / map_length_x)));
     auto map_y = static_cast<int>(vertices_map[0].position.y + ((new_y_position - new_y_view / 2.0f) / (world_height / map_length_y)));
-    auto map_xsize = static_cast<int>(new_x_view / (world_width / map_length_x));
-    auto map_ysize = static_cast<int>(new_y_view / (world_height / map_length_y));
-    Vector2f *points = rotateRectangle(map_x, map_y, -map_xsize/2, -map_ysize/2, map_xsize/2, map_ysize/2, M_PI_4);
+    auto map_size_x = static_cast<int>(new_x_view / (world_width / map_length_x));
+    auto map_size_y = static_cast<int>(new_y_view / (world_height / map_length_y));
+    VertexArray box = generateVertices(map_x, map_y, map_size_x, map_size_y);
+    Vector2f *points = rotateRectangle(Vector2f(map_x + map_size_x/2, map_y + map_size_y/2), &box, M_PI_4);
     vertices_reticle[0].position = points[0];
     vertices_reticle[1].position = points[1];
     vertices_reticle[2].position = points[2];

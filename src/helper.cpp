@@ -7,7 +7,7 @@
 const char * INPUT_SETTINGS_LOCATION = "./inputs.cfg";
 const char * SETTINGS_LOCATION = "./settings.cfg";
 
-using namespace std;
+Selector * selector = new(rpmalloc(sizeof(Selector))) Selector();
 
 int *readBMP(char *filename)
 {
@@ -71,19 +71,67 @@ VertexArray generateVertices(float xposition, float yposition, float xsize, floa
     return vertices;
 }
 
+VertexArray generateVertices(float xposition, float yposition, float xsize, float ysize) {
+    VertexArray vertices = VertexArray(Quads, 4);
+
+    /** Corner positions for the rendering box */
+    vertices[0].position = Vector2f(xposition, yposition);
+    vertices[1].position = Vector2f(xposition, yposition + ysize);
+    vertices[2].position = Vector2f(xposition + xsize, yposition + ysize);
+    vertices[3].position = Vector2f(xposition + xsize, yposition);
+
+    return vertices;
+}
+
 Vector2f rotatePoint(float x, float y, double angle) {
     return Vector2f(int(x * cos(angle) - y * sin(angle)), int(x * sin(angle) + y * cos(angle)));
 }
 
-Vector2f * rotateRectangle(float point_x, float point_y, float left, float top, float right, float bottom, double angle) {
-    auto *points = (Vector2f*)rpmalloc(sizeof(Vector2f) * 4);
-    Vector2f top_left = rotatePoint(left, top, angle);
-    Vector2f top_right = rotatePoint(right, top, angle);
-    Vector2f bot_right = rotatePoint(right, bottom, angle);
-    Vector2f bot_left = rotatePoint(left, bottom, angle);
-    points[0] = Vector2f(point_x + abs(left) + top_left.x, point_y + abs(top) + top_left.y);
-    points[1] = Vector2f(point_x + abs(left) + top_right.x, point_y + abs(top) + top_right.y);
-    points[2] = Vector2f(point_x + abs(left) + bot_right.x, point_y + abs(top) + bot_right.y);
-    points[3] = Vector2f(point_x + abs(left) + bot_left.x, point_y + abs(top) + bot_left.y);
+Vector2f * rotateRectangle(Vector2f pivot, VertexArray * rect, double angle) {
+    auto *points = (Vector2f *)rpmalloc(sizeof(Vector2f) * 4);
+    Vector2f pointOne = (*rect)[0].position - pivot;
+    Vector2f pointTwo = (*rect)[1].position - pivot;
+    Vector2f pointThree = (*rect)[2].position - pivot;
+    Vector2f pointFour = (*rect)[3].position - pivot;
+    points[0] = pivot + rotatePoint(pointOne.x, pointOne.y, angle);
+    points[1] = pivot + rotatePoint(pointTwo.x, pointTwo.y, angle);
+    points[2] = pivot + rotatePoint(pointThree.x, pointThree.y, angle);
+    points[3] = pivot + rotatePoint(pointFour.x, pointFour.y, angle);
     return points;
+}
+
+bool intersectPointRect(Vector2f point, VertexArray *quad){
+    Vector2f difference = (*quad)[1].position - (*quad)[0].position;
+    double angle = (difference.y == 0) ? 0 : atan(difference.x/difference.y);
+    Vector2f * points;
+    if(angle == 0) {
+        points = (Vector2f *)rpmalloc(sizeof(Vector2f) * 4);
+        points[0] = (*quad)[0].position;
+        points[1] = (*quad)[1].position;
+        points[2] = (*quad)[2].position;
+        points[3] = (*quad)[3].position;
+    }
+    else {
+        points = rotateRectangle((*quad)[0].position, quad, angle);
+        point -= (*quad)[0].position;
+        point = rotatePoint(point.x, point.y, angle);
+        point += (*quad)[0].position;
+    }
+    float left = min(points[0].x, points[2].x);
+    float right = max(points[0].x, points[2].x);
+    float top = min(points[0].y, points[2].y);
+    float bottom = max(points[0].y, points[2].y);
+
+    return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
+}
+
+bool intersectRectRect(VertexArray *quadOne, VertexArray *quadTwo){
+    // TODO: Modify this to not screw up in very specific cases. Likely just need to check centers
+    for(int i = 0; i < 4; i++)
+        if(intersectPointRect((*quadOne)[i].position, quadTwo))
+            return true;
+    for(int i = 0; i < 4; i++)
+        if(intersectPointRect((*quadTwo)[i].position, quadOne))
+            return true;
+    return false;
 }

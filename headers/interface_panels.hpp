@@ -5,10 +5,7 @@
 #ifndef RTMOBAS_GAME_INTERFACE_PANELS_HPP
 #define RTMOBAS_GAME_INTERFACE_PANELS_HPP
 
-class CommandButton;
 class EntityPanel;
-class MinimapPanel;
-class InterfacePanels;
 
 class CommandButton : public Drawable {
 private:
@@ -164,6 +161,24 @@ public:
     ~InterfacePanels();
 
     void update();
+};
+
+class Selector {
+public:
+    /** Vertices of the box being drawn by dragging the mouse, given in reference to the world view */
+    VertexArray select_box;
+
+    /** Texture for the selection box */
+    Texture * select_texture;
+
+    /** List of entities selected by the mouse */
+    vector<Entity *> selected_entities;
+
+    /** List of tile bound entities selected by the mouse */
+    vector<TileEntity *> selected_tile_entities;
+
+    /** Constructor */
+    Selector() = default;
 };
 
 #endif //RTMOBAS_GAME_INTERFACE_PANELS_HPP

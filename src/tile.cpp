@@ -5,9 +5,6 @@
 #include "helper.hpp"
 #include <random>
 
-using namespace std;
-using namespace resources;
-
 Tile::Tile(int x, int y, int type) {
     this->tile_type = type;
 

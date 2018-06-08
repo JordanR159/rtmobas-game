@@ -138,9 +138,6 @@ namespace settings {
     extern int window_x;
     extern int window_y;
 
-    extern Texture * select_texture;
-    extern VertexArray select_box;
-
     /** Dimensions of the entire window across all involved monitors. */
     extern unsigned int window_width;
     extern unsigned int window_height;

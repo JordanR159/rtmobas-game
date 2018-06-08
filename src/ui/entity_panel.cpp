@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 EntityPanel::EntityPanel(int xposition, int yposition, int size, int type, World * world) {
     this->world = world;
     this->type = type;

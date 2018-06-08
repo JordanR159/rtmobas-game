@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 /** NOTE - xposition and yposition are in units of tiles */
 Resource::Resource(int x, int y, int type, Tile *** tiles) {
     this->tile_entity_type = type;

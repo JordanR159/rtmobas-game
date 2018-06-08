@@ -1,6 +1,5 @@
 #include "helper.hpp"
 
-using namespace sf;
 using namespace settings;
 
 int main()
@@ -8,10 +7,11 @@ int main()
     //start of every process for rpmalloc
     rpmalloc_initialize();
     load();
-
     init();
-
     save();
+
+    selector->select_texture = resources::load(ui::SELECT_BOX_TEXTURE);
+    selector->select_box = generateVertices(0, 0, 1, 1, *selector->select_texture);
 
     char *map_path = strdup("../resources/maps/basic.bmp");
     char *spawn_path = strdup("../resources/maps/basic.txt");
@@ -56,45 +56,19 @@ int main()
                 auto start_x = int(window_zoom * mouse->mouse_x + center.x - window_zoom * window_width/2.0);
                 auto start_y = int(window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height);
 
-                /** Calculated to find the top left point of the box */
-                auto end_x = int(window_zoom * curr_x + center.x - window_zoom * window_width/2.0);
-                auto end_y = int(window_zoom * curr_y * height_scale + center.y - window_zoom * window_height);
-
                 /** Offset (top left point) for the selection box so that it appears in the correct area */
-                Vector2f point = rotatePoint(start_x, start_y, M_PI_4);
+                Vector2f pivot = rotatePoint(start_x, start_y, M_PI_4);
 
                 /** Length of the box, adjusted to account for scaling differences */
-                Vector2f length(abs(mouse->mouse_x - curr_x) * window_zoom, int(abs(mouse->mouse_y - curr_y) * window_zoom * height_scale));
-
-                /** Determines how to rotate selection box */
-                int rotation = 0;
-                if(start_x > end_x) {
-                    if(start_y > end_y)
-                        rotation = 5;
-                    else {
-                        rotation = 3;
-                        float temp = length.x;
-                        length.x = length.y;
-                        length.y = temp;
-                    }
-                }
-                else {
-                    if(start_y < end_y)
-                        rotation = 1;
-                    else {
-                        rotation = 7;
-                        float temp = length.x;
-                        length.x = length.y;
-                        length.y = temp;
-                    }
-                }
+                Vector2f length((curr_x - mouse->mouse_x) * window_zoom, (curr_y - mouse->mouse_y) * window_zoom * height_scale);
 
                 /** Rotates and scales a box about the pivot to match orientation of window */
-                Vector2f *points = rotateRectangle(point.x, point.y, 0, 0, length.x, length.y, rotation * M_PI_4);
-                select_box[0].position = points[0];
-                select_box[1].position = points[1];
-                select_box[2].position = points[2];
-                select_box[3].position = points[3];
+                VertexArray box = generateVertices(pivot.x, pivot.y, length.x, length.y);
+                Vector2f *points = rotateRectangle(pivot, &box, M_PI_4);
+                selector->select_box[0].position = points[0];
+                selector->select_box[1].position = points[1];
+                selector->select_box[2].position = points[2];
+                selector->select_box[3].position = points[3];
             }
         }
 
@@ -123,19 +97,25 @@ int main()
 
         if(mouse_mapping[Mouse::Left]->clicked) {
             Key *mouse = mouse_mapping[Mouse::Left];
+            if(mouse->dragging) {
+                world.selectEntities(selector->select_box);
+                mouse->dragging = false;
+            }
+            else {
+                /** Scaling accomadates for fact that world view height does not match window height */
+                float height_scale = world_view.getSize().y / (window_height * 0.75f * window_zoom);
 
-            /** Scaling accomadates for fact that world view height does not match window height */
-            float height_scale = world_view.getSize().y / (window_height * 0.75f * window_zoom);
+                /** Rotates center to simplify translation between world view and window coordinates */
+                Vector2f center = rotatePoint(int(world_view.getCenter().x), int(world_view.getCenter().y), -M_PI_4);
 
-            /** Rotates center to simplify translation between world view and window coordinates */
-            Vector2f center = rotatePoint(int(world_view.getCenter().x), int(world_view.getCenter().y), -M_PI_4);
+                /** The pivot point for when the selection box is rotated. Always location of initial click */
+                auto start_x = int(window_zoom * mouse->mouse_x + center.x - window_zoom * window_width / 2.0);
+                auto start_y = int(
+                        window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height);
 
-            /** The pivot point for when the selection box is rotated. Always location of initial click */
-            auto start_x = int(window_zoom * mouse->mouse_x + center.x - window_zoom * window_width/2.0);
-            auto start_y = int(window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height);
-
-            Vector2f point = rotatePoint(start_x, start_y, M_PI_4);
-            world.select_entity(point);
+                Vector2f point = rotatePoint(start_x, start_y, M_PI_4);
+                world.selectEntity(point);
+            }
         }
 
         world_view.move(movement.x, movement.y);
@@ -164,8 +144,8 @@ int main()
         window.draw(world);
 
         if(mouse_mapping[Mouse::Left]->dragging) {
-            RenderStates states(select_texture);
-            window.draw(select_box, states);
+            RenderStates states(selector->select_texture);
+            window.draw(selector->select_box, states);
         }
 
         window.setView(ui_view);

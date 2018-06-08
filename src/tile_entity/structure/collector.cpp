@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 Collector::Collector(int x, int y, int type, Tile *** tiles) {
     Texture * texture;
 

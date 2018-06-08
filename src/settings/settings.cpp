@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 namespace settings {
 
     std::map<int, Key *> keyboard_mapping;
@@ -17,10 +15,6 @@ namespace settings {
     sf::View ui_view;
     sf::View minimap_view;
     sf::View mouse_view;
-
-    Texture * select_texture;
-    VertexArray select_box;
-    Vector2f select_start;
 
     bool update_window = false;
 
@@ -107,9 +101,6 @@ namespace settings {
 
         mouse_view.reset(FloatRect(0, 0, window_width, window_height * 0.75f));
         mouse_view.setViewport(FloatRect(0.f, 0.f, 1.f, 0.75f));
-
-        select_texture = resources::load(ui::SELECT_BOX_TEXTURE);
-        select_box = generateVertices(0, 0, 1, 1, *select_texture);
 
         /*
          * Creates all non-loaded key bindings (their defaults are assigned).
@@ -220,7 +211,6 @@ namespace settings {
                 key->release();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
-                key->dragging = false;
             }
 
             /* Translates mouse wheel scroll into a zoom for the world view */

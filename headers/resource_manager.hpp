@@ -5,8 +5,6 @@
 #ifndef RTMOBAS_GAME_RESOURCE_MANAGER_HPP
 #define RTMOBAS_GAME_RESOURCE_MANAGER_HPP
 
-#include "helper.hpp"
-
 namespace resources {
 
     extern std::map<const char *, sf::Texture *> textures;
@@ -53,6 +51,10 @@ namespace resources {
 
     namespace unit {
         extern const char * PEASANT_TEXTURE;
+    }
+
+    namespace pblock {
+        extern const char * pblocktexture;
     }
 
     Texture * load(const char *);

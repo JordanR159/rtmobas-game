@@ -5,26 +5,20 @@
 #ifndef RTMOBAS_GAME_ENTITY_HPP
 #define RTMOBAS_GAME_ENTITY_HPP
 
-#include "helper.hpp"
-
-using namespace sf;
-
 class Tile;
 
 class Entity : public Drawable {
 private:
-
     /** Allows window.draw(Entity) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 protected:
 
-    /** Position of corners for entity, only needs to change just before rendering */
-    VertexArray vao;
-
     Texture * texture;
 
 public:
+    /** Position of corners for entity, only needs to change just before rendering */
+    VertexArray vao;
 
     /** Position of entity on the map */
     double x_position;
@@ -42,6 +36,9 @@ public:
 
     /** Subtype for the entity, as defined in the subclasses */
     int entity_type;
+
+    /** True if unit is currently being directed. False otherwise */
+    bool selected;
 
     static const int PRODUCER = 1;
     static const int RESEARCHER = 2;

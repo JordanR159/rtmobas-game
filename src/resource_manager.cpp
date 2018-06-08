@@ -50,6 +50,10 @@ namespace resources {
         const char * PEASANT_TEXTURE = "../resources/sprites/peasant.png";
     }
 
+    namespace pblock {
+        const char * pblocktexture = "../resources/textures/pblock.png";
+    }
+
     Texture * load(const char * resource) {
         if(resource == nullptr)
             return nullptr;
