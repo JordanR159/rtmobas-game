@@ -5,10 +5,6 @@
 #ifndef RTMOBAS_GAME_ENTITY_HPP
 #define RTMOBAS_GAME_ENTITY_HPP
 
-#include "helper.hpp"
-
-using namespace sf;
-
 class Tile;
 
 class Entity : public Drawable {

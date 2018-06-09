@@ -5,8 +5,6 @@
 #ifndef RTMOBAS_GAME_TILE_H
 #define RTMOBAS_GAME_TILE_H
 
-#include "helper.hpp"
-
 /** Size of tiles, which is the same for all tiles */
 #define TILE_SIZE 32
 
@@ -24,9 +22,6 @@
 #define TERRAIN_MOUNTAINS_COLOR 0x808040
 #define TERRAIN_DESERT_COLOR 0xC0C000
 #define TERRAIN_WATER_COLOR 0x004080
-
-using namespace sf;
-using namespace std;
 
 class Tile : public Drawable {
 
@@ -84,10 +79,14 @@ public:
 
     ~World();
 
-    void select_entity(Vector2f point);
+    /** Used to select an entity that was clicked on by the mouse */
+    void selectEntity(Vector2f point);
+
+    /** Used to select all entities within the mouse box select */
+    void selectEntities(VertexArray points);
 
     /** Spawns initial entities for the world */
-    void spawn_entities(char *spawn_path);
+    void spawnEntities(char *spawn_path);
 
     void update();
 };

@@ -21,13 +21,13 @@ World::World(char *map_path, char *spawn_path) {
 
     resources::load(resources::unit::PEASANT_TEXTURE);
 
+    resources::load(resources::pblock::pblocktexture);
+
     this->map_layout_path = map_path;
     int *tile_info = readBMP(map_path);
 
     this->world_width_tiles = tile_info[0];
     this->world_height_tiles = tile_info[1];
-
-    std::cout << this->world_height_tiles << std::endl;
 
     this->tiles = (Tile ***) rpmalloc(this->world_width_tiles * sizeof(Tile **));
 
@@ -56,7 +56,7 @@ World::World(char *map_path, char *spawn_path) {
 
     tile_entity::init();
 
-    spawn_entities(spawn_path);
+    spawnEntities(spawn_path);
 }
 
 World::~World() {
@@ -100,38 +100,47 @@ World::~World() {
     resources::flush();
 }
 
-void World::select_entity(Vector2f point) {
-    int tile_x = int(point.x / TILE_SIZE);
-    int tile_y = int(point.y / TILE_SIZE);
-    if(tile_x < 0)
-        tile_x = 0;
-    if(tile_y < 0)
-        tile_y = 0;
-    if(tile_x > world_width_tiles)
-        tile_x = world_width_tiles - 1;
-    if(tile_y > world_height_tiles)
-        tile_y = world_height_tiles - 1;
-
-    tiles[tile_x][tile_y]->tile_type = TERRAIN_MOUNTAINS;
-    Texture * texture = resources::textures[resources::terrain::TERRAIN_TEXTURES];
-
-    int random = rand() % (4);
-
-    int x_tex1 = texture->getSize().x / NUMBER_OF_TERRAIN_VARIATIONS;
-    int x_tex2 = x_tex1 * (random + 1);
-    x_tex1 = x_tex2 - x_tex1;
-
-    int y_tex1 = texture->getSize().y / NUMBER_OF_TERRAIN_TYPES;
-    int y_tex2 = y_tex1 * (tiles[tile_x][tile_y]->tile_type + 1);
-    y_tex1 = y_tex2 - y_tex1;
-
-    tiles[tile_x][tile_y]->vao[0].texCoords = Vector2f(x_tex1, y_tex1);
-    tiles[tile_x][tile_y]->vao[1].texCoords = Vector2f(x_tex1, y_tex2);
-    tiles[tile_x][tile_y]->vao[2].texCoords = Vector2f(x_tex2, y_tex2);
-    tiles[tile_x][tile_y]->vao[3].texCoords = Vector2f(x_tex2, y_tex1);
+void World::selectEntity(sf::Vector2f point) {
+    for(auto &entity : selector->selected_tile_entities) {
+        entity->selected = false;
+    }
+    selector->selected_tile_entities.clear();
+    for(auto &structure : structures) {
+        if (intersectPointRect(point, &structure->vao)) {
+            selector->selected_tile_entities.emplace_back(structure);
+            structure->info.selected = true;
+            return;
+        }
+    }
+    for(auto &resource : resources) {
+        if (intersectPointRect(point, &resource->vao)) {
+            selector->selected_tile_entities.emplace_back(resource);
+            resource->info.selected = true;
+            return;
+        }
+    }
 }
 
-void World::spawn_entities(char *spawn_path) {
+void World::selectEntities(sf::VertexArray points) {
+    for (auto &entity : selector->selected_tile_entities) {
+        entity->selected = false;
+    }
+    selector->selected_tile_entities.clear();
+    for (auto &structure : structures) {
+        if (intersectRectRect(&points, &structure->vao)) {
+            selector->selected_tile_entities.emplace_back(structure);
+            structure->info.selected = true;
+        }
+    }
+    for (auto &resource : resources) {
+        if (intersectRectRect(&points, &resource->vao)) {
+            selector->selected_tile_entities.emplace_back(resource);
+            resource->info.selected = true;
+        }
+    }
+}
+
+void World::spawnEntities(char *spawn_path) {
     // TODO simplify
 
     std::string line;
@@ -190,6 +199,7 @@ void World::spawn_entities(char *spawn_path) {
                 default:
                     break;
             }
+
         }
         spawn_file.close();
     }
@@ -239,7 +249,7 @@ void World::update() {
 
 }
 
-void World::draw(RenderTarget &target, RenderStates states) const {
+void World::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     states.texture = resources::textures[resources::terrain::TERRAIN_TEXTURES];
 
     Tile ** tile_column;

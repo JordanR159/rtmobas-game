@@ -55,6 +55,10 @@ namespace resources {
         extern const char * PEASANT_TEXTURE;
     }
 
+    namespace pblock {
+        extern const char * pblocktexture;
+    }
+
     sf::Texture * load(const char *);
 
     void flush(const char *);

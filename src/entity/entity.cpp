@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     states.texture = info.texture;
     target.draw(info.vao, states);

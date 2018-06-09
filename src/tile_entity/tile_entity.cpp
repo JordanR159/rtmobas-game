@@ -5,6 +5,9 @@
 #include "helper.hpp"
 
 void TileEntity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    if(selected) {
+        states.blendMode = sf::BlendMode(sf::BlendMode::SrcColor, sf::BlendMode::SrcAlpha, sf::BlendMode::ReverseSubtract);
+    }
     states.texture = info.texture;
     target.draw(info.vao, states);
 }

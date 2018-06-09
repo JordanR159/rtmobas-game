@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 Structure::~Structure() {
 
 }
