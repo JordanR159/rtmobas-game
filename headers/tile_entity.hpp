@@ -7,23 +7,63 @@
 
 #include "helper.hpp"
 
+#define TILE_ENTITY 1
+#define PRODUCER 1
+#define RESEARCHER 2
+#define COLLECTOR 3
+#define RESOURCE 4
+
 #define TILE_ENTITY_START_VALUE 10000
 #define TILE_ENTITY_TYPE_DIFF 1000
-#define PRODUCER_START_VALUE 11000
-#define RESEARCHER_START_VALUE 12000
-#define COLLECTOR_START_VALUE 13000
-#define RESOURCE_START_VALUE 14000
-#define PRODUCER_VALUE_CALC(value) 11000 + value
-#define RESEARCHER_VALUE_CALC(value) 12000 + value
-#define COLLECTOR_VALUE_CALC(value) 13000 + value
-#define RESOURCE_VALUE_CALC(value) 14000 + value
+
+#define PRODUCER_START_VALUE TILE_ENTITY_START_VALUE + TILE_ENTITY_TYPE_DIFF * PRODUCER
+#define RESEARCHER_START_VALUE TILE_ENTITY_START_VALUE + TILE_ENTITY_TYPE_DIFF * RESEARCHER
+#define COLLECTOR_START_VALUE TILE_ENTITY_START_VALUE + TILE_ENTITY_TYPE_DIFF * COLLECTOR
+#define RESOURCE_START_VALUE TILE_ENTITY_START_VALUE + TILE_ENTITY_TYPE_DIFF * RESOURCE
+
+#define PRODUCER_NEW_VALUE(i) PRODUCER_START_VALUE + i
+#define RESEARCHER_NEW_VALUE(i) RESEARCHER_START_VALUE + i
+#define COLLECTOR_NEW_VALUE(i) COLLECTOR_START_VALUE + i
+#define RESOURCE_NEW_VALUE(i) RESOURCE_START_VALUE + i
 
 #define WIDTH_OF_RESOURCE 3
 #define HEIGHT_OF_RESOURCE 3
 #define WIDTH_OF_WOOD 1
 #define HEIGHT_OF_WOOD 1
 
-#define STRUCTURE_COLLECTOR_FARM 301
+#define SIZE_OF_CASTLE 3
+#define SIZE_OF_FARM 2
+
+/** Building Types */
+#define PRODUCER_CASTLE PRODUCER_NEW_VALUE(0)
+
+#define PRODUCER_LAST_VALUE PRODUCER_START_VALUE + 0
+
+#define RESEARCHER_GROUND RESEARCHER_NEW_VALUE(0)
+#define RESEARCHER_AIR RESEARCHER_NEW_VALUE(1)
+
+#define RESEARCHER_LAST_VALUE RESEARCHER_START_VALUE + 1
+
+/** Collector Types */
+#define COLLECTOR_FOOD COLLECTOR_NEW_VALUE(0)
+#define COLLECTOR_GOLD COLLECTOR_NEW_VALUE(1)
+#define COLLECTOR_WOOD COLLECTOR_NEW_VALUE(2)
+#define COLLECTOR_METAL COLLECTOR_NEW_VALUE(3)
+#define COLLECTOR_CRYSTAL COLLECTOR_NEW_VALUE(4)
+#define COLLECTOR_OIL COLLECTOR_NEW_VALUE(5)
+
+#define COLLECTOR_LAST_VALUE COLLECTOR_START_VALUE + 5
+
+/** Resource types */
+#define RESOURCE_FOOD RESOURCE_NEW_VALUE(0)
+#define RESOURCE_GOLD RESOURCE_NEW_VALUE(1)
+#define RESOURCE_WOOD RESOURCE_NEW_VALUE(2)
+#define RESOURCE_METAL RESOURCE_NEW_VALUE(3)
+#define RESOURCE_CRYSTAL RESOURCE_NEW_VALUE(4)
+#define RESOURCE_OIL RESOURCE_NEW_VALUE(5)
+
+#define RESOURCE_LAST_VALUE RESOURCE_START_VALUE + 5
+
 
 class World;
 
@@ -33,16 +73,9 @@ private:
     /** Allows window.draw(Entity) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-protected:
-
-    /** Position of corners for entity, only needs to change just before rendering */
-    VertexArray vao;
-
-    Texture * texture;
-
 public:
 
-    World * world;
+    entity_info info;
 
     Tile *** owned_tiles;
 
@@ -53,22 +86,6 @@ public:
     /** Size of rendering box for entity */
     int width;
     int height;
-
-    /** Remaining lifepoints for an entity. For Resources, this is number of resources left */
-    int curr_lifepoints;
-
-    /** Maximum lifepoints that the entity can have */
-    int max_lifepoints;
-
-    /** Subtype for the entity, as defined in the subclasses */
-    int tile_entity_type;
-
-    static const int TILE_ENTITY = 1;
-
-    static const int PRODUCER = 1;
-    static const int RESEARCHER = 2;
-    static const int COLLECTOR = 3;
-    static const int RESOURCE = 4;
 };
 
 class Resource : public TileEntity {
@@ -77,23 +94,6 @@ private:
     void create_vao();
 
 public:
-
-    static Texture * textures[6] = {
-            resources::textures[resources::resource::FOOD_TEXTURE],
-            resources::textures[resources::resource::GOLD_TEXTURE],
-            resources::textures[resources::resource::TREE_TEXTURE],
-            resources::textures[resources::resource::METAL_TEXTURE],
-            resources::textures[resources::resource::CRYSTAL_TEXTURE],
-            resources::textures[resources::resource::OIL_TEXTURE]
-    };
-
-    /** Resource types */
-    static const int RESOURCE_FOOD = RESOURCE_VALUE_CALC(0);
-    static const int RESOURCE_GOLD = RESOURCE_VALUE_CALC(1);
-    static const int RESOURCE_WOOD = RESOURCE_VALUE_CALC(2);
-    static const int RESOURCE_METAL = RESOURCE_VALUE_CALC(3);
-    static const int RESOURCE_CRYSTAL = RESOURCE_VALUE_CALC(4);
-    static const int RESOURCE_OIL = RESOURCE_VALUE_CALC(5);
 
     /** Constructors */
     Resource() = default;
@@ -117,12 +117,6 @@ public:
     // int xrally;
     // int yrally;
 
-    /** Building Types */
-    static const int PRODUCER_CASTLE = 101;
-
-    static const int RESEARCHER_GROUND = 201;
-    static const int RESEARCHER_AIR = 202;
-
     /** Constructors */
     Structure() = default;
 
@@ -130,17 +124,15 @@ public:
     ~Structure();
 };
 
+class Farm : public Structure {
+public:
+    Farm(World *, int, int, int);
+};
+
+/** Resource that building is built on */
 class Collector : public Structure {
-    /** Resource that building is built on */
 public:
     Resource * resource;
-
-    static const int COLLECTOR_FOOD = COLLECTOR_VALUE_CALC(0);
-    static const int COLLECTOR_GOLD = COLLECTOR_VALUE_CALC(1);
-    static const int COLLECTOR_WOOD = COLLECTOR_VALUE_CALC(2);
-    static const int COLLECTOR_METAL = COLLECTOR_VALUE_CALC(3);
-    static const int COLLECTOR_CRYSTAL = COLLECTOR_VALUE_CALC(4);
-    static const int COLLECTOR_OIL = COLLECTOR_VALUE_CALC(5);
 
     Collector(World *, int, int, int);
 };
@@ -150,5 +142,17 @@ class Castle : public Structure {
 public:
     Castle(World *, int, int, int);
 };
+
+namespace tile_entity {
+    extern sf::Texture * resource_textures[];
+    extern std::map<int, Structure *(*)(World *, int, int, int)> structures;
+
+    template<typename T> Structure * create_structure(World * world, int type, int x, int y) {
+        void * mem = rpmalloc(sizeof(T));
+        return new(mem) T(world, type, x, y);
+    }
+
+    void init();
+}
 
 #endif //RTMOBAS_GAME_TILE_ENTITY_HPP

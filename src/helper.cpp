@@ -71,19 +71,24 @@ VertexArray generateVertices(float xposition, float yposition, float xsize, floa
     return vertices;
 }
 
-Vector2f rotatePoint(float x, float y, double angle) {
-    return Vector2f(int(x * cos(angle) - y * sin(angle)), int(x * sin(angle) + y * cos(angle)));
+void rotate(Vector2f &vec, float x, float y, double angle) {
+    vec.x = static_cast<float>(x * cos(angle) - y * sin(angle));
+    vec.y = static_cast<float>(x * sin(angle) + y * cos(angle));
 }
 
-Vector2f * rotateRectangle(float point_x, float point_y, float left, float top, float right, float bottom, double angle) {
-    auto *points = (Vector2f*)rpmalloc(sizeof(Vector2f) * 4);
-    Vector2f top_left = rotatePoint(left, top, angle);
-    Vector2f top_right = rotatePoint(right, top, angle);
-    Vector2f bot_right = rotatePoint(right, bottom, angle);
-    Vector2f bot_left = rotatePoint(left, bottom, angle);
-    points[0] = Vector2f(point_x + abs(left) + top_left.x, point_y + abs(top) + top_left.y);
-    points[1] = Vector2f(point_x + abs(left) + top_right.x, point_y + abs(top) + top_right.y);
-    points[2] = Vector2f(point_x + abs(left) + bot_right.x, point_y + abs(top) + bot_right.y);
-    points[3] = Vector2f(point_x + abs(left) + bot_left.x, point_y + abs(top) + bot_left.y);
-    return points;
+void clamp_vec(Vector2f &vec, float x, float y, float width, float height) {
+    vec.x = clamp<float>(vec.x, x, x + width);
+    vec.y = clamp<float>(vec.y, y, y + height);
+}
+
+void rotatePoint(Vertex &vertex, float x, float y, double angle) {
+    vertex.position.x = static_cast<int>(x * cos(angle) - y * sin(angle));
+    vertex.position.y = static_cast<int>(x * sin(angle) + y * cos(angle));
+}
+
+void rotateRectangle(VertexArray &vao, int point_x, int point_y, int left, int top, int right, int bottom, int angle) {
+    rotatePoint(vao[0], point_x + left, top, angle);
+    rotatePoint(vao[1], right, top, angle);
+    rotatePoint(vao[2], right, bottom, angle);
+    rotatePoint(vao[2], left, bottom, angle);
 }

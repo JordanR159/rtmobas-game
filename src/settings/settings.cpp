@@ -4,8 +4,6 @@
 
 #include "helper.hpp"
 
-using namespace resources;
-
 namespace settings {
 
     std::map<int, Key *> keyboard_mapping;
@@ -15,7 +13,6 @@ namespace settings {
     sf::RenderWindow window;
     sf::View world_view;
     sf::View ui_view;
-    sf::View minimap_view;
     sf::View mouse_view;
 
     Texture * select_texture;
@@ -108,7 +105,7 @@ namespace settings {
         mouse_view.reset(FloatRect(0, 0, window_width, window_height * 0.75f));
         mouse_view.setViewport(FloatRect(0.f, 0.f, 1.f, 0.75f));
 
-        select_texture = resources::load(ui::SELECT_BOX_TEXTURE);
+        select_texture = resources::load(resources::ui::SELECT_BOX_TEXTURE);
         select_box = generateVertices(0, 0, 1, 1, *select_texture);
 
         /*

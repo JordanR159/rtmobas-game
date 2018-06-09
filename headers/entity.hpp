@@ -17,14 +17,9 @@ private:
     /** Allows window.draw(Entity) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-protected:
-
-    /** Position of corners for entity, only needs to change just before rendering */
-    VertexArray vao;
-
-    Texture * texture;
-
 public:
+
+    entity_info info;
 
     /** Position of entity on the map */
     double x_position;
@@ -34,19 +29,6 @@ public:
     double width;
     double height;
 
-    /** Remaining lifepoints for an entity. For Resources, this is number of resources left */
-    int curr_lifepoints;
-
-    /** Maximum lifepoints that the entity can have */
-    int max_lifepoints;
-
-    /** Subtype for the entity, as defined in the subclasses */
-    int entity_type;
-
-    static const int PRODUCER = 1;
-    static const int RESEARCHER = 2;
-    static const int COLLECTOR = 3;
-    static const int RESOURCE = 4;
     static const int UNIT = 5;
 };
 

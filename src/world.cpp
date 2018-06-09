@@ -5,28 +5,29 @@
 #include "helper.hpp"
 
 using namespace std;
-using namespace resources;
 
 World::World(char *map_path, char *spawn_path) {
     // TODO better loading so as not required to pre-load each individual.
-    load(terrain::TERRAIN_TEXTURES);
+    resources::load(resources::terrain::TERRAIN_TEXTURES);
 
-    load(structure::CASTLE_TEXTURE);
-    load(structure::FARM_TEXTURE);
+    resources::load(resources::structure::CASTLE_TEXTURE);
+    resources::load(resources::structure::FARM_TEXTURE);
 
-    load(resource::GOLD_TEXTURE);
-    load(resource::TREE_TEXTURE);
-    load(resource::METAL_TEXTURE);
-    load(resource::CRYSTAL_TEXTURE);
-    load(resource::OIL_TEXTURE);
+    resources::load(resources::resource::GOLD_TEXTURE);
+    resources::load(resources::resource::TREE_TEXTURE);
+    resources::load(resources::resource::METAL_TEXTURE);
+    resources::load(resources::resource::CRYSTAL_TEXTURE);
+    resources::load(resources::resource::OIL_TEXTURE);
 
-    load(unit::PEASANT_TEXTURE);
+    resources::load(resources::unit::PEASANT_TEXTURE);
 
     this->map_layout_path = map_path;
     int *tile_info = readBMP(map_path);
 
     this->world_width_tiles = tile_info[0];
     this->world_height_tiles = tile_info[1];
+
+    std::cout << this->world_height_tiles << std::endl;
 
     this->tiles = (Tile ***) rpmalloc(this->world_width_tiles * sizeof(Tile **));
 
@@ -52,6 +53,8 @@ World::World(char *map_path, char *spawn_path) {
     for(int i = 0; i < tiles_size; i++) {
         this->tiles[i] = Tile((i % this->world_width_tiles) * Tile::TILE_SIZE, (i / this->world_height_tiles) * Tile::TILE_SIZE, tile_info[i + 2]);
     } */
+
+    tile_entity::init();
 
     spawn_entities(spawn_path);
 }
@@ -94,7 +97,7 @@ World::~World() {
     this->structures.clear();
     this->units.clear();
 
-    flush();
+    resources::flush();
 }
 
 void World::select_entity(Vector2f point) {
@@ -110,7 +113,7 @@ void World::select_entity(Vector2f point) {
         tile_y = world_height_tiles - 1;
 
     tiles[tile_x][tile_y]->tile_type = TERRAIN_MOUNTAINS;
-    Texture * texture = textures[terrain::TERRAIN_TEXTURES];
+    Texture * texture = resources::textures[resources::terrain::TERRAIN_TEXTURES];
 
     int random = rand() % (4);
 
@@ -160,68 +163,33 @@ void World::spawn_entities(char *spawn_path) {
             team1_y = stoi(token);
 
             switch(type / TILE_ENTITY_START_VALUE) {
-                case TileEntity::TILE_ENTITY:
+                case TILE_ENTITY:
                     switch((type - TILE_ENTITY_START_VALUE) / TILE_ENTITY_TYPE_DIFF) {
-                        case TileEntity::RESOURCE:
+                        case RESOURCE:
                             mem = rpmalloc(sizeof(Resource));
 
                             this->resources.emplace_back(new(mem) Resource(this, type, team1_x, team1_y));
 
-                            team2_x = this->world_width_tiles - team1_x - (resources.back()->width);
-                            team2_y = this->world_height_tiles - team1_y - (resources.back()->height);
+                            team2_x = this->world_width_tiles - team1_x - this->resources.back()->width;
+                            team2_y = this->world_height_tiles - team1_y - this->resources.back()->height;
 
                             mem = rpmalloc(sizeof(Resource));
 
                             this->resources.emplace_back(new(mem) Resource(this, type, team2_x, team2_y));
                             break;
                         default:
+                            this->structures.emplace_back(tile_entity::structures[type](this, type, team1_x, team1_y));
+
+                            team2_x = this->world_width_tiles - team1_x - this->structures.back()->width;
+                            team2_y = this->world_height_tiles - team1_y - this->structures.back()->height;
+
+                            this->structures.emplace_back(tile_entity::structures[type](this, type, team2_x, team2_y));
                             break;
                     }
                     break;
                 default:
                     break;
             }
-
-            switch(type / 100) {
-                case Entity::PRODUCER:
-                    switch(type) {
-                        /*case Structure::PRODUCER_CASTLE:
-                            break;*/
-                        default:
-                            mem = rpmalloc(sizeof(Castle));
-
-                            this->structures.emplace_back(new (mem) Castle(this, type, team1_x, team1_y));
-
-                            team2_x = this->world_width_tiles - team1_x - (this->structures.back()->width);
-                            team2_y = this->world_height_tiles - team1_y - (this->structures.back()->height);
-
-                            mem = rpmalloc(sizeof(Castle));
-
-                            this->structures.emplace_back(new(mem) Castle(this, type, team2_x, team2_y));
-                    }
-                    break;
-                case Entity::RESEARCHER:
-                case Entity::COLLECTOR:
-                    mem = rpmalloc(sizeof(Collector));
-
-                    std::cout << type << std::endl;
-
-                    this->structures.emplace_back(new(mem) Collector(this, type, team1_x, team1_y));
-
-                    team2_x = this->world_width_tiles - team1_x - (this->structures.back()->width);
-                    team2_y = this->world_height_tiles - team1_y - (this->structures.back()->height);
-
-                    mem = rpmalloc(sizeof(Collector));
-
-                    this->structures.emplace_back(new(mem) Collector(this, type, team2_x, team2_y));
-                    break;
-                case Entity::RESOURCE:
-
-                // case Entity::UNIT: default shall replace this case
-                default:
-                    break;
-            }
-
         }
         spawn_file.close();
     }
@@ -272,7 +240,7 @@ void World::update() {
 }
 
 void World::draw(RenderTarget &target, RenderStates states) const {
-    states.texture = textures[terrain::TERRAIN_TEXTURES];
+    states.texture = resources::textures[resources::terrain::TERRAIN_TEXTURES];
 
     Tile ** tile_column;
 

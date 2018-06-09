@@ -4,61 +4,41 @@
 
 #include "helper.hpp"
 
-Resource::textures
-
 /** NOTE - xposition and yposition are in units of tiles */
 Resource::Resource(World * world, int type, int x, int y) {
-    this->world = world;
-    this->tile_entity_type = type;
+    this->info.world = world;
+    this->info.entity_type = type;
 
-    int w = WIDTH_OF_RESOURCE;
-    int h = HEIGHT_OF_RESOURCE;
-
-    this->texture = textures[type - RESOURCE_START_VALUE];
+    this->info.texture = tile_entity::resource_textures[(type) - (RESOURCE_START_VALUE)];
 
     switch(type) {
-        case Resource::RESOURCE_GOLD:
-            this->texture = textures[resource::GOLD_TEXTURE];
+        case RESOURCE_WOOD:
+            this->width = WIDTH_OF_WOOD;
+            this->height = HEIGHT_OF_WOOD;
             break;
-        case Resource::RESOURCE_WOOD:
-            this->texture = textures[resource::TREE_TEXTURE];
-            w = WIDTH_OF_WOOD;
-            h = HEIGHT_OF_WOOD;
-            break;
-        case Resource::RESOURCE_METAL:
-            this->texture = textures[resource::METAL_TEXTURE];
-            break;
-        case Resource::RESOURCE_CRYSTAL:
-            this->texture = textures[resource::CRYSTAL_TEXTURE];
-            break;
-        /* case Resource::RESOURCE_OIL:
-            texture = textures[resource::OIL_TEXTURE];
-            break; */
         default:
-            this->texture = textures[resource::OIL_TEXTURE];
+            this->width = WIDTH_OF_RESOURCE;
+            this->height = HEIGHT_OF_RESOURCE;
             break;
     }
 
     this->x_coord = x;
     this->y_coord = y;
 
-    this->width = w;
-    this->height = h;
+    this->owned_tiles = (Tile ***) rpmalloc(this->width * sizeof(Tile **));
 
-    this->owned_tiles = (Tile ***) rpmalloc(w * sizeof(Tile **));
-
-    for(int i = 0; i < w; i ++) {
+    for(int i = 0; i < this->width; i ++) {
         this->owned_tiles[i] = world->tiles[x + i] + y;
 
-        for(int j = 0; j < h; j++) {
+        for(int j = 0; j < this->height; j++) {
             this->owned_tiles[i][j]->resource = this;
         }
     }
 
-    this->vao = generateVertices(static_cast<float>(this->x_coord * TILE_SIZE),
+    this->info.vao = generateVertices(static_cast<float>(this->x_coord * TILE_SIZE),
                                  static_cast<float>(this->y_coord * TILE_SIZE),
                                  static_cast<float>(this->width * TILE_SIZE),
-                                 static_cast<float>(this->height * TILE_SIZE), *texture);
+                                 static_cast<float>(this->height * TILE_SIZE), *info.texture);
 }
 
 Resource::~Resource() {

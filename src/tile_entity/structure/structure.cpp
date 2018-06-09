@@ -11,8 +11,8 @@ Structure::~Structure() {
 }
 
 void Structure::create_structure(World * world, int type, int x, int y, int w, int h, Texture * texture) {
-    this->world = world;
-    this->tile_entity_type = type;
+    this->info.world = world;
+    this->info.entity_type = type;
 
     this->x_coord = x;
     this->y_coord = y;
@@ -20,7 +20,7 @@ void Structure::create_structure(World * world, int type, int x, int y, int w, i
     this->width = w;
     this->height = h;
 
-    this->curr_lifepoints = this->max_lifepoints;
+    this->info.curr_lifepoints = this->info.max_lifepoints;
 
     this->owned_tiles = (Tile ***) rpmalloc(w * sizeof(Tile **));
 
@@ -32,9 +32,9 @@ void Structure::create_structure(World * world, int type, int x, int y, int w, i
         }
     }
 
-    this->texture = texture;
+    this->info.texture = texture;
 
-    this->vao = generateVertices(static_cast<float>(this->x_coord * TILE_SIZE),
+    this->info.vao = generateVertices(static_cast<float>(this->x_coord * TILE_SIZE),
                                  static_cast<float>(this->y_coord * TILE_SIZE),
                                  static_cast<float>(this->width * TILE_SIZE),
                                  static_cast<float>(this->height * TILE_SIZE), *texture);

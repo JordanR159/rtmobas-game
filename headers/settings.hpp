@@ -125,7 +125,6 @@ namespace settings {
 
     /** Non-moving view (lens) that allows the player to see the displayed UI. */
     extern sf::View ui_view;
-    extern sf::View minimap_view;
 
     /** Non-moving view (lens) that is used to draw mouse feedback */
     extern sf::View mouse_view;
@@ -143,8 +142,8 @@ namespace settings {
     extern int window_x;
     extern int window_y;
 
-    extern Texture * select_texture;
-    extern VertexArray select_box;
+    extern sf::Texture * select_texture;
+    extern sf::VertexArray select_box;
 
     /** Dimensions of the entire window across all involved monitors. */
     extern unsigned int window_width;

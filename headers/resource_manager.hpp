@@ -55,7 +55,7 @@ namespace resources {
         extern const char * PEASANT_TEXTURE;
     }
 
-    Texture * load(const char *);
+    sf::Texture * load(const char *);
 
     void flush(const char *);
 

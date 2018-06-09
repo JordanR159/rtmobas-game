@@ -18,7 +18,7 @@ Collector::Collector(World * world, int type, int x, int y) {
             texture = textures[structure::FARM_TEXTURE];
             w = 2;
             h = 2;
-            this->max_lifepoints = 1000;
+            this->info.max_lifepoints = 1000;
     }
 
     this->create_structure(world, type, x, y, w, h, texture);

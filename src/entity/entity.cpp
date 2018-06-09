@@ -7,6 +7,6 @@
 using namespace resources;
 
 void Entity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.texture = texture;
-    target.draw(vao, states);
+    states.texture = info.texture;
+    target.draw(info.vao, states);
 }

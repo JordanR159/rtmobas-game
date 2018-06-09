@@ -4,23 +4,24 @@
 
 #include "helper.hpp"
 
-using namespace resources;
+CommandButton::CommandButton(World * world, Panel * parent, int type, int xpos, int ypos, int size) {
+    this->world = world;
+    this->parent = parent;
+    this->panel_type = type;
 
-CommandButton::CommandButton(int xposition, int yposition, int size, int type) {
-    this->type = type;
-
-    button_size = size;
-    this->xposition = xposition;
-    this->yposition = yposition;
+    this->x = xpos;
+    this->y = ypos;
+    this->width = size;
+    this->height = size;
 
     this->texture = get_texture();
 
     if(this->texture != nullptr) {
-        vertices = generateVertices(this->xposition, this->yposition, button_size, button_size, *(this->texture));
+        this->vao = generateVertices(this->x, this->y, width, height, *(this->texture));
     }
 
-    this->highlight.setSize(sf::Vector2f(this->button_size, this->button_size));
-    this->highlight.setPosition(this->xposition, this->yposition);
+    this->highlight.setSize(sf::Vector2f(this->width, this->height));
+    this->highlight.setPosition(this->width, this->height);
 
     this->highlight.setFillColor(sf::Color(0, 0, 0, 64));
 
@@ -28,22 +29,22 @@ CommandButton::CommandButton(int xposition, int yposition, int size, int type) {
 }
 
 Texture * CommandButton::get_texture() {
-    switch(this->type) {
+    switch(this->panel_type) {
         case BACK_BUTTON:
-            return textures[ui::BACK_COMMAND_TEXTURE];
+            return resources::textures[resources::ui::BACK_COMMAND_TEXTURE];
         case BUILD_COLLECTORS:
-            return textures[ui::BUILD_COLLECTORS_TEXTURE];
+            return resources::textures[resources::ui::BUILD_COLLECTORS_TEXTURE];
         case BUILD_FARM:
-            return textures[ui::BUILD_FARM_TEXTURE];
+            return resources::textures[resources::ui::BUILD_FARM_TEXTURE];
         default:
-            return textures[ui::MOVE_COMMAND_TEXTURE];
+            return resources::textures[resources::ui::MOVE_COMMAND_TEXTURE];
     }
 }
 
 void CommandButton::set(int type, int key) {
-    this->type = type;
+    this->panel_type = type;
 
-    if(this->type == CommandButton::NULL_BUTTON)
+    if(this->panel_type == CommandButton::NULL_BUTTON)
         return;
 
     this->key = key;
@@ -51,7 +52,7 @@ void CommandButton::set(int type, int key) {
     Texture * tex = get_texture();
 
     if(this->texture == nullptr && tex != nullptr)
-        vertices = generateVertices(this->xposition, this->yposition, this->button_size, this->button_size, *(this->texture));
+        this->vao = generateVertices(this->x, this->y, this->width, this->height, *(this->texture));
 
     this->texture = tex;
 }
@@ -60,35 +61,49 @@ void CommandButton::press() {
     this->pressed = true;
 }
 
-int CommandButton::click(EntityPanel * panel) {
+void CommandButton::click() {
     this->pressed = false;
-    switch(this->type) {
+    switch(this->panel_type) {
         case BACK_BUTTON:
-            switch(panel->type) {
-                case EntityPanel::BASE_BUILD_COLLECTORS:
-                    return EntityPanel::BASE;
+            switch(this->parent->panel_type) {
+                case CommandPanel::BASE_BUILD_COLLECTORS:
+                    CommandPanel::BASE;
                 default:
-                    return -1;
+                    -1;
             }
         case BUILD_COLLECTORS:
-            return EntityPanel::BASE_BUILD_COLLECTORS;
+            CommandPanel::BASE_BUILD_COLLECTORS;
         case BUILD_FARM: {
             void * mem = rpmalloc(sizeof(Structure));
             Structure * structure = new(mem) Structure();
 
             //World::held_entity = structure;
-            return EntityPanel::BASE;
+            CommandPanel::BASE;
         }
         default:
-            return EntityPanel::BASE;
+            CommandPanel::BASE;
     }
 }
 
 void CommandButton::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.texture = texture;
-    target.draw(vertices, states);
+    if(this->texture != nullptr) {
+        states.texture = texture;
+        target.draw(this->vao, states);
+    }
 
     if(this->pressed) {
         target.draw(highlight);
+    }
+}
+
+void CommandButton::update() {
+    if(this->panel_type != CommandButton::NULL_BUTTON) {
+        if(settings::input_mapping[this->key]->pressed) {
+            press();
+        }
+
+        if(settings::input_mapping[this->key]->clicked) {
+            click();
+        }
     }
 }
