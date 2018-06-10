@@ -38,7 +38,7 @@ int main()
             {
                 int diff_x = abs(mouse->mouse_x - curr_x);
                 int diff_y = abs(mouse->mouse_y - curr_y);
-                if(sqrt(pow(diff_x, 2) + pow(diff_y, 2)) > Key::MOUSE_DRAG_TOLERANCE)
+                if(sqrt(pow(diff_x, 2) + pow(diff_y, 2)) > SETTINGS_MOUSE_DRAG_TOLERANCE)
                     mouse->dragging = true;
             }
             if(mouse->dragging) {
@@ -73,22 +73,22 @@ int main()
 
         /** Allows scrolling of world view */
         else {
-            if (input_mapping[Key::SCROLL_UP]->pressed) {
+            if (input_mapping[KEY_SCROLL_UP]->pressed) {
                 movement.x += speed;
                 movement.y -= speed;
             }
 
-            if (input_mapping[Key::SCROLL_DOWN]->pressed) {
+            if (input_mapping[KEY_SCROLL_DOWN]->pressed) {
                 movement.x -= speed;
                 movement.y += speed;
             }
 
-            if (input_mapping[Key::SCROLL_LEFT]->pressed) {
+            if (input_mapping[KEY_SCROLL_LEFT]->pressed) {
                 movement.x -= speed;
                 movement.y -= speed;
             }
 
-            if (input_mapping[Key::SCROLL_RIGHT]->pressed) {
+            if (input_mapping[KEY_SCROLL_RIGHT]->pressed) {
                 movement.x += speed;
                 movement.y += speed;
             }
@@ -109,9 +109,8 @@ int main()
                 rotate(center, world_view.getCenter().x, world_view.getCenter().y, -M_PI_4);
 
                 /** The pivot point for when the selection box is rotated. Always location of initial click */
-                auto start_x = int(window_zoom * mouse->mouse_x + center.x - window_zoom * window_width / 2.0);
-                auto start_y = int(
-                        window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height);
+                auto start_x = window_zoom * mouse->mouse_x + center.x - window_zoom * window_width / 2.0f;
+                auto start_y = window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height;
 
                 Vector2f point;
                 rotate(point, start_x, start_y, M_PI_4);

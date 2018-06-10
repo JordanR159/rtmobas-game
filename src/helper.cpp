@@ -7,6 +7,9 @@
 const char * INPUT_SETTINGS_LOCATION = "./inputs.cfg";
 const char * SETTINGS_LOCATION = "./settings.cfg";
 
+using namespace sf;
+using namespace std;
+
 Selector * selector = new(rpmalloc(sizeof(Selector))) Selector();
 
 int *readBMP(char *filename)
@@ -53,8 +56,20 @@ int *readBMP(char *filename)
     return tile_info;
 }
 
+void gen_vao(VertexArray &vao, float xpos, float ypos, float width, float height, Texture * texture) {
+    vao[0].position = Vector2f(xpos, ypos);
+    vao[1].position = Vector2f(xpos, ypos + height);
+    vao[2].position = Vector2f(xpos + width, ypos + height);
+    vao[3].position = Vector2f(xpos + width, ypos);
+
+    vao[0].texCoords = Vector2f(0, 0);
+    vao[1].texCoords = Vector2f(0, texture->getSize().y);
+    vao[2].texCoords = Vector2f(texture->getSize().x, texture->getSize().y);
+    vao[3].texCoords = Vector2f(texture->getSize().x, 0);
+}
+
 VertexArray generateVertices(float xposition, float yposition, float xsize, float ysize, Texture texture) {
-    VertexArray vertices = VertexArray(Quads, 4);
+    VertexArray vertices(Quads, 4);
 
     /** Corner positions for the rendering box */
     vertices[0].position = Vector2f(xposition, yposition);

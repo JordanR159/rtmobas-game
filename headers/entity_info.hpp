@@ -27,6 +27,9 @@ struct entity_info {
     /** Subtype for the entity, as defined in the subclasses */
     int entity_type;
 
+    /** Used for determining if the entity is being managed by the player through selection */
+    bool selected;
+
 };
 
 #endif //RTMOBAS_GAME_ENTITY_INFO_HPP

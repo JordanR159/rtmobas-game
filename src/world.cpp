@@ -29,6 +29,8 @@ World::World(char *map_path, char *spawn_path) {
     this->world_width_tiles = tile_info[0];
     this->world_height_tiles = tile_info[1];
 
+    this->held_entity = nullptr;
+
     this->tiles = (Tile ***) rpmalloc(this->world_width_tiles * sizeof(Tile **));
 
     Tile ** tile_column;
@@ -102,18 +104,18 @@ World::~World() {
 
 void World::selectEntity(sf::Vector2f point) {
     for(auto &entity : selector->selected_tile_entities) {
-        entity->selected = false;
+        entity->info.selected = false;
     }
     selector->selected_tile_entities.clear();
     for(auto &structure : structures) {
-        if (intersectPointRect(point, &structure->vao)) {
+        if (intersectPointRect(point, &structure->info.vao)) {
             selector->selected_tile_entities.emplace_back(structure);
             structure->info.selected = true;
             return;
         }
     }
     for(auto &resource : resources) {
-        if (intersectPointRect(point, &resource->vao)) {
+        if (intersectPointRect(point, &resource->info.vao)) {
             selector->selected_tile_entities.emplace_back(resource);
             resource->info.selected = true;
             return;
@@ -123,17 +125,17 @@ void World::selectEntity(sf::Vector2f point) {
 
 void World::selectEntities(sf::VertexArray points) {
     for (auto &entity : selector->selected_tile_entities) {
-        entity->selected = false;
+        entity->info.selected = false;
     }
     selector->selected_tile_entities.clear();
     for (auto &structure : structures) {
-        if (intersectRectRect(&points, &structure->vao)) {
+        if (intersectRectRect(&points, &structure->info.vao)) {
             selector->selected_tile_entities.emplace_back(structure);
             structure->info.selected = true;
         }
     }
     for (auto &resource : resources) {
-        if (intersectRectRect(&points, &resource->vao)) {
+        if (intersectRectRect(&points, &resource->info.vao)) {
             selector->selected_tile_entities.emplace_back(resource);
             resource->info.selected = true;
         }
@@ -203,49 +205,81 @@ void World::spawnEntities(char *spawn_path) {
         }
         spawn_file.close();
     }
-
-    /*FILE *spawn_file = fopen(spawn_path, "rb");
-    char spawn_info[100];
-    while(fgets(spawn_info, 100, spawn_file) != nullptr) {
-        char *data = strtok(spawn_info, ",");
-        int subtype = atoi(data);
-        int type = subtype/100;
-        data = strtok(NULL, ",");
-        int xposition = atoi(data);
-        data = strtok(NULL, ",");
-        int yposition = atoi(data);
-        int alt_xposition;
-        int alt_yposition;
-        switch(type){
-            case Entity::PRODUCER:
-            case Entity::RESEARCHER:
-            case Entity::COLLECTOR:
-                structures.emplace_back(Structure(xposition, yposition, subtype));
-                alt_xposition = this->world_width_tiles - xposition - (structures.back().xsize / Tile::TILE_SIZE);
-                alt_yposition = this->world_height_tiles - yposition - (structures.back().ysize / Tile::TILE_SIZE);
-                structures.emplace_back(Structure(alt_xposition, alt_yposition, subtype));
-                break;
-            case Entity::RESOURCE:
-                resources.emplace_back(Resource(xposition, yposition, subtype));
-                alt_xposition = this->world_width_tiles - xposition - (resources.back().xsize / Tile::TILE_SIZE);
-                alt_yposition = this->world_height_tiles - yposition - (resources.back().ysize / Tile::TILE_SIZE);
-                resources.emplace_back(Resource(alt_xposition, alt_yposition, subtype));
-                break;
-            case Entity::UNIT:
-                xposition *= Tile::TILE_SIZE;
-                yposition *= Tile::TILE_SIZE;
-                units.emplace_back(Unit(xposition, yposition, subtype));
-                alt_xposition = (this->world_width_tiles * Tile::TILE_SIZE) - xposition - units.back().xsize;
-                alt_yposition = (this->world_height_tiles * Tile::TILE_SIZE) - yposition - units.back().ysize;
-                units.emplace_back(Unit(alt_xposition, alt_yposition, subtype));
-                break;
-            default:
-                break;
-        }
-    }*/
 }
 
 void World::update() {
+    if(this->held_entity != nullptr) {
+        sf::Vector2i mouse = sf::Mouse::getPosition(settings::window);
+
+        /** Scaling accomadates for fact that world view height does not match window height */
+        float height_scale = settings::world_view.getSize().y / (settings::window_height * 0.75f * settings::window_zoom);
+
+        /** Rotates center to simplify translation between world view and window coordinates */
+        sf::Vector2f center;
+        rotate(center, settings::world_view.getCenter().x, settings::world_view.getCenter().y, -M_PI_4);
+
+        /** The pivot point for when the selection box is rotated. Always location of initial click */
+        auto start_x = settings::window_zoom * mouse.x + center.x - settings::window_zoom * settings::window_width / 2.0f;
+        auto start_y = settings::window_zoom * mouse.y * height_scale + center.y - settings::window_zoom * settings::window_height;
+
+        sf::Vector2f float_point;
+        rotate(float_point, start_x, start_y, M_PI_4);
+
+        clamp_vec(float_point, 0, 0, (this->world_width_tiles - this->held_entity->width) * TILE_SIZE, (this->world_height_tiles - this->held_entity->height) * TILE_SIZE);
+
+        sf::Vector2i point(static_cast<int>(float_point.x / TILE_SIZE) * TILE_SIZE, static_cast<int>(float_point.y / TILE_SIZE) * TILE_SIZE);
+
+        sf::VertexArray * vao = &this->held_entity->info.vao;
+
+        auto width = this->held_entity->width * TILE_SIZE;
+        auto height = this->held_entity->height * TILE_SIZE;
+
+        (*vao)[0].position = sf::Vector2f(point.x, point.y);
+        (*vao)[1].position = sf::Vector2f(point.x, point.y + height);
+        (*vao)[2].position = sf::Vector2f(point.x + width, point.y + height);
+        (*vao)[3].position = sf::Vector2f(point.x + width, point.y);
+
+        this->held_entity->x_coord = point.x / TILE_SIZE;
+        this->held_entity->y_coord = point.y / TILE_SIZE;
+
+        bool overlaps_tile_entity = false;
+
+        for (auto &structure : structures) {
+            if (intersectRectRect(vao, &structure->info.vao)) {
+                overlaps_tile_entity = true;
+                break;
+            }
+        }
+        if(!overlaps_tile_entity) {
+            for (auto &resource : resources) {
+                if (intersectRectRect(vao, &resource->info.vao)) {
+                    overlaps_tile_entity = true;
+                    break;
+                }
+            }
+        }
+
+        this->held_entity->info.selected = overlaps_tile_entity || !this->held_entity->can_place();
+
+        if(settings::input_mapping[MOUSE_CLICK]->clicked && !this->held_entity->info.selected) {
+
+            this->held_entity->claim_tiles();
+
+            sf::Color color(255, 255, 255, 255);
+
+            (*vao)[0].color = color;
+            (*vao)[1].color = color;
+            (*vao)[2].color = color;
+            (*vao)[3].color = color;
+
+            this->structures.emplace_back(this->held_entity);
+            this->held_entity = nullptr;
+        }
+
+        if(settings::input_mapping[])
+
+        //std::cout << point.x << " " << point.y << " " << point.x / TILE_SIZE << " " << point.y / TILE_SIZE << std::endl;
+    }
 
 }
 
@@ -262,14 +296,31 @@ void World::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         }
     }
 
-    for (auto &r : resources) {
+    for (auto &r : this->resources) {
         target.draw(*r);
     }
-    for (auto &s : structures) {
+    for (auto &s : this->structures) {
         target.draw(*s);
     }
-    for (auto &u : units) {
+    for (auto &u : this->units) {
         target.draw(*u);
+    }
+
+    if(this->held_entity) {
+        states.blendMode = sf::BlendMode(sf::BlendMode::SrcAlpha, sf::BlendMode::OneMinusSrcAlpha);
+
+        sf::VertexArray * vao = &this->held_entity->info.vao;
+        sf::Color color(255, 255, 255, 128);
+
+        if(this->held_entity->info.selected)
+            color = sf::Color(239, 4, 4, 128);
+
+        (*vao)[0].color = color;
+        (*vao)[1].color = color;
+        (*vao)[2].color = color;
+        (*vao)[3].color = color;
+
+        target.draw(*this->held_entity, states);
     }
 
 }

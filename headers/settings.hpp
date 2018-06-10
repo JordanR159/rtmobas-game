@@ -5,6 +5,20 @@
 #ifndef RTMOBAS_GAME_SETTINGS_HPP
 #define RTMOBAS_GAME_SETTINGS_HPP
 
+#include "helper.hpp"
+
+#define SETTINGS_MOUSE_DRAG_TOLERANCE 10
+
+#define KEY_SCROLL_UP 1
+#define KEY_SCROLL_DOWN 2
+#define KEY_SCROLL_LEFT 3
+#define KEY_SCROLL_RIGHT 4
+
+#define MOUSE_CLICK 5
+#define KEY_BACK_COMMAND 100
+#define KEY_BUILD_COLLECTORS 101
+#define KEY_BUILD_FARM 102
+
 namespace settings {
 
     /** Interface for any custom setting used within the game. */
@@ -84,22 +98,6 @@ namespace settings {
         void update();
 
         //char * to_string();
-
-        static const int MOUSE_DRAG_TOLERANCE;
-
-        //Movement around the world
-        static const int SCROLL_UP ;
-        static const int SCROLL_DOWN;
-        static const int SCROLL_LEFT;
-        static const int SCROLL_RIGHT;
-
-        //Mouse interactions
-        static const int CLICK;
-
-        //Hotkeys for UI
-        static const int HOTKEY_BACK_COMMAND;
-        static const int HOTKEY_BUILD_COLLECTORS;
-        static const int HOTKEY_BUILD_FARM;
 
     };
 

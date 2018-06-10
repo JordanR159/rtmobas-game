@@ -8,19 +8,6 @@ namespace settings {
 
     const long long int KEY_DOUBLE_PRESS = 1000 / 5;
 
-    const int Key::MOUSE_DRAG_TOLERANCE = 10;
-
-    const int Key::SCROLL_UP = 1;
-    const int Key::SCROLL_DOWN = 2;
-    const int Key::SCROLL_LEFT = 3;
-    const int Key::SCROLL_RIGHT = 4;
-
-    const int Key::CLICK = 5;
-
-    const int Key::HOTKEY_BACK_COMMAND = 100;
-    const int Key::HOTKEY_BUILD_COLLECTORS = 101;
-    const int Key::HOTKEY_BUILD_FARM = 102;
-
     void Key::press() {
         this->pressed ++;
 

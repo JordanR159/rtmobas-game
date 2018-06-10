@@ -51,8 +51,10 @@ extern Selector * selector;
 /** Used to read map terrain information from 24 bit bitmap files */
 int* readBMP(char* filename);
 
+void gen_vao(sf::VertexArray &vao, float xpos, float ypos, float width, float height, sf::Texture * texture);
+
 /** Generates the vertex array using the specified texture */
-sf::VertexArray generateVertices(float xposition, float yposition, float xsize, float ysize, Texture texture);
+sf::VertexArray generateVertices(float xposition, float yposition, float xsize, float ysize, sf::Texture texture);
 
 /** Rotate the coordinates (x,y) by the angle (in radians) and set the value to vec. */
 void rotate(sf::Vector2f &vec, float x, float y, double angle);

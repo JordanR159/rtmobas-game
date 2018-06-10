@@ -4,12 +4,62 @@
 
 #include "helper.hpp"
 
+TileEntity::~TileEntity() {
+    rpfree(&this->info.vao);
+    rpfree(this->owned_tiles);
+}
+
 void TileEntity::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    if(selected) {
+    if(this->info.selected) {
         states.blendMode = sf::BlendMode(sf::BlendMode::SrcColor, sf::BlendMode::SrcAlpha, sf::BlendMode::ReverseSubtract);
     }
     states.texture = info.texture;
     target.draw(info.vao, states);
+}
+
+void TileEntity::create_held_entity(World * world, int tile_entity_type, int width, int height, sf::Texture * texture) {
+    this->info.world = world;
+    this->info.entity_type = tile_entity_type;
+    this->info.texture = texture;
+
+    this->info.selected = false;
+
+    this->x_coord = 0;
+    this->y_coord = 0;
+    this->width = width;
+    this->height = height;
+
+    this->info.vao = sf::VertexArray(sf::Quads, 4);
+
+    gen_vao(this->info.vao, this->x_coord, this->y_coord, this->width * TILE_SIZE, this->height * TILE_SIZE, this->info.texture);
+}
+
+void TileEntity::create_tile_entity(World * world, int tile_entity_type, int xpos, int ypos, int width, int height, sf::Texture * texture) {
+    this->info.world = world;
+    this->info.entity_type = tile_entity_type;
+    this->info.texture = texture;
+
+    this->info.selected = false;
+
+    this->x_coord = xpos;
+    this->y_coord = ypos;
+
+    this->width = width;
+    this->height = height;
+
+    this->claim_tiles();
+
+    this->info.vao = sf::VertexArray(sf::Quads, 4);
+
+    gen_vao(this->info.vao, this->x_coord * TILE_SIZE, this->y_coord * TILE_SIZE, this->width * TILE_SIZE, this->height * TILE_SIZE, this->info.texture);
+}
+
+void TileEntity::claim_tiles() {
+    this->owned_tiles = (Tile ***) rpmalloc(this->width * sizeof(Tile **));
+
+    for(int i = 0; i < this->width; i ++) {
+        this->owned_tiles[i] = this->info.world->tiles[this->x_coord + i] + this->y_coord;
+    }
 }
 
 namespace tile_entity {

@@ -54,7 +54,7 @@ namespace resources {
         const char * pblocktexture = "../resources/textures/pblock.png";
     }
 
-    Texture * load(const char * resource) {
+    sf::Texture * load(const char * resource) {
         if(resource == nullptr)
             return nullptr;
 

@@ -8,7 +8,7 @@ using namespace resources;
 
 CommandPanel::CommandPanel(World * world, Panel * parent, int type, int xpos, int ypos, int size) {
 
-    Texture * texture = new(rpmalloc(sizeof(Texture))) Texture();
+    sf::Texture * texture = new(rpmalloc(sizeof(sf::Texture))) sf::Texture();
 
     texture->loadFromFile("../resources/textures/entity_panel.png");
 
@@ -25,11 +25,7 @@ CommandPanel::CommandPanel(World * world, Panel * parent, int type, int xpos, in
 
 void CommandPanel::clear_options() {
     for(auto &child : this->children) {
-        CommandButton * button = static_cast<CommandButton *>(child);
-        if(button->panel_type != CommandButton::NULL_BUTTON) {
-            button->set(CommandButton::NULL_BUTTON, 0);
-            button->pressed = false;
-        }
+        child->set_panel_type(CommandButton::NULL_BUTTON);
     }
 }
 
@@ -38,12 +34,18 @@ void CommandPanel::set_options() {
 
     switch(this->panel_type) {
         case BASE:
-            static_cast<CommandButton *>(this->children.at(0))->set(CommandButton::BUILD_COLLECTORS, settings::Key::HOTKEY_BUILD_COLLECTORS);
+            this->children.at(0)->set_panel_type(CommandButton::BUILD_COLLECTORS);
             break;
         case BASE_BUILD_COLLECTORS:
-            static_cast<CommandButton *>(this->children.at(0))->set(CommandButton::BACK_BUTTON, settings::Key::HOTKEY_BACK_COMMAND);
-            static_cast<CommandButton *>(this->children.at(1))->set(CommandButton::BUILD_FARM, settings::Key::HOTKEY_BUILD_FARM);
+            this->children[0]->set_panel_type(CommandButton::BACK_BUTTON);
+            this->children[1]->set_panel_type(CommandButton::BUILD_FARM);
         default:
             break;
     }
+}
+
+void CommandPanel::set_panel_type(int new_panel_type) {
+    this->panel_type = new_panel_type;
+
+    set_options();
 }

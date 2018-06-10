@@ -5,6 +5,8 @@
 #include "helper.hpp"
 #include <random>
 
+using namespace sf;
+
 Tile::Tile(int x, int y, int type) {
     this->tile_type = type;
 
@@ -36,7 +38,7 @@ Tile::Tile(int x, int y, int type) {
 }
 
 void Tile::create_vao() {
-    Texture * texture = textures[terrain::TERRAIN_TEXTURES];
+    Texture * texture = resources::textures[resources::terrain::TERRAIN_TEXTURES];
 
     void * mem = rpmalloc(sizeof(VertexArray));
     this->vao = *(new (mem) VertexArray(Quads, 4));

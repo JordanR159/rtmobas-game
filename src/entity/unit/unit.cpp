@@ -6,16 +6,16 @@
 
 /** NOTE - xposition and yposition are in units of pixels */
 Unit::Unit(double x, double y, int type) {
-    Texture * texture;
+    sf::Texture * texture;
     switch(type) {
         case Unit::UNIT_BUILDER:
-            texture = textures[unit::PEASANT_TEXTURE];
+            texture = resources::textures[resources::unit::PEASANT_TEXTURE];
             this->width = 16;
             this->height = 32;
             this->info.max_lifepoints = INT32_MAX;
             break;
         default:
-            texture = textures[unit::PEASANT_TEXTURE];
+            texture = resources::textures[resources::unit::PEASANT_TEXTURE];
             break;
     }
     this->info.entity_type = type;

@@ -26,13 +26,13 @@
 #define COLLECTOR_NEW_VALUE(i) COLLECTOR_START_VALUE + i
 #define RESOURCE_NEW_VALUE(i) RESOURCE_START_VALUE + i
 
-#define WIDTH_OF_RESOURCE 3
-#define HEIGHT_OF_RESOURCE 3
-#define WIDTH_OF_WOOD 1
-#define HEIGHT_OF_WOOD 1
+/** Defines of Resource sizes, expressed as "x, y" */
+#define SIZE_OF_BASE_RESOURCE 3, 3
+#define SIZE_OF_WOOD_RESOURCE 1, 1
 
-#define SIZE_OF_CASTLE 3
-#define SIZE_OF_FARM 2
+/** Defines of Structure sizes, expressed as "x, y" */
+#define SIZE_OF_CASTLE 3, 3
+#define SIZE_OF_FARM 2, 2
 
 /** Building Types */
 #define PRODUCER_CASTLE PRODUCER_NEW_VALUE(0)
@@ -64,14 +64,19 @@
 
 #define RESOURCE_LAST_VALUE RESOURCE_START_VALUE + 5
 
-
+class Tile;
 class World;
 
-class TileEntity : public Drawable {
+class TileEntity : public sf::Drawable {
 private:
 
     /** Allows window.draw(Entity) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+protected:
+
+    void create_held_entity(World * world, int tile_entity_type, int width, int height, sf::Texture * texture);
+    void create_tile_entity(World * world, int tile_entity_type, int xpos, int ypos, int width, int height, sf::Texture * texture);
 
 public:
 
@@ -86,6 +91,14 @@ public:
     /** Size of rendering box for entity */
     int width;
     int height;
+
+    ~TileEntity();
+
+    /**
+     * Only called when placing a new structure down and from create_tile_entity
+     * Obtains the tiles that this tile entity would be over.
+     */
+    virtual void claim_tiles();
 };
 
 class Resource : public TileEntity {
@@ -97,7 +110,7 @@ public:
 
     /** Constructors */
     Resource() = default;
-    Resource(World *, int, int, int);
+    Resource(World * world, int resource_type, int xpos, int ypos);
 
     /** Deconstructor */
     ~Resource();
@@ -105,9 +118,6 @@ public:
 };
 
 class Structure : public TileEntity {
-protected:
-
-    void create_structure(World *, int, int, int, int, int, Texture *);
 
 public:
     /** Units/Research that can be done at the building */
@@ -120,13 +130,17 @@ public:
     /** Constructors */
     Structure() = default;
 
-    /** Deconstructor */
-    ~Structure();
+    virtual void claim_tiles();
+
+    virtual bool can_place();
 };
 
 class Farm : public Structure {
 public:
+    Farm(World *, int);
     Farm(World *, int, int, int);
+
+    bool can_place();
 };
 
 /** Resource that building is built on */

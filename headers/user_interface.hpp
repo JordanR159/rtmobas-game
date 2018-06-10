@@ -7,13 +7,9 @@
 
 #include "helper.hpp"
 
-class CommandButton;
-class CommandPanel;
-class MinimapPanel;
-
-class Panel : public Drawable {
+class Panel : public sf::Drawable {
 private:
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 protected:
     World * world;
@@ -27,7 +23,7 @@ protected:
 
     std::vector<Panel *> children;
 
-    void create_panel(World * world, Panel * parent, int type, int xpos, int ypos, int width, int height, Texture * texture);
+    void create_panel(World * world, Panel * parent, int type, int xpos, int ypos, int width, int height, sf::Texture * texture);
 
 public:
 
@@ -45,6 +41,8 @@ public:
 
     ~Panel();
 
+    virtual void set_panel_type(int new_panel_type);
+
 };
 
 class CommandButton : public Panel {
@@ -54,7 +52,9 @@ private:
 
     sf::RectangleShape highlight;
 
-    Texture * get_texture();
+    sf::Texture * get_texture();
+
+    int get_key();
 
     void press();
 
@@ -84,6 +84,8 @@ public:
     void set(int type, int key);
 
     void update();
+
+    void set_panel_type(int new_panel_type);
 };
 
 class CommandPanel : public Panel {
@@ -101,6 +103,8 @@ public:
     CommandPanel() = default;
     CommandPanel(World * world, Panel * panel, int type, int xpos, int ypos, int size);
 
+    void set_panel_type(int new_panel_type);
+
 };
 
 class MinimapPanel : public Panel {
@@ -108,10 +112,10 @@ private:
     /** Allows window.draw(CommandButton) to be used in SFML */
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-    Texture * minimap_texture;
+    sf::Texture * minimap_texture;
     sf::ConvexShape camera_view_box;
 
-    VertexArray minimap_vao;
+    sf::VertexArray minimap_vao;
 
 public:
 
@@ -133,6 +137,24 @@ public:
     /** Constructors */
     UserInterface() = default;
     UserInterface(World *, int, int);
+};
+
+class Selector {
+public:
+    /** Vertices of the box being drawn by dragging the mouse, given in reference to the world view */
+    sf::VertexArray select_box;
+
+    /** Texture for the selection box */
+    sf::Texture * select_texture;
+
+    /** List of entities selected by the mouse */
+    std::vector<Entity *> selected_entities;
+
+    /** List of tile bound entities selected by the mouse */
+    std::vector<TileEntity *> selected_tile_entities;
+
+    /** Constructor */
+    Selector() = default;
 };
 
 #endif //RTMOBAS_GAME_INTERFACE_PANELS_HPP

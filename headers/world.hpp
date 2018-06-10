@@ -23,7 +23,7 @@
 #define TERRAIN_DESERT_COLOR 0xC0C000
 #define TERRAIN_WATER_COLOR 0x004080
 
-class Tile : public Drawable {
+class Tile : public sf::Drawable {
 
 private:
 
@@ -33,7 +33,7 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 public:
     /** Vertex Array Buffer that defines the render procedure (Vertices, Tex Coords, etc.)*/
-    VertexArray vao;
+    sf::VertexArray vao;
 
     int tile_type;
 
@@ -50,7 +50,7 @@ public:
     Tile(int x, int y, int type);
 };
 
-class World : public Drawable {
+class World : public sf::Drawable {
 
 private:
     /** Allows window.draw(World) to be used in SFML */
@@ -64,15 +64,15 @@ public:
     char * map_layout_path;
 
     /** Lists of all entities in the world. Resources rendered first, then structures, then units */
-    vector<Resource *> resources;
-    vector<Structure *> structures;
-    vector<Unit *> units;
+    std::vector<Resource *> resources;
+    std::vector<Structure *> structures;
+    std::vector<Unit *> units;
 
     /** Dimensions of the world, in units of tiles */
     int world_width_tiles;
     int world_height_tiles;
 
-    static Structure * held_entity;
+    Structure * held_entity;
 
     /** Constructor */
     World(char *map_path, char *spawn_path);
@@ -80,10 +80,10 @@ public:
     ~World();
 
     /** Used to select an entity that was clicked on by the mouse */
-    void selectEntity(Vector2f point);
+    void selectEntity(sf::Vector2f point);
 
     /** Used to select all entities within the mouse box select */
-    void selectEntities(VertexArray points);
+    void selectEntities(sf::VertexArray points);
 
     /** Spawns initial entities for the world */
     void spawnEntities(char *spawn_path);

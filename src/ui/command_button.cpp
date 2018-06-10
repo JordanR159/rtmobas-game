@@ -20,16 +20,20 @@ CommandButton::CommandButton(World * world, Panel * parent, int type, int xpos, 
         this->vao = generateVertices(this->x, this->y, width, height, *(this->texture));
     }
 
+    this->key = get_key();
+
     this->highlight.setSize(sf::Vector2f(this->width, this->height));
-    this->highlight.setPosition(this->width, this->height);
+    this->highlight.setPosition(this->x, this->y);
 
     this->highlight.setFillColor(sf::Color(0, 0, 0, 64));
 
     this->pressed = false;
 }
 
-Texture * CommandButton::get_texture() {
+sf::Texture * CommandButton::get_texture() {
     switch(this->panel_type) {
+        case NULL_BUTTON:
+            return nullptr;
         case BACK_BUTTON:
             return resources::textures[resources::ui::BACK_COMMAND_TEXTURE];
         case BUILD_COLLECTORS:
@@ -41,6 +45,19 @@ Texture * CommandButton::get_texture() {
     }
 }
 
+int CommandButton::get_key() {
+    switch(this->panel_type) {
+        case NULL_BUTTON:
+            return -1;
+        case BACK_BUTTON:
+            return KEY_BACK_COMMAND;
+        case BUILD_COLLECTORS:
+            return KEY_BUILD_COLLECTORS;
+        case BUILD_FARM:
+            return KEY_BUILD_FARM;
+    }
+}
+
 void CommandButton::set(int type, int key) {
     this->panel_type = type;
 
@@ -49,7 +66,7 @@ void CommandButton::set(int type, int key) {
 
     this->key = key;
 
-    Texture * tex = get_texture();
+    sf::Texture * tex = get_texture();
 
     if(this->texture == nullptr && tex != nullptr)
         this->vao = generateVertices(this->x, this->y, this->width, this->height, *(this->texture));
@@ -67,21 +84,23 @@ void CommandButton::click() {
         case BACK_BUTTON:
             switch(this->parent->panel_type) {
                 case CommandPanel::BASE_BUILD_COLLECTORS:
-                    CommandPanel::BASE;
+                    this->parent->set_panel_type(CommandPanel::BASE);
+                    break;
                 default:
-                    -1;
+                    break;
             }
         case BUILD_COLLECTORS:
-            CommandPanel::BASE_BUILD_COLLECTORS;
+            this->parent->set_panel_type(CommandPanel::BASE_BUILD_COLLECTORS);
+            break;
         case BUILD_FARM: {
-            void * mem = rpmalloc(sizeof(Structure));
-            Structure * structure = new(mem) Structure();
 
-            //World::held_entity = structure;
-            CommandPanel::BASE;
+            this->world->held_entity = new(rpmalloc(sizeof(Farm))) Farm(this->world, COLLECTOR_FOOD);
+
+            this->parent->set_panel_type(CommandPanel::BASE);
+            break;
         }
         default:
-            CommandPanel::BASE;
+            this->parent->set_panel_type(CommandPanel::BASE);
     }
 }
 
@@ -106,4 +125,19 @@ void CommandButton::update() {
             click();
         }
     }
+}
+
+void CommandButton::set_panel_type(int new_panel_type) {
+    this->panel_type = new_panel_type;
+
+    this->key = get_key();
+
+    sf::Texture * tex = get_texture();
+
+    if(this->texture == nullptr && tex != nullptr)
+        this->vao = generateVertices(this->x, this->y, this->width, this->height, *(tex));
+
+    this->texture = tex;
+
+    this->pressed = false;
 }

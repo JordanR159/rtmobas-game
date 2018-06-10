@@ -5,9 +5,9 @@
 #ifndef RTMOBAS_GAME_ENTITY_HPP
 #define RTMOBAS_GAME_ENTITY_HPP
 
-class Tile;
+#include "helper.hpp"
 
-class Entity : public Drawable {
+class Entity : public sf::Drawable {
 private:
 
     /** Allows window.draw(Entity) to be used in SFML */

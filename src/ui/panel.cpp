@@ -20,9 +20,11 @@ void Panel::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     }
 }
 
-void Panel::create_panel(World * world, Panel * panel, int type, int x, int y, int w, int h, Texture * texture) {
+void Panel::create_panel(World * world, Panel * panel, int type, int x, int y, int w, int h, sf::Texture * texture) {
     this->world = world;
     this->parent = panel;
+
+    this->panel_type = type;
 
     this->x = x;
     this->y = y;
@@ -39,4 +41,8 @@ void Panel::update() {
     for(auto &child : this->children) {
         child->update();
     }
+}
+
+void Panel::set_panel_type(int new_panel_type) {
+    this->panel_type = new_panel_type;
 }

@@ -6,7 +6,7 @@
 
 MinimapPanel::MinimapPanel(World * world, Panel * parent, int xpos, int ypos, int size) {
 
-    this->minimap_texture = new(rpmalloc(sizeof(Texture))) Texture();
+    this->minimap_texture = new(rpmalloc(sizeof(sf::Texture))) sf::Texture();
 
     this->minimap_texture->loadFromFile(world->map_layout_path);
 
@@ -21,8 +21,8 @@ MinimapPanel::MinimapPanel(World * world, Panel * parent, int xpos, int ypos, in
 
     this->camera_view_box.setPointCount(4);
 
-    this->camera_view_box.setFillColor(Color::Transparent);
-    this->camera_view_box.setOutlineColor(Color::White);
+    this->camera_view_box.setFillColor(sf::Color::Transparent);
+    this->camera_view_box.setOutlineColor(sf::Color::White);
     this->camera_view_box.setOutlineThickness(2.0f);
 
     this->create_panel(world, parent, 0, xpos, ypos, size, size, resources::textures[resources::ui::MINIMAP_PANEL_TEXTURE]);
@@ -42,7 +42,7 @@ void MinimapPanel::update() {
     auto map_xsize = (world_size_x / 2) / (world_width / this->width);
     auto map_ysize = (world_size_y / 2) / (world_height / this->height);
 
-    Vector2f point1, point2, point3, point4;
+    sf::Vector2f point1, point2, point3, point4;
 
     rotate(point1, map_x - map_xsize, map_y - map_ysize, M_PI_4);
     rotate(point2, map_x - map_xsize, map_y + map_ysize, M_PI_4);

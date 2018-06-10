@@ -107,31 +107,31 @@ namespace settings {
 
         Key * key;
 
-        if((key = get_set_key(Key::SCROLL_UP)) != nullptr) {
+        if((key = get_set_key(KEY_SCROLL_UP)) != nullptr) {
             keyboard_mapping[sf::Keyboard::W] = key;
             keyboard_mapping[sf::Keyboard::Up] = key;
         }
 
-        if((key = get_set_key(Key::SCROLL_DOWN)) != nullptr) {
+        if((key = get_set_key(KEY_SCROLL_DOWN)) != nullptr) {
             keyboard_mapping[sf::Keyboard::S] = key;
             keyboard_mapping[sf::Keyboard::Down] = key;
         }
 
-        if((key = get_set_key(Key::SCROLL_LEFT)) != nullptr) {
+        if((key = get_set_key(KEY_SCROLL_LEFT)) != nullptr) {
             keyboard_mapping[sf::Keyboard::A] = key;
             keyboard_mapping[sf::Keyboard::Left] = key;
         }
 
-        if((key = get_set_key(Key::SCROLL_RIGHT)) != nullptr) {
+        if((key = get_set_key(KEY_SCROLL_RIGHT)) != nullptr) {
             keyboard_mapping[sf::Keyboard::D] = key;
             keyboard_mapping[sf::Keyboard::Right] = key;
         }
 
-        set_key(Key::CLICK, &mouse_mapping, sf::Mouse::Left);
+        set_key(MOUSE_CLICK, &mouse_mapping, sf::Mouse::Left);
 
-        set_key(Key::HOTKEY_BACK_COMMAND, &keyboard_mapping, sf::Keyboard::B);
-        set_key(Key::HOTKEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
-        set_key(Key::HOTKEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
+        set_key(KEY_BACK_COMMAND, &keyboard_mapping, sf::Keyboard::B);
+        set_key(KEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
+        set_key(KEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
 
     }
 
@@ -213,7 +213,7 @@ namespace settings {
             }
 
             /* Translates mouse wheel scroll into a zoom for the world view */
-            if(event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == Mouse::VerticalWheel) {
+            if(event.type == sf::Event::MouseWheelScrolled && event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
 
                 window_zoom -= event.mouseWheelScroll.delta * 0.15;
                 if(window_zoom < 0.25) {
