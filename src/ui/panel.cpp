@@ -16,7 +16,8 @@ void Panel::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     target.draw(this->vao, states);
 
     for(auto &child : this->children) {
-        target.draw(*child);
+        if(child->panel_type != MINIMAP_PANEL)
+            target.draw(*child);
     }
 }
 

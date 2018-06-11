@@ -25,5 +25,13 @@ UserInterface::UserInterface(World * world, int width, int height) {
 
     this->children.emplace_back(new(rpmalloc(sizeof(CommandPanel))) CommandPanel(this->world, this, CommandPanel::BASE, 531, 11, 128));
 
-    this->children.emplace_back(new(rpmalloc(sizeof(MinimapPanel))) MinimapPanel(this->world, this, 11, 11, 128));
+    this->children.emplace_back(new(rpmalloc(sizeof(MinimapPanel))) MinimapPanel(this->world, this, 0, 0, 150));
+}
+
+Panel * UserInterface::getPanel(int panel_type) {
+    for(auto &child : this->children){
+        if(child->panel_type == panel_type)
+            return child;
+    }
+    return nullptr;
 }

@@ -151,7 +151,7 @@ bool intersectPointRect(Vector2f point, VertexArray *quad){
 }
 
 bool intersectRectRect(VertexArray *quadOne, VertexArray *quadTwo){
-    // TODO: Modify this to not screw up in very specific cases. Likely just need to check centers
+    // TODO: Modify this to not screw up in very specific cases
     for(int i = 0; i < 4; i++)
         if(intersectPointRect((*quadOne)[i].position, quadTwo))
             return true;

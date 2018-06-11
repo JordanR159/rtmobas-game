@@ -19,7 +19,7 @@ CommandPanel::CommandPanel(World * world, Panel * parent, int type, int xpos, in
             this->children.emplace_back(new(rpmalloc(sizeof(CommandButton))) CommandButton(world, this, CommandButton::NULL_BUTTON, x, y, size / 4));
         }
     }
-
+    this->panel_type = COMMAND_PANEL;
     set_options();
 }
 

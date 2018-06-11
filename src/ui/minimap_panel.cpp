@@ -26,6 +26,7 @@ MinimapPanel::MinimapPanel(World * world, Panel * parent, int xpos, int ypos, in
     this->camera_view_box.setOutlineThickness(2.0f);
 
     this->create_panel(world, parent, 0, xpos, ypos, size, size, resources::textures[resources::ui::MINIMAP_PANEL_TEXTURE]);
+    this->panel_type = MINIMAP_PANEL;
 }
 
 void MinimapPanel::update() {
@@ -34,31 +35,26 @@ void MinimapPanel::update() {
     auto world_size_x = settings::world_view.getSize().x * 2;
     auto world_size_y = settings::world_view.getSize().y;
 
-    int world_width = (world->world_width_tiles) * (TILE_SIZE);
-    int world_height = (world->world_height_tiles) * (TILE_SIZE);
+    float world_width = (world->world_width_tiles) * (TILE_SIZE);
+    float world_height = (world->world_height_tiles) * (TILE_SIZE);
 
-    auto map_x = x + ((world_center_x - world_size_x / 2.0f) / (world_width / this->width));
+    auto map_size_x = world_size_x / ((2 *world_width) / this->width);
+    auto map_size_y = world_size_y / (world_height / this->height);
+    auto map_x = x + ((world_center_x - world_size_x / 2.0f) / (world_width / this->width)) + map_size_x/2.0f;
     auto map_y = y + ((world_center_y - world_size_y / 2.0f) / (world_height / this->height));
-    auto map_xsize = (world_size_x / 2) / (world_width / this->width);
-    auto map_ysize = (world_size_y / 2) / (world_height / this->height);
 
-    sf::Vector2f point1, point2, point3, point4;
-
-    rotate(point1, map_x - map_xsize, map_y - map_ysize, M_PI_4);
-    rotate(point2, map_x - map_xsize, map_y + map_ysize, M_PI_4);
-    rotate(point3, map_x + map_xsize, map_y + map_ysize, M_PI_4);
-    rotate(point4, map_x + map_xsize, map_y - map_ysize, M_PI_4);
+    sf::VertexArray box = generateVertices(map_x, map_y, map_size_x, map_size_y);
+    sf::Vector2f *points = rotateRectangle(sf::Vector2f(map_x + map_size_x/2.0f, map_y + map_size_y/2.0f), &box, M_PI_4);
 
     /*clamp_vec(point1, this->inner_x, this->inner_y, this->inner_width, this->inner_height);
     clamp_vec(point2, this->inner_x, this->inner_y, this->inner_width, this->inner_height);
     clamp_vec(point3, this->inner_x, this->inner_y, this->inner_width, this->inner_height);
     clamp_vec(point4, this->inner_x, this->inner_y, this->inner_width, this->inner_height);*/
 
-    this->camera_view_box.setPoint(0, point1);
-    this->camera_view_box.setPoint(1, point2);
-    this->camera_view_box.setPoint(2, point3);
-    this->camera_view_box.setPoint(3, point4);
-
+    this->camera_view_box.setPoint(0, points[0]);
+    this->camera_view_box.setPoint(1, points[1]);
+    this->camera_view_box.setPoint(2, points[2]);
+    this->camera_view_box.setPoint(3, points[3]);
 }
 
 void MinimapPanel::draw(sf::RenderTarget &target, sf::RenderStates states) const {

@@ -13,13 +13,11 @@ int main()
 
     save();
 
-    selector->select_texture = resources::load(resources::ui::SELECT_BOX_TEXTURE);
-    selector->select_box = generateVertices(0, 0, 1, 1, *selector->select_texture);
-
     char *map_path = strdup("../resources/maps/basic.bmp");
     char *spawn_path = strdup("../resources/maps/basic.txt");
     World world(map_path, spawn_path);
     UserInterface interfaces(&world, static_cast<int>(ui_view.getSize().x), static_cast<int>(ui_view.getSize().y));
+    initMinimap(&interfaces);
 
     double speed = 20.0;
 
@@ -131,8 +129,7 @@ int main()
             world_view.setCenter(world_view.getCenter().x, world.world_height_tiles * TILE_SIZE);
 
         /** Set the zoom on the world view */
-        world_view.setSize(window_width * window_zoom,
-                               window_height * window_zoom * 2);
+        world_view.setSize(window_width * window_zoom, window_height * window_zoom * 2);
 
         window.clear();
 
@@ -144,12 +141,14 @@ int main()
         window.draw(world);
 
         if(mouse_mapping[Mouse::Left]->dragging) {
-            RenderStates states(selector->select_texture);
-            window.draw(selector->select_box, states);
+            window.draw(*selector);
         }
 
         window.setView(ui_view);
         window.draw(interfaces);
+
+        window.setView(minimap_view);
+        window.draw(*interfaces.getPanel(MINIMAP_PANEL));
 
         window.display();
     }

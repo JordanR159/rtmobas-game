@@ -19,6 +19,9 @@
 #define KEY_BUILD_COLLECTORS 101
 #define KEY_BUILD_FARM 102
 
+class UserInterface;
+class Panel;
+
 namespace settings {
 
     /** Interface for any custom setting used within the game. */
@@ -112,6 +115,12 @@ namespace settings {
 
     extern std::map<int, Key *> input_mapping;
 
+    /** Minimap panel that is readjusted on resize events */
+    extern Panel * minimap;
+
+    /** Ratio between width and height of minimap view */
+    extern float minimap_ratio;
+
     // /** The monitor that the window is contained in (or at least the top left corner is located inside). */
     // Monitor monitor;
 
@@ -127,6 +136,9 @@ namespace settings {
     /** Non-moving view (lens) that is used to draw mouse feedback */
     extern sf::View mouse_view;
 
+    /** Partly moving view that is used to show current area of map being seen */
+    extern sf::View minimap_view;
+
     /** Determines what mode the window is, used for switching purposes. */
     extern WindowMode window_mode;
 
@@ -139,9 +151,6 @@ namespace settings {
     /** Top left corner of the window */
     extern int window_x;
     extern int window_y;
-
-    extern sf::Texture * select_texture;
-    extern sf::VertexArray select_box;
 
     /** Dimensions of the entire window across all involved monitors. */
     extern unsigned int window_width;
@@ -167,6 +176,9 @@ namespace settings {
 
     /** Initializes the game, including the window, views, inputs, and other important start-up functions. */
     void init();
+
+    /** Initializes the game the minimap */
+    void initMinimap(UserInterface * interfaces);
 
     /** Processes the new inputs and updates states of mappings. */
     bool update();

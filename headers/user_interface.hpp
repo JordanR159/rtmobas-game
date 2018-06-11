@@ -7,6 +7,9 @@
 
 #include "helper.hpp"
 
+#define COMMAND_PANEL 1
+#define MINIMAP_PANEL 2
+
 class Panel : public sf::Drawable {
 private:
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
@@ -24,6 +27,8 @@ protected:
     std::vector<Panel *> children;
 
     void create_panel(World * world, Panel * parent, int type, int xpos, int ypos, int width, int height, sf::Texture * texture);
+
+
 
 public:
 
@@ -134,18 +139,23 @@ public:
 
 class UserInterface : public Panel {
 public:
+    /** Used to retrieve a major panel on the interface */
+    Panel * getPanel(int panel_type);
+
     /** Constructors */
     UserInterface() = default;
     UserInterface(World *, int, int);
 };
 
-class Selector {
-public:
-    /** Vertices of the box being drawn by dragging the mouse, given in reference to the world view */
-    sf::VertexArray select_box;
+class Selector : public sf::Drawable{
+private:
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     /** Texture for the selection box */
     sf::Texture * select_texture;
+public:
+    /** Vertices of the box being drawn by dragging the mouse, given in reference to the world view */
+    sf::VertexArray select_box;
 
     /** List of entities selected by the mouse */
     std::vector<Entity *> selected_entities;
@@ -154,7 +164,7 @@ public:
     std::vector<TileEntity *> selected_tile_entities;
 
     /** Constructor */
-    Selector() = default;
+    Selector();
 };
 
 #endif //RTMOBAS_GAME_INTERFACE_PANELS_HPP

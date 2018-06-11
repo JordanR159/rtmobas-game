@@ -276,7 +276,7 @@ void World::update() {
             this->held_entity = nullptr;
         }
 
-        if(settings::input_mapping[])
+        //if(settings::input_mapping[])
 
         //std::cout << point.x << " " << point.y << " " << point.x / TILE_SIZE << " " << point.y / TILE_SIZE << std::endl;
     }

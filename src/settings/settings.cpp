@@ -14,12 +14,16 @@ namespace settings {
     sf::View world_view;
     sf::View ui_view;
     sf::View mouse_view;
+    sf::View minimap_view;
 
     bool update_window = false;
+
+    Panel * minimap;
 
     unsigned int window_width = 800;
     unsigned int window_height = 600;
     float window_zoom = 1.f;
+    float minimap_ratio;
 
     void set_input(const std::string &key_string, const std::string &value_string, std::map<int, Key *> * mapping) {
         void * mem = rpmalloc(sizeof(Key));
@@ -135,6 +139,19 @@ namespace settings {
 
     }
 
+    void initMinimap(UserInterface * interfaces) {
+        minimap = interfaces->getPanel(MINIMAP_PANEL);
+        auto offset = static_cast<float>(minimap->width * sqrt(2)) - minimap->width;
+        minimap_view.reset(sf::FloatRect(minimap->x - offset/2, minimap->y - offset/2,
+                                         minimap->width + offset, minimap->height + offset));
+        minimap_view.setViewport(sf::FloatRect(static_cast<float>(minimap->x)/window_width,
+                                           0.75f + static_cast<float>(minimap->y)/window_height,
+                                           static_cast<float>(minimap->width * 2)/window_width,
+                                           static_cast<float>(minimap->height)/window_height));
+        minimap_view.setRotation(45);
+        minimap_ratio = (minimap_view.getViewport().width * window_width) / (minimap_view.getViewport().height * window_height);
+    }
+
     void save() {
         /*std::ofstream output;
         output.open(INPUT_SETTINGS_LOCATION);
@@ -229,9 +246,14 @@ namespace settings {
              * number of objects is shown on the world view
              */
             if(event.type == sf::Event::Resized) {
-
                 window_width = event.size.width;
                 window_height = event.size.height;
+
+                /** Resizes minimap in a way that preserves shape */
+                minimap_view.setViewport(sf::FloatRect(static_cast<float>(minimap->x)/window_width,
+                                                       0.75f + static_cast<float>(minimap->y)/window_height,
+                                                       (minimap_ratio * minimap_view.getViewport().height * window_height) / window_width,
+                                                       minimap_view.getViewport().height));
             }
 
             if(event.type == sf::Event::MouseMoved) {
