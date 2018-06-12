@@ -23,7 +23,7 @@ UserInterface::UserInterface(World * world, int width, int height) {
 
     this->create_panel(world, nullptr, 0, 0, 0, width, height, resources::load(resources::ui::INTERFACE_TEXTURE));
 
-    this->children.emplace_back(new(rpmalloc(sizeof(CommandPanel))) CommandPanel(this->world, this, CommandPanel::BASE, 531, 11, 128));
+    this->children.emplace_back(new(rpmalloc(sizeof(CommandPanel))) CommandPanel(this->world, this, BASE_PANEL, 531, 11, 128));
 
     this->children.emplace_back(new(rpmalloc(sizeof(MinimapPanel))) MinimapPanel(this->world, this, 0, 0, 150));
 }

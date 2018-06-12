@@ -7,8 +7,18 @@
 
 #include "helper.hpp"
 
-#define COMMAND_PANEL 1
-#define MINIMAP_PANEL 2
+/** Major panel type macros */
+#define MINIMAP_PANEL 1
+#define BASE_PANEL 2
+#define BASE_BUILD_COLLECTORS 3
+
+/** Macros for generic buttons on the command panel */
+#define NULL_BUTTON 100
+#define BACK_BUTTON 101
+
+/** Macros for unique buttons on the command panel */
+#define BUILD_COLLECTORS 200
+#define BUILD_FARM 201
 
 #define NUMBER_TILE_ENTITY_GROUPS 4
 #define NUMBER_ENTITY_GROUPS 6
@@ -74,18 +84,6 @@ public:
 
     bool pressed;
 
-    //Used to represent any empty location within the EntityPanel.
-    static const int NULL_BUTTON = 0;
-
-    //Used among many EntityPanel states, so kept as a reuse option.
-    static const int BACK_BUTTON = 1;
-
-    //Base Commands (given when nothing is selected).
-    static const int BUILD_COLLECTORS = 100;
-
-    //Build Collectors commands
-    static const int BUILD_FARM = 201;
-
     CommandButton() = default;
     CommandButton(World * world, Panel * parent, int type, int xpos, int ypos, int size);
 
@@ -103,10 +101,6 @@ private:
     void clear_options();
 
 public:
-
-    static const int BASE = 1;
-    static const int BASE_BUILD_COLLECTORS = 2;
-
     /** Constructors */
     CommandPanel() = default;
     CommandPanel(World * world, Panel * panel, int type, int xpos, int ypos, int size);

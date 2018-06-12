@@ -16,16 +16,15 @@ CommandPanel::CommandPanel(World * world, Panel * parent, int type, int xpos, in
 
     for(int x = this->x + this->width / 16; x < this->x + this->width * 14 / 16; x += this->width * 3/16) {
         for (int y = this->y + this->height / 16; y < this->y + this->height * 14 / 16; y += this->height * 5 / 16) {
-            this->children.emplace_back(new(rpmalloc(sizeof(CommandButton))) CommandButton(world, this, CommandButton::NULL_BUTTON, x, y, size / 4));
+            this->children.emplace_back(new(rpmalloc(sizeof(CommandButton))) CommandButton(world, this, NULL_BUTTON, x, y, size / 4));
         }
     }
-    this->panel_type = COMMAND_PANEL;
     set_options();
 }
 
 void CommandPanel::clear_options() {
     for(auto &child : this->children) {
-        child->set_panel_type(CommandButton::NULL_BUTTON);
+        child->set_panel_type(NULL_BUTTON);
     }
 }
 
@@ -33,12 +32,12 @@ void CommandPanel::set_options() {
     clear_options();
 
     switch(this->panel_type) {
-        case BASE:
-            this->children.at(0)->set_panel_type(CommandButton::BUILD_COLLECTORS);
+        case BASE_PANEL:
+            this->children.at(0)->set_panel_type(BUILD_COLLECTORS);
             break;
         case BASE_BUILD_COLLECTORS:
-            this->children[0]->set_panel_type(CommandButton::BACK_BUTTON);
-            this->children[1]->set_panel_type(CommandButton::BUILD_FARM);
+            this->children[0]->set_panel_type(BACK_BUTTON);
+            this->children[1]->set_panel_type(BUILD_FARM);
         default:
             break;
     }

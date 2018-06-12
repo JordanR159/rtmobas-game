@@ -61,7 +61,7 @@ int CommandButton::get_key() {
 void CommandButton::set(int type, int key) {
     this->panel_type = type;
 
-    if(this->panel_type == CommandButton::NULL_BUTTON)
+    if(this->panel_type == NULL_BUTTON)
         return;
 
     this->key = key;
@@ -83,24 +83,25 @@ void CommandButton::click() {
     switch(this->panel_type) {
         case BACK_BUTTON:
             switch(this->parent->panel_type) {
-                case CommandPanel::BASE_BUILD_COLLECTORS:
-                    this->parent->set_panel_type(CommandPanel::BASE);
+                case BASE_BUILD_COLLECTORS:
+                    this->parent->set_panel_type(BASE_PANEL);
                     break;
                 default:
                     break;
             }
+            break;
         case BUILD_COLLECTORS:
-            this->parent->set_panel_type(CommandPanel::BASE_BUILD_COLLECTORS);
+            this->parent->set_panel_type(BASE_BUILD_COLLECTORS);
             break;
         case BUILD_FARM: {
 
             this->world->held_entity = new(rpmalloc(sizeof(Farm))) Farm(this->world, COLLECTOR_FOOD);
 
-            this->parent->set_panel_type(CommandPanel::BASE);
+            this->parent->set_panel_type(BASE_PANEL);
             break;
         }
         default:
-            this->parent->set_panel_type(CommandPanel::BASE);
+            this->parent->set_panel_type(BASE_PANEL);
     }
 }
 
@@ -116,7 +117,7 @@ void CommandButton::draw(sf::RenderTarget &target, sf::RenderStates states) cons
 }
 
 void CommandButton::update() {
-    if(this->panel_type != CommandButton::NULL_BUTTON) {
+    if(this->panel_type != NULL_BUTTON) {
         if(settings::input_mapping[this->key]->pressed) {
             press();
         }
