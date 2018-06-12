@@ -137,6 +137,20 @@ namespace settings {
         set_key(KEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
         set_key(KEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
 
+        set_key(KEY_ZERO, &keyboard_mapping, sf::Keyboard::Num0);
+        set_key(KEY_ONE, &keyboard_mapping, sf::Keyboard::Num1);
+        set_key(KEY_TWO, &keyboard_mapping, sf::Keyboard::Num2);
+        set_key(KEY_THREE, &keyboard_mapping, sf::Keyboard::Num3);
+        set_key(KEY_FOUR, &keyboard_mapping, sf::Keyboard::Num4);
+        set_key(KEY_FIVE, &keyboard_mapping, sf::Keyboard::Num5);
+        set_key(KEY_SIX, &keyboard_mapping, sf::Keyboard::Num6);
+        set_key(KEY_SEVEN, &keyboard_mapping, sf::Keyboard::Num7);
+        set_key(KEY_EIGHT, &keyboard_mapping, sf::Keyboard::Num8);
+        set_key(KEY_NINE, &keyboard_mapping, sf::Keyboard::Num9);
+
+        set_key(KEY_CONTROL, &keyboard_mapping, sf::Keyboard::LControl);
+        set_key(KEY_SHIFT, &keyboard_mapping, sf::Keyboard::LShift);
+        set_key(KEY_ALT, &keyboard_mapping, sf::Keyboard::LAlt);
     }
 
     void initMinimap(UserInterface * interfaces) {

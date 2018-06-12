@@ -10,6 +10,9 @@
 #define COMMAND_PANEL 1
 #define MINIMAP_PANEL 2
 
+#define NUMBER_TILE_ENTITY_GROUPS 4
+#define NUMBER_ENTITY_GROUPS 6
+
 class Panel : public sf::Drawable {
 private:
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
@@ -160,8 +163,14 @@ public:
     /** List of entities selected by the mouse */
     std::vector<Entity *> selected_entities;
 
-    /** List of tile bound entities selected by the mouse */
+    /** Control groups for regular entities */
+    std::vector<Entity *> * control_groups_entities;
+
+    /** List of tile bound entities currently selected */
     std::vector<TileEntity *> selected_tile_entities;
+
+    /** Control groups for tile entities */
+    std::vector<TileEntity *> * control_groups_tile_entities;
 
     /** Constructor */
     Selector();

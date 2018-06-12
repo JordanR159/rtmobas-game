@@ -29,6 +29,7 @@
 
 #include "resource_manager.hpp"
 #include "settings.hpp"
+#include "input_handler.hpp"
 
 #include "entity_info.hpp"
 

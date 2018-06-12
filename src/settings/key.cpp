@@ -10,6 +10,7 @@ namespace settings {
 
     void Key::press() {
         this->pressed ++;
+        this->just_pressed = true;
 
         if(this->pressed == 1) {
             this->quick_pressed = false;
@@ -40,6 +41,7 @@ namespace settings {
 
     void Key::update() {
         this->clicked = false;
+        this->just_pressed = false;
         this->quick_pressed = false;
 
         if(this->quick_press_count > 0) {

@@ -28,8 +28,8 @@ int main()
 
         Vector2f movement = Vector2f(0.0, 0.0);
 
-        if(mouse_mapping[Mouse::Left]->pressed) {
-            Key *mouse = mouse_mapping[Mouse::Left];
+        if(input_mapping[MOUSE_CLICK]->pressed) {
+            Key *mouse = input_mapping[MOUSE_CLICK];
             int curr_x = Mouse::getPosition(window).x;
             int curr_y = Mouse::getPosition(window).y;
             if(!mouse->dragging)
@@ -92,8 +92,8 @@ int main()
             }
         }
 
-        if(mouse_mapping[Mouse::Left]->clicked) {
-            Key *mouse = mouse_mapping[Mouse::Left];
+        if(input_mapping[MOUSE_CLICK]->clicked) {
+            Key *mouse = input_mapping[MOUSE_CLICK];
             if(mouse->dragging) {
                 world.selectEntities(selector->select_box);
                 mouse->dragging = false;
@@ -115,6 +115,8 @@ int main()
                 world.selectEntity(point);
             }
         }
+
+        handleControlGroups();
 
         world_view.move(movement.x, movement.y);
 

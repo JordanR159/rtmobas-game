@@ -9,12 +9,27 @@
 
 #define SETTINGS_MOUSE_DRAG_TOLERANCE 10
 
-#define KEY_SCROLL_UP 1
-#define KEY_SCROLL_DOWN 2
-#define KEY_SCROLL_LEFT 3
-#define KEY_SCROLL_RIGHT 4
+#define KEY_ZERO 0
+#define KEY_ONE 1
+#define KEY_TWO 2
+#define KEY_THREE 3
+#define KEY_FOUR 4
+#define KEY_FIVE 5
+#define KEY_SIX 6
+#define KEY_SEVEN 7
+#define KEY_EIGHT 8
+#define KEY_NINE 9
 
-#define MOUSE_CLICK 5
+#define KEY_SCROLL_UP 11
+#define KEY_SCROLL_DOWN 12
+#define KEY_SCROLL_LEFT 13
+#define KEY_SCROLL_RIGHT 14
+
+#define KEY_CONTROL 20
+#define KEY_SHIFT 21
+#define KEY_ALT 22
+
+#define MOUSE_CLICK 10
 #define KEY_BACK_COMMAND 100
 #define KEY_BUILD_COLLECTORS 101
 #define KEY_BUILD_FARM 102
@@ -67,6 +82,9 @@ namespace settings {
     public:
         /** Count of how many key codes are currently pressed. */
         int pressed = 0;
+
+        /** True for first tick after a key is initially pressed, false afterwards until next press */
+        bool just_pressed;
 
         /** True after release for one tick. */
         bool clicked = false;
