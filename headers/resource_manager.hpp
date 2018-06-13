@@ -9,19 +9,29 @@
 
 namespace resources {
 
+    class SpriteCatalog {
+    private:
+        const char * folder_location;
+        std::vector<sf::Texture *> catalog;
+    public:
+        SpriteCatalog(const char * folder);
+
+        void load();
+
+        void flush();
+
+        sf::Texture * get_texture();
+    };
+
     extern std::map<const char *, sf::Texture *> textures;
+    extern std::vector<SpriteCatalog *> sprites;
 
     namespace ui {
         extern const char * INTERFACE_TEXTURE;
         extern const char * ENTITY_PANEL_TEXTURE;
         extern const char * MINIMAP_PANEL_TEXTURE;
 
-        extern const char * BACK_COMMAND_TEXTURE;
-
-        extern const char * BUILD_COLLECTORS_TEXTURE;
-        extern const char * BUILD_FARM_TEXTURE;
-
-        extern const char * MOVE_COMMAND_TEXTURE;
+        extern const char * COMMAND_BUTTONS_TEXTURE;
 
         extern const char * SELECT_BOX_TEXTURE;
         extern const char * MINIMAP_RETICLE_TEXTURE;
@@ -39,7 +49,12 @@ namespace resources {
 
     namespace structure {
         extern const char * CASTLE_TEXTURE;
-        extern const char * FARM_TEXTURE;
+
+        extern SpriteCatalog FARM;
+        extern SpriteCatalog GOLD_MINE;
+        extern SpriteCatalog METAL_MINE;
+        extern SpriteCatalog CRYSTAL_HARVESTER;
+        extern SpriteCatalog OIL_DRILL;
     }
 
     namespace resource {

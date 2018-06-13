@@ -11,7 +11,12 @@ World::World(char *map_path, char *spawn_path) {
     resources::load(resources::terrain::TERRAIN_TEXTURES);
 
     resources::load(resources::structure::CASTLE_TEXTURE);
-    resources::load(resources::structure::FARM_TEXTURE);
+
+    resources::structure::FARM.load();
+    resources::structure::GOLD_MINE.load();
+    resources::structure::METAL_MINE.load();
+    resources::structure::CRYSTAL_HARVESTER.load();
+    resources::structure::OIL_DRILL.load();
 
     resources::load(resources::resource::GOLD_TEXTURE);
     resources::load(resources::resource::TREE_TEXTURE);
@@ -250,7 +255,7 @@ void World::update() {
                 break;
             }
         }
-        if(!overlaps_tile_entity) {
+        if(!overlaps_tile_entity && COLLECTOR_FOOD < this->held_entity->info.entity_type && this->held_entity->info.entity_type <= COLLECTOR_LAST_VALUE) {
             for (auto &resource : resources) {
                 if (intersectRectRect(vao, &resource->info.vao)) {
                     overlaps_tile_entity = true;

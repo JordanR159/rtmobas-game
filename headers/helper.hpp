@@ -27,6 +27,8 @@
 #include <mem.h>
 #endif
 
+#include "tinydir.hpp"
+
 #include "resource_manager.hpp"
 #include "settings.hpp"
 #include "input_handler.hpp"

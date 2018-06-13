@@ -5,11 +5,11 @@
 #include "helper.hpp"
 
 Farm::Farm(World * world, int type) {
-    this->create_held_entity(world, type, SIZE_OF_FARM, resources::textures[resources::structure::FARM_TEXTURE]);
+    this->create_held_entity(world, type, SIZE_OF_FARM, resources::structure::FARM.get_texture());
 }
 
 Farm::Farm(World * world, int type, int x, int y) {
-    this->create_tile_entity(world, type, x, y, SIZE_OF_FARM, resources::textures[resources::structure::FARM_TEXTURE]);
+    this->create_tile_entity(world, type, x, y, SIZE_OF_FARM, resources::structure::FARM.get_texture());
 }
 
 bool Farm::can_place() {
