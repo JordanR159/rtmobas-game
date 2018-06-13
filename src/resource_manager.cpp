@@ -5,19 +5,58 @@
 #include "helper.hpp"
 
 namespace resources {
+
+    SpriteCatalog::SpriteCatalog(const char * folder) {
+        this->folder_location = folder;
+
+        sprites.emplace_back(this);
+    }
+
+    void SpriteCatalog::load() {
+        tinydir_dir dir;
+
+        tinydir_open(&dir, this->folder_location);
+
+        sf::Texture * texture;
+
+        while(dir.has_next) {
+            tinydir_file file;
+            tinydir_readfile(&dir, &file);
+
+            if(!file.is_dir) {
+                texture = new(rpmalloc(sizeof(sf::Texture))) sf::Texture();
+
+                texture->loadFromFile(file.path);
+
+                this->catalog.emplace_back(texture);
+            }
+            tinydir_next(&dir);
+        }
+        tinydir_close(&dir);
+    }
+
+    void SpriteCatalog::flush() {
+        for(auto &item : this->catalog) {
+            item->~Texture();
+            rpfree(item);
+        }
+
+        this->catalog.clear();
+    }
+
+    sf::Texture * SpriteCatalog::get_texture() {
+        return this->catalog.at(rand() % (this->catalog.size()));
+    }
+
     std::map<const char *, sf::Texture *> textures;
+    std::vector<SpriteCatalog *> sprites;
 
     namespace ui {
         const char * INTERFACE_TEXTURE = "../resources/textures/interface_panels.png";
         const char * ENTITY_PANEL_TEXTURE = "../resources/textures/entity_panel.png";
         const char * MINIMAP_PANEL_TEXTURE = "../resources/textures/minimap_panel.png";
 
-        const char * BACK_COMMAND_TEXTURE = "../resources/textures/back_command.png";
-
-        const char * BUILD_COLLECTORS_TEXTURE = "../resources/textures/build_collectors.png";
-        const char * BUILD_FARM_TEXTURE = "../resources/textures/build_farm.png";
-
-        const char * MOVE_COMMAND_TEXTURE = "../resources/textures/move_command.png";
+        const char * COMMAND_BUTTONS_TEXTURE = "../resources/textures/command_buttons.png";
 
         const char * SELECT_BOX_TEXTURE = "../resources/textures/select_box.png";
         const char * MINIMAP_RETICLE_TEXTURE = "../resources/textures/reticle.png";
@@ -34,7 +73,12 @@ namespace resources {
 
     namespace structure {
         const char * CASTLE_TEXTURE = "../resources/sprites/castle.png";
-        const char * FARM_TEXTURE = "../resources/sprites/food_collector.png";
+
+        SpriteCatalog FARM("../resources/sprites/farm/");
+        SpriteCatalog GOLD_MINE("../resources/sprites/gold_mine/");
+        SpriteCatalog METAL_MINE("../resources/sprites/metal_mine/");
+        SpriteCatalog CRYSTAL_HARVESTER("../resources/sprites/crystal_harvester/");
+        SpriteCatalog OIL_DRILL("../resources/sprites/oil_drill/");
     }
 
     namespace resource {
@@ -108,5 +152,9 @@ namespace resources {
         }
 
         textures.clear();
+
+        for(auto &item : sprites) {
+            item->flush();
+        }
     }
 }

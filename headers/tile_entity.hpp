@@ -33,6 +33,8 @@
 /** Defines of Structure sizes, expressed as "x, y" */
 #define SIZE_OF_CASTLE 3, 3
 #define SIZE_OF_FARM 2, 2
+#define SIZE_OF_LOGGER 3, 3
+#define SIZE_OF_MINE 3, 3
 
 /** Building Types */
 #define PRODUCER_CASTLE PRODUCER_NEW_VALUE(0)
@@ -46,6 +48,8 @@
 
 /** Collector Types */
 #define COLLECTOR_FOOD COLLECTOR_NEW_VALUE(0)
+
+/** Technically the real collectors */
 #define COLLECTOR_GOLD COLLECTOR_NEW_VALUE(1)
 #define COLLECTOR_WOOD COLLECTOR_NEW_VALUE(2)
 #define COLLECTOR_METAL COLLECTOR_NEW_VALUE(3)
@@ -154,7 +158,10 @@ class Collector : public Structure {
 public:
     Resource * resource;
 
+    Collector(World *, int);
     Collector(World *, int, int, int);
+
+    bool can_place();
 };
 
 class Castle : public Structure {

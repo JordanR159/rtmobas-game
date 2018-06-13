@@ -4,21 +4,48 @@
 
 #include "helper.hpp"
 
-Collector::Collector(World * world, int type, int x, int y) {
-    sf::Texture * texture;
+using namespace resources::structure;
 
-    int w, h;
-
-    switch(type) {
-        /* case STRUCTURE_COLLECTOR_FARM:
-            break; */
-        default:
-            texture = resources::textures[resources::structure::FARM_TEXTURE];
-            w = 2;
-            h = 2;
-            this->info.max_lifepoints = 1000;
-    }
-
-    this->create_tile_entity(world, type, x, y, w, h, texture);
+Collector::Collector(World * world, int type) {
     this->rally_set = false;
+    switch(type) {
+        case COLLECTOR_GOLD:
+            this->create_held_entity(world, type, SIZE_OF_MINE, GOLD_MINE.get_texture());
+            break;
+        case COLLECTOR_METAL:
+            this->create_held_entity(world, type, SIZE_OF_MINE, METAL_MINE.get_texture());
+            break;
+        case COLLECTOR_CRYSTAL:
+            this->create_held_entity(world, type, SIZE_OF_MINE, CRYSTAL_HARVESTER.get_texture());
+            break;
+        case COLLECTOR_OIL:
+            this->create_held_entity(world, type, SIZE_OF_MINE, OIL_DRILL.get_texture());
+            break;
+        default:
+            this->create_held_entity(world, type, SIZE_OF_LOGGER, nullptr);
+    }
+}
+
+Collector::Collector(World * world, int type, int x, int y) {
+    this->rally_set = false;
+    switch(type) {
+         case COLLECTOR_GOLD:
+             this->create_tile_entity(world, type, x, y, SIZE_OF_MINE, GOLD_MINE.get_texture());
+            break;
+        case COLLECTOR_METAL:
+            this->create_tile_entity(world, type, x, y, SIZE_OF_MINE, METAL_MINE.get_texture());
+            break;
+        case COLLECTOR_CRYSTAL:
+            this->create_tile_entity(world, type, x, y, SIZE_OF_MINE, CRYSTAL_HARVESTER.get_texture());
+            break;
+        case COLLECTOR_OIL:
+            this->create_tile_entity(world, type, x, y, SIZE_OF_MINE, OIL_DRILL.get_texture());
+            break;
+        default:
+            this->create_tile_entity(world, type, x, y, SIZE_OF_LOGGER, nullptr);
+    }
+}
+
+bool Collector::can_place() {
+    return true;
 }

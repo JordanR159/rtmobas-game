@@ -8,17 +8,20 @@
 #include "helper.hpp"
 
 /** Major panel type macros */
-#define MINIMAP_PANEL 1
+#define MINIMAP_PANEL -1
 #define BASE_PANEL 2
 #define BASE_BUILD_COLLECTORS 3
 
-/** Macros for generic buttons on the command panel */
-#define NULL_BUTTON 100
-#define BACK_BUTTON 101
+#define WIDTH_OF_BUTTON_TEXTURE 32
 
-/** Macros for unique buttons on the command panel */
-#define BUILD_COLLECTORS 200
-#define BUILD_FARM 201
+#define COMMAND_NULL 0
+#define COMMAND_BACK 1
+#define COMMAND_BUILD_COLLECTORS 2
+#define COMMAND_BUILD_FARM 3
+#define COMMAND_BUILD_GOLD_MINE 4
+#define COMMAND_BUILD_METAL_MINE 5
+#define COMMAND_BUILD_CRYSTAL_HARVESTER 6
+#define COMMAND_BUILD_OIL_DRILL 7
 
 #define NUMBER_CONTROL_GROUPS 10
 
@@ -69,8 +72,6 @@ private:
 
     sf::RectangleShape highlight;
 
-    sf::Texture * get_texture();
-
     int get_key();
 
     void press();
@@ -86,8 +87,6 @@ public:
     CommandButton() = default;
     CommandButton(World * world, Panel * parent, int type, int xpos, int ypos, int size);
 
-    void set(int type, int key);
-
     void update();
 
     void set_panel_type(int new_panel_type);
@@ -96,6 +95,8 @@ public:
 class CommandPanel : public Panel {
 private:
 
+    int current_state;
+
     void set_options();
     void clear_options();
 
@@ -103,6 +104,8 @@ public:
     /** Constructors */
     CommandPanel() = default;
     CommandPanel(World * world, Panel * panel, int type, int xpos, int ypos, int size);
+
+    void update();
 
     void set_panel_type(int new_panel_type);
 

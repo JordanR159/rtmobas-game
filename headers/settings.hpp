@@ -35,6 +35,10 @@
 #define KEY_BACK_COMMAND 100
 #define KEY_BUILD_COLLECTORS 101
 #define KEY_BUILD_FARM 102
+#define KEY_BUILD_GOLD_MINE 103
+#define KEY_BUILD_METAL_MINE 104
+#define KEY_BUILD_CRYSTAL_HARVESTER 105
+#define KEY_BUILD_OIL_DRILL 106
 
 class UserInterface;
 class Panel;
@@ -133,9 +137,9 @@ namespace settings {
     };
 
     /** key (integer) -> Key Object for advanced processing */
-    extern std::map<int, Key *> keyboard_mapping;
+    extern std::map<int, std::vector<Key *>> keyboard_mapping;
     /** mouse (integer) -> Key Object for advanced processing */
-    extern std::map<int, Key *> mouse_mapping;
+    extern std::map<int, std::vector<Key *>> mouse_mapping;
 
     extern std::map<int, Key *> input_mapping;
 

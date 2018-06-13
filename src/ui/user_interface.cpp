@@ -11,12 +11,7 @@ UserInterface::UserInterface(World * world, int width, int height) {
     resources::load(resources::ui::ENTITY_PANEL_TEXTURE);
     resources::load(resources::ui::MINIMAP_PANEL_TEXTURE);
 
-    resources::load(resources::ui::BACK_COMMAND_TEXTURE);
-
-    resources::load(resources::ui::BUILD_COLLECTORS_TEXTURE);
-    resources::load(resources::ui::BUILD_FARM_TEXTURE);
-
-    resources::load(resources::ui::MOVE_COMMAND_TEXTURE);
+    resources::load(resources::ui::COMMAND_BUTTONS_TEXTURE);
 
     resources::load(resources::ui::SELECT_BOX_TEXTURE);
     resources::load(resources::ui::MINIMAP_RETICLE_TEXTURE);

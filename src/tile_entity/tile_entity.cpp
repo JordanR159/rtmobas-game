@@ -59,6 +59,7 @@ void TileEntity::create_tile_entity(World * world, int tile_entity_type, int xpo
     this->rally_line[0].color = sf::Color::White;
     this->rally_line[1] = this->rally_line[0];
     this->rally_line[1].color = sf::Color::White;
+    this->rally_set = false;
 
     gen_vao(this->info.vao, this->x_coord * TILE_SIZE, this->y_coord * TILE_SIZE, this->width * TILE_SIZE, this->height * TILE_SIZE, this->info.texture);
 }

@@ -14,11 +14,24 @@ CommandButton::CommandButton(World * world, Panel * parent, int type, int xpos, 
     this->width = size;
     this->height = size;
 
-    this->texture = get_texture();
+    this->texture = resources::textures[resources::ui::COMMAND_BUTTONS_TEXTURE];
 
-    if(this->texture != nullptr) {
-        this->vao = generateVertices(this->x, this->y, width, height, *(this->texture));
-    }
+    this->vao = generateVertices(this->x, this->y, width, height, *(this->texture));
+
+    float texSize = this->texture->getSize().x / WIDTH_OF_BUTTON_TEXTURE;
+
+    float x_tex1 = (this->panel_type % (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
+    float x_tex2 = x_tex1 + texSize;
+
+    float y_tex1 = (this->panel_type / (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
+    float y_tex2 = y_tex1 + texSize;
+
+    std::cout << x_tex1 << " " << x_tex2 << " " << y_tex1 << " " << y_tex2 << " " << this->panel_type << std::endl;
+
+    this->vao[0].texCoords = sf::Vector2f(x_tex1, y_tex1);
+    this->vao[1].texCoords = sf::Vector2f(x_tex1, y_tex2);
+    this->vao[2].texCoords = sf::Vector2f(x_tex2, y_tex2);
+    this->vao[3].texCoords = sf::Vector2f(x_tex2, y_tex1);
 
     this->key = get_key();
 
@@ -30,48 +43,8 @@ CommandButton::CommandButton(World * world, Panel * parent, int type, int xpos, 
     this->pressed = false;
 }
 
-sf::Texture * CommandButton::get_texture() {
-    switch(this->panel_type) {
-        case NULL_BUTTON:
-            return nullptr;
-        case BACK_BUTTON:
-            return resources::textures[resources::ui::BACK_COMMAND_TEXTURE];
-        case BUILD_COLLECTORS:
-            return resources::textures[resources::ui::BUILD_COLLECTORS_TEXTURE];
-        case BUILD_FARM:
-            return resources::textures[resources::ui::BUILD_FARM_TEXTURE];
-        default:
-            return resources::textures[resources::ui::MOVE_COMMAND_TEXTURE];
-    }
-}
-
 int CommandButton::get_key() {
-    switch(this->panel_type) {
-        case NULL_BUTTON:
-            return -1;
-        case BACK_BUTTON:
-            return KEY_BACK_COMMAND;
-        case BUILD_COLLECTORS:
-            return KEY_BUILD_COLLECTORS;
-        case BUILD_FARM:
-            return KEY_BUILD_FARM;
-    }
-}
-
-void CommandButton::set(int type, int key) {
-    this->panel_type = type;
-
-    if(this->panel_type == NULL_BUTTON)
-        return;
-
-    this->key = key;
-
-    sf::Texture * tex = get_texture();
-
-    if(this->texture == nullptr && tex != nullptr)
-        this->vao = generateVertices(this->x, this->y, this->width, this->height, *(this->texture));
-
-    this->texture = tex;
+    return KEY_BACK_COMMAND + this->panel_type - 1;
 }
 
 void CommandButton::press() {
@@ -81,7 +54,7 @@ void CommandButton::press() {
 void CommandButton::click() {
     this->pressed = false;
     switch(this->panel_type) {
-        case BACK_BUTTON:
+        case COMMAND_BACK:
             switch(this->parent->panel_type) {
                 case BASE_BUILD_COLLECTORS:
                     this->parent->set_panel_type(BASE_PANEL);
@@ -90,10 +63,10 @@ void CommandButton::click() {
                     break;
             }
             break;
-        case BUILD_COLLECTORS:
+        case COMMAND_BUILD_COLLECTORS:
             this->parent->set_panel_type(BASE_BUILD_COLLECTORS);
             break;
-        case BUILD_FARM: {
+        case COMMAND_BUILD_FARM: {
 
             this->world->held_entity = new(rpmalloc(sizeof(Farm))) Farm(this->world, COLLECTOR_FOOD);
 
@@ -106,10 +79,8 @@ void CommandButton::click() {
 }
 
 void CommandButton::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    if(this->texture != nullptr) {
-        states.texture = texture;
-        target.draw(this->vao, states);
-    }
+    states.texture = texture;
+    target.draw(this->vao, states);
 
     if(this->pressed) {
         target.draw(highlight);
@@ -117,12 +88,13 @@ void CommandButton::draw(sf::RenderTarget &target, sf::RenderStates states) cons
 }
 
 void CommandButton::update() {
-    if(this->panel_type != NULL_BUTTON) {
+    if(this->panel_type != COMMAND_NULL) {
         if(settings::input_mapping[this->key]->pressed) {
             press();
         }
 
         if(settings::input_mapping[this->key]->clicked) {
+            std::cout << "CLICKED" << std::endl;
             click();
         }
     }
@@ -133,12 +105,20 @@ void CommandButton::set_panel_type(int new_panel_type) {
 
     this->key = get_key();
 
-    sf::Texture * tex = get_texture();
+    float texSize = this->texture->getSize().x / WIDTH_OF_BUTTON_TEXTURE;
 
-    if(this->texture == nullptr && tex != nullptr)
-        this->vao = generateVertices(this->x, this->y, this->width, this->height, *(tex));
+    float x_tex1 = (this->panel_type % (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
+    float x_tex2 = x_tex1 + texSize;
 
-    this->texture = tex;
+    float y_tex1 = (this->panel_type / (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
+    float y_tex2 = y_tex1 + texSize;
+
+    std::cout << x_tex1 << " " << x_tex2 << " " << y_tex1 << " " << y_tex2 << " " << this->panel_type << std::endl;
+
+    this->vao[0].texCoords = sf::Vector2f(x_tex1, y_tex1);
+    this->vao[1].texCoords = sf::Vector2f(x_tex1, y_tex2);
+    this->vao[2].texCoords = sf::Vector2f(x_tex2, y_tex2);
+    this->vao[3].texCoords = sf::Vector2f(x_tex2, y_tex1);
 
     this->pressed = false;
 }

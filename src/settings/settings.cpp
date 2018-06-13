@@ -6,8 +6,8 @@
 
 namespace settings {
 
-    std::map<int, Key *> keyboard_mapping;
-    std::map<int, Key *> mouse_mapping;
+    std::map<int, std::vector<Key *>> keyboard_mapping;
+    std::map<int, std::vector<Key *>> mouse_mapping;
     std::map<int, Key *> input_mapping;
 
     sf::RenderWindow window;
@@ -67,8 +67,7 @@ namespace settings {
 
     Key * get_set_key(const int key_value) {
         if(input_mapping.find(key_value) == input_mapping.end()) {
-            void * mem = rpmalloc(sizeof(settings::Key));
-            Key * key = new(mem) Key();
+            Key * key = new(rpmalloc(sizeof(settings::Key))) Key();
 
             input_mapping[key_value] = key;
 
@@ -77,11 +76,11 @@ namespace settings {
         return nullptr;
     }
 
-    void set_key(const int key_value, std::map<int, Key *> * mapping, int code) {
+    void set_key(const int key_value, std::map<int, std::vector<Key *>> * mapping, int code) {
         Key * key = get_set_key(key_value);
 
         if(key != nullptr)
-            (*mapping)[code] = key;
+            (*mapping)[code].emplace_back(key);
     }
 
     void init() {
@@ -112,23 +111,23 @@ namespace settings {
         Key * key;
 
         if((key = get_set_key(KEY_SCROLL_UP)) != nullptr) {
-            keyboard_mapping[sf::Keyboard::W] = key;
-            keyboard_mapping[sf::Keyboard::Up] = key;
+            keyboard_mapping[sf::Keyboard::W].emplace_back(key);
+            keyboard_mapping[sf::Keyboard::Up].emplace_back(key);
         }
 
         if((key = get_set_key(KEY_SCROLL_DOWN)) != nullptr) {
-            keyboard_mapping[sf::Keyboard::S] = key;
-            keyboard_mapping[sf::Keyboard::Down] = key;
+            keyboard_mapping[sf::Keyboard::S].emplace_back(key);
+            keyboard_mapping[sf::Keyboard::Down].emplace_back(key);
         }
 
         if((key = get_set_key(KEY_SCROLL_LEFT)) != nullptr) {
-            keyboard_mapping[sf::Keyboard::A] = key;
-            keyboard_mapping[sf::Keyboard::Left] = key;
+            keyboard_mapping[sf::Keyboard::A].emplace_back(key);
+            keyboard_mapping[sf::Keyboard::Left].emplace_back(key);
         }
 
         if((key = get_set_key(KEY_SCROLL_RIGHT)) != nullptr) {
-            keyboard_mapping[sf::Keyboard::D] = key;
-            keyboard_mapping[sf::Keyboard::Right] = key;
+            keyboard_mapping[sf::Keyboard::D].emplace_back(key);
+            keyboard_mapping[sf::Keyboard::Right].emplace_back(key);
         }
 
         set_key(MOUSE_SELECT_CLICK, &mouse_mapping, sf::Mouse::Left);
@@ -137,6 +136,15 @@ namespace settings {
         set_key(KEY_BACK_COMMAND, &keyboard_mapping, sf::Keyboard::B);
         set_key(KEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
         set_key(KEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
+        set_key(KEY_BUILD_GOLD_MINE, &keyboard_mapping, sf::Keyboard::G);
+        set_key(KEY_BUILD_METAL_MINE, &keyboard_mapping, sf::Keyboard::M);
+
+        if((key = get_set_key(KEY_BUILD_CRYSTAL_HARVESTER)) != nullptr) {
+            keyboard_mapping[sf::Keyboard::C].emplace_back(key);
+            keyboard_mapping[sf::Keyboard::H].emplace_back(key);
+        }
+
+        set_key(KEY_BUILD_OIL_DRILL, &keyboard_mapping, sf::Keyboard::O);
 
         set_key(KEY_CONTROL_ZERO, &keyboard_mapping, sf::Keyboard::Num0);
         set_key(KEY_CONTROL_ONE, &keyboard_mapping, sf::Keyboard::Num1);
@@ -204,11 +212,17 @@ namespace settings {
         bool events = false;
 
         for(auto &iter : keyboard_mapping) {
-            iter.second->update();
+
+            for(auto &key : iter.second) {
+                key->update();
+            }
         }
 
         for(auto &iter : mouse_mapping) {
-            iter.second->update();
+
+            for(auto &key : iter.second) {
+                key->update();
+            }
         }
 
         while(window.pollEvent(event)) {
@@ -219,32 +233,40 @@ namespace settings {
                 window.close();
             }
 
-            if(event.type == sf::Event::KeyPressed && keyboard_mapping.find(event.key.code) != keyboard_mapping.end())
-                keyboard_mapping[event.key.code]->press();
+            if(event.type == sf::Event::KeyPressed && keyboard_mapping.find(event.key.code) != keyboard_mapping.end()) {
 
-            if(event.type == sf::Event::KeyReleased && keyboard_mapping.find(event.key.code) != keyboard_mapping.end())
-                keyboard_mapping[event.key.code]->release();
+                for(auto &key : keyboard_mapping[event.key.code])
+                    key->press();
+            }
+
+            if(event.type == sf::Event::KeyReleased && keyboard_mapping.find(event.key.code) != keyboard_mapping.end()) {
+
+                for(auto &key : keyboard_mapping[event.key.code])
+                    key->release();
+            }
 
             if(event.type == sf::Event::MouseButtonPressed && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
 
-                auto * key = mouse_mapping[event.mouseButton.button];
-
-                key->press();
-                key->mouse_x = event.mouseButton.x;
-                key->mouse_y = event.mouseButton.y;
-                sf::Vector2f adjusted = alignMouseCursor(key->mouse_x, key->mouse_y);
-                key->adjusted_mouse_x = adjusted.x;
-                key->adjusted_mouse_y = adjusted.y;
-                key->dragging = false;
+                for(auto &key : mouse_mapping[event.mouseButton.button]) {
+                    key->press();
+                    key->mouse_x = event.mouseButton.x;
+                    key->mouse_y = event.mouseButton.y;
+                    sf::Vector2f adjusted = alignMouseCursor(key->mouse_x, key->mouse_y);
+                    key->adjusted_mouse_x = adjusted.x;
+                    key->adjusted_mouse_y = adjusted.y;
+                    key->dragging = false;
+                }
             }
 
             if(event.type == sf::Event::MouseButtonReleased && mouse_mapping.find(event.mouseButton.button) != mouse_mapping.end()) {
 
-                auto * key = mouse_mapping[event.mouseButton.button];
+                for(auto &key : mouse_mapping[event.mouseButton.button]) {
 
-                key->release();
-                key->mouse_x = event.mouseButton.x;
-                key->mouse_y = event.mouseButton.y;
+                    key->release();
+
+                    key->mouse_x = event.mouseButton.x;
+                    key->mouse_y = event.mouseButton.y;
+                }
             }
 
             /* Translates mouse wheel scroll into a zoom for the world view */

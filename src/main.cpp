@@ -129,7 +129,7 @@ int main()
         window.setView(world_view);
         window.draw(world);
 
-        if(mouse_mapping[Mouse::Left]->dragging) {
+        if(input_mapping[MOUSE_SELECT_CLICK]->dragging) {
             window.draw(*selector);
         }
 
