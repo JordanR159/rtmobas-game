@@ -5,13 +5,14 @@
 #include "helper.hpp"
 
 /** NOTE - xposition and yposition are in units of pixels */
-Unit::Unit(double x, double y, int type) {
+Unit::Unit(float x, float y, int type) {
     sf::Texture * texture;
     switch(type) {
         case Unit::UNIT_BUILDER:
             texture = resources::textures[resources::unit::PEASANT_TEXTURE];
-            this->width = 16;
+            this->width = 8;
             this->height = 32;
+            this->speed = 0.75f;
             this->info.max_lifepoints = INT32_MAX;
             break;
         default:
@@ -23,8 +24,14 @@ Unit::Unit(double x, double y, int type) {
     this->y_position = y;
     this->info.curr_lifepoints = this->info.max_lifepoints;
 
-    this->info.vao = generateVertices(static_cast<float>(this->x_position),
-                                 static_cast<float>(this->y_position),
-                                 static_cast<float>(this->width),
-                                 static_cast<float>(this->height), *texture);
+    this->info.vao = generateVertices(this->x_position, this->y_position, this->width, this->height, *texture);
+
+    sf::Vector2f pivot(this->x_position + this->width/2, this->y_position + this->height/2);
+    sf::Vector2f * points = rotateRectangle(pivot, &this->info.vao, M_PI_4);
+    this->info.vao[0].position = points[0];
+    this->info.vao[1].position = points[1];
+    this->info.vao[2].position= points[2];
+    this->info.vao[3].position = points[3];
+
+    rpfree(points);
 }

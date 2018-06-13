@@ -28,8 +28,8 @@ int main()
 
         Vector2f movement = Vector2f(0.0, 0.0);
 
-        if(input_mapping[MOUSE_CLICK]->pressed) {
-            Key *mouse = input_mapping[MOUSE_CLICK];
+        if(input_mapping[MOUSE_SELECT_CLICK]->pressed) {
+            Key *mouse = input_mapping[MOUSE_SELECT_CLICK];
             int curr_x = Mouse::getPosition(window).x;
             int curr_y = Mouse::getPosition(window).y;
             if(!mouse->dragging)
@@ -43,29 +43,17 @@ int main()
                 /** Scaling accomadates for fact that world view height does not match window height */
                 float height_scale = world_view.getSize().y / (window_height * 0.75f * window_zoom);
 
-                /** Rotates center to simplify translation between world view and window coordinates */
-                Vector2f center;
-
-                rotate(center, world_view.getCenter().x, world_view.getCenter().y, -M_PI_4);
-
-                /** The pivot point for when the selection box is rotated. Always location of initial click */
-                auto start_x = int(window_zoom * mouse->mouse_x + center.x - window_zoom * window_width/2.0);
-                auto start_y = int(window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height);
-
-                /** Offset (top left point) for the selection box so that it appears in the correct area */
-                Vector2f pivot;
-                rotate(pivot, start_x, start_y, M_PI_4);
-
                 /** Length of the box, adjusted to account for scaling differences */
                 Vector2f length((curr_x - mouse->mouse_x) * window_zoom, (curr_y - mouse->mouse_y) * window_zoom * height_scale);
 
                 /** Rotates and scales a box about the pivot to match orientation of window */
-                VertexArray box = generateVertices(pivot.x, pivot.y, length.x, length.y);
-                Vector2f *points = rotateRectangle(pivot, &box, M_PI_4);
+                VertexArray box = generateVertices(mouse->adjusted_mouse_x, mouse->adjusted_mouse_y, length.x, length.y);
+                Vector2f *points = rotateRectangle(Vector2f(mouse->adjusted_mouse_x, mouse->adjusted_mouse_y), &box, M_PI_4);
                 selector->select_box[0].position = points[0];
                 selector->select_box[1].position = points[1];
                 selector->select_box[2].position = points[2];
                 selector->select_box[3].position = points[3];
+                rpfree(points);
             }
         }
 
@@ -92,27 +80,26 @@ int main()
             }
         }
 
-        if(input_mapping[MOUSE_CLICK]->clicked) {
-            Key *mouse = input_mapping[MOUSE_CLICK];
+        if(input_mapping[MOUSE_SELECT_CLICK]->clicked) {
+            Key *mouse = input_mapping[MOUSE_SELECT_CLICK];
             if(mouse->dragging) {
                 world.selectEntities(selector->select_box);
                 mouse->dragging = false;
             }
             else {
-                /** Scaling accomadates for fact that world view height does not match window height */
-                float height_scale = world_view.getSize().y / (window_height * 0.75f * window_zoom);
+                world.selectEntity(Vector2f(mouse->adjusted_mouse_x, mouse->adjusted_mouse_y));
+            }
+        }
 
-                /** Rotates center to simplify translation between world view and window coordinates */
-                Vector2f center;
-                rotate(center, world_view.getCenter().x, world_view.getCenter().y, -M_PI_4);
+        if(input_mapping[MOUSE_COMMAND_CLICK]->clicked) {
+            Key *mouse = input_mapping[MOUSE_COMMAND_CLICK];
 
-                /** The pivot point for when the selection box is rotated. Always location of initial click */
-                auto start_x = window_zoom * mouse->mouse_x + center.x - window_zoom * window_width / 2.0f;
-                auto start_y = window_zoom * mouse->mouse_y * height_scale + center.y - window_zoom * window_height;
+            for(auto &entity : selector->selected_entities) {
+                entity->rightClickAction(Vector2f(mouse->adjusted_mouse_x, mouse->adjusted_mouse_y));
+            }
 
-                Vector2f point;
-                rotate(point, start_x, start_y, M_PI_4);
-                world.selectEntity(point);
+            for(auto &entity : selector->selected_tile_entities) {
+                entity->rightClickAction(Vector2f(mouse->adjusted_mouse_x, mouse->adjusted_mouse_y));
             }
         }
 

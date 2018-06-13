@@ -131,26 +131,27 @@ namespace settings {
             keyboard_mapping[sf::Keyboard::Right] = key;
         }
 
-        set_key(MOUSE_CLICK, &mouse_mapping, sf::Mouse::Left);
+        set_key(MOUSE_SELECT_CLICK, &mouse_mapping, sf::Mouse::Left);
+        set_key(MOUSE_COMMAND_CLICK, &mouse_mapping, sf::Mouse::Right);
 
         set_key(KEY_BACK_COMMAND, &keyboard_mapping, sf::Keyboard::B);
         set_key(KEY_BUILD_COLLECTORS, &keyboard_mapping, sf::Keyboard::C);
         set_key(KEY_BUILD_FARM, &keyboard_mapping, sf::Keyboard::F);
 
-        set_key(KEY_ZERO, &keyboard_mapping, sf::Keyboard::Num0);
-        set_key(KEY_ONE, &keyboard_mapping, sf::Keyboard::Num1);
-        set_key(KEY_TWO, &keyboard_mapping, sf::Keyboard::Num2);
-        set_key(KEY_THREE, &keyboard_mapping, sf::Keyboard::Num3);
-        set_key(KEY_FOUR, &keyboard_mapping, sf::Keyboard::Num4);
-        set_key(KEY_FIVE, &keyboard_mapping, sf::Keyboard::Num5);
-        set_key(KEY_SIX, &keyboard_mapping, sf::Keyboard::Num6);
-        set_key(KEY_SEVEN, &keyboard_mapping, sf::Keyboard::Num7);
-        set_key(KEY_EIGHT, &keyboard_mapping, sf::Keyboard::Num8);
-        set_key(KEY_NINE, &keyboard_mapping, sf::Keyboard::Num9);
+        set_key(KEY_CONTROL_ZERO, &keyboard_mapping, sf::Keyboard::Num0);
+        set_key(KEY_CONTROL_ONE, &keyboard_mapping, sf::Keyboard::Num1);
+        set_key(KEY_CONTROL_TWO, &keyboard_mapping, sf::Keyboard::Num2);
+        set_key(KEY_CONTROL_THREE, &keyboard_mapping, sf::Keyboard::Num3);
+        set_key(KEY_CONTROL_FOUR, &keyboard_mapping, sf::Keyboard::Num4);
+        set_key(KEY_CONTROL_FIVE, &keyboard_mapping, sf::Keyboard::Num5);
+        set_key(KEY_CONTROL_SIX, &keyboard_mapping, sf::Keyboard::Num6);
+        set_key(KEY_CONTROL_SEVEN, &keyboard_mapping, sf::Keyboard::Num7);
+        set_key(KEY_CONTROL_EIGHT, &keyboard_mapping, sf::Keyboard::Num8);
+        set_key(KEY_CONTROL_NINE, &keyboard_mapping, sf::Keyboard::Num9);
 
-        set_key(KEY_CONTROL, &keyboard_mapping, sf::Keyboard::LControl);
-        set_key(KEY_SHIFT, &keyboard_mapping, sf::Keyboard::LShift);
-        set_key(KEY_ALT, &keyboard_mapping, sf::Keyboard::LAlt);
+        set_key(KEY_CREATE_CONTROL, &keyboard_mapping, sf::Keyboard::LControl);
+        set_key(KEY_ADD_CONTROL, &keyboard_mapping, sf::Keyboard::LShift);
+        set_key(KEY_REMOVE_CONTROL, &keyboard_mapping, sf::Keyboard::LAlt);
     }
 
     void initMinimap(UserInterface * interfaces) {
@@ -231,6 +232,9 @@ namespace settings {
                 key->press();
                 key->mouse_x = event.mouseButton.x;
                 key->mouse_y = event.mouseButton.y;
+                sf::Vector2f adjusted = alignMouseCursor(key->mouse_x, key->mouse_y);
+                key->adjusted_mouse_x = adjusted.x;
+                key->adjusted_mouse_y = adjusted.y;
                 key->dragging = false;
             }
 

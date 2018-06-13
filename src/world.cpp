@@ -103,10 +103,22 @@ World::~World() {
 }
 
 void World::selectEntity(sf::Vector2f point) {
+    for(auto &entity : selector->selected_entities) {
+        entity->info.selected = false;
+    }
+    selector->selected_entities.clear();
     for(auto &entity : selector->selected_tile_entities) {
         entity->info.selected = false;
     }
     selector->selected_tile_entities.clear();
+
+    for(auto &unit : units) {
+        if (intersectPointRect(point, &unit->info.vao)) {
+            selector->selected_entities.emplace_back(unit);
+            unit->info.selected = true;
+            return;
+        }
+    }
     for(auto &structure : structures) {
         if (intersectPointRect(point, &structure->info.vao)) {
             selector->selected_tile_entities.emplace_back(structure);
@@ -124,22 +136,42 @@ void World::selectEntity(sf::Vector2f point) {
 }
 
 void World::selectEntities(sf::VertexArray points) {
+    for(auto &entity : selector->selected_entities) {
+        entity->info.selected = false;
+    }
+    selector->selected_entities.clear();
     for (auto &entity : selector->selected_tile_entities) {
         entity->info.selected = false;
     }
     selector->selected_tile_entities.clear();
+    bool selection_made = false;
+
+    for (auto &unit : units) {
+        if (intersectRectRect(&points, &unit->info.vao)) {
+            selector->selected_entities.emplace_back(unit);
+            unit->info.selected = true;
+            selection_made = true;
+        }
+    }
+    if(selection_made) return;
+
     for (auto &structure : structures) {
         if (intersectRectRect(&points, &structure->info.vao)) {
             selector->selected_tile_entities.emplace_back(structure);
             structure->info.selected = true;
+            selection_made = true;
         }
     }
+    if(selection_made) return;
+
     for (auto &resource : resources) {
         if (intersectRectRect(&points, &resource->info.vao)) {
             selector->selected_tile_entities.emplace_back(resource);
             resource->info.selected = true;
+            selection_made = true;
         }
     }
+    if(selection_made) return;
 }
 
 void World::spawnEntities(char *spawn_path) {
@@ -199,6 +231,16 @@ void World::spawnEntities(char *spawn_path) {
                     }
                     break;
                 default:
+                    mem = rpmalloc(sizeof(Unit));
+
+                    this->units.emplace_back(new(mem) Unit(team1_x * TILE_SIZE, team1_y * TILE_SIZE, type));
+
+                    team2_x = static_cast<int>(this->world_width_tiles * TILE_SIZE - team1_x * TILE_SIZE - this->units.back()->width);
+                    team2_y = static_cast<int>(this->world_height_tiles * TILE_SIZE - team1_y * TILE_SIZE - this->units.back()->height);
+
+                    mem = rpmalloc(sizeof(Unit));
+
+                    this->units.emplace_back(new(mem) Unit(team2_x, team2_y, type));
                     break;
             }
 
@@ -211,19 +253,7 @@ void World::update() {
     if(this->held_entity != nullptr) {
         sf::Vector2i mouse = sf::Mouse::getPosition(settings::window);
 
-        /** Scaling accomadates for fact that world view height does not match window height */
-        float height_scale = settings::world_view.getSize().y / (settings::window_height * 0.75f * settings::window_zoom);
-
-        /** Rotates center to simplify translation between world view and window coordinates */
-        sf::Vector2f center;
-        rotate(center, settings::world_view.getCenter().x, settings::world_view.getCenter().y, -M_PI_4);
-
-        /** The pivot point for when the selection box is rotated. Always location of initial click */
-        auto start_x = settings::window_zoom * mouse.x + center.x - settings::window_zoom * settings::window_width / 2.0f;
-        auto start_y = settings::window_zoom * mouse.y * height_scale + center.y - settings::window_zoom * settings::window_height;
-
-        sf::Vector2f float_point;
-        rotate(float_point, start_x, start_y, M_PI_4);
+        sf::Vector2f float_point = alignMouseCursor(mouse.x, mouse.y);
 
         clamp_vec(float_point, 0, 0, (this->world_width_tiles - this->held_entity->width) * TILE_SIZE, (this->world_height_tiles - this->held_entity->height) * TILE_SIZE);
 
@@ -261,7 +291,7 @@ void World::update() {
 
         this->held_entity->info.selected = overlaps_tile_entity || !this->held_entity->can_place();
 
-        if(settings::input_mapping[MOUSE_CLICK]->clicked && !this->held_entity->info.selected) {
+        if(settings::input_mapping[MOUSE_SELECT_CLICK]->clicked && !this->held_entity->info.selected) {
 
             this->held_entity->claim_tiles();
 
@@ -281,6 +311,8 @@ void World::update() {
         //std::cout << point.x << " " << point.y << " " << point.x / TILE_SIZE << " " << point.y / TILE_SIZE << std::endl;
     }
 
+    for(auto &unit : units)
+        unit->update(this);
 }
 
 void World::draw(sf::RenderTarget &target, sf::RenderStates states) const {

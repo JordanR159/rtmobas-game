@@ -10,6 +10,7 @@ Farm::Farm(World * world, int type) {
 
 Farm::Farm(World * world, int type, int x, int y) {
     this->create_tile_entity(world, type, x, y, SIZE_OF_FARM, resources::textures[resources::structure::FARM_TEXTURE]);
+    this->rally_set = false;
 }
 
 bool Farm::can_place() {

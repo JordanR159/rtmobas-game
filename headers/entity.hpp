@@ -18,14 +18,31 @@ public:
     entity_info info;
 
     /** Position of entity on the map */
-    double x_position;
-    double y_position;
+    float x_position;
+    float y_position;
 
     /** Size of rendering box for entity */
-    double width;
-    double height;
+    float width;
+    float height;
+
+    /** Point that entity is moving towards */
+    float x_destination;
+    float y_destination;
+
+    /** Distance that unit moves on each update */
+    float speed;
+
+    /** Direction that unit is moving in, < 90 is towards bottom left, > 90 and < 180 is towards bottom right, and so on */
+    double travel_direction;
+
+    bool moving;
 
     static const int UNIT = 5;
+
+    void moveCommand(sf::Vector2f point);
+    void rightClickAction(sf::Vector2f point);
+
+    void update(World * world);
 };
 
 class Unit : public Entity {
@@ -42,7 +59,7 @@ public:
 
     /** Constructors */
     Unit() = default;
-    Unit(double, double, int type);
+    Unit(float x, float y, int type);
 };
 
 

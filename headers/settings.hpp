@@ -9,27 +9,29 @@
 
 #define SETTINGS_MOUSE_DRAG_TOLERANCE 10
 
-#define KEY_ZERO 0
-#define KEY_ONE 1
-#define KEY_TWO 2
-#define KEY_THREE 3
-#define KEY_FOUR 4
-#define KEY_FIVE 5
-#define KEY_SIX 6
-#define KEY_SEVEN 7
-#define KEY_EIGHT 8
-#define KEY_NINE 9
+#define KEY_CONTROL_ZERO 0
+#define KEY_CONTROL_ONE 1
+#define KEY_CONTROL_TWO 2
+#define KEY_CONTROL_THREE 3
+#define KEY_CONTROL_FOUR 4
+#define KEY_CONTROL_FIVE 5
+#define KEY_CONTROL_SIX 6
+#define KEY_CONTROL_SEVEN 7
+#define KEY_CONTROL_EIGHT 8
+#define KEY_CONTROL_NINE 9
 
-#define KEY_SCROLL_UP 11
-#define KEY_SCROLL_DOWN 12
-#define KEY_SCROLL_LEFT 13
-#define KEY_SCROLL_RIGHT 14
+#define KEY_SCROLL_UP 10
+#define KEY_SCROLL_DOWN 11
+#define KEY_SCROLL_LEFT 12
+#define KEY_SCROLL_RIGHT 13
 
-#define KEY_CONTROL 20
-#define KEY_SHIFT 21
-#define KEY_ALT 22
+#define KEY_CREATE_CONTROL 20
+#define KEY_ADD_CONTROL 21
+#define KEY_REMOVE_CONTROL 22
 
-#define MOUSE_CLICK 10
+#define MOUSE_SELECT_CLICK 30
+#define MOUSE_COMMAND_CLICK 31
+
 #define KEY_BACK_COMMAND 100
 #define KEY_BUILD_COLLECTORS 101
 #define KEY_BUILD_FARM 102
@@ -101,6 +103,10 @@ namespace settings {
         /** Used for the Mouse Key Event for determining location during click */
         int mouse_x = 0;
         int mouse_y = 0;
+
+        /** Used to determine location of a click relative to the world */
+        float adjusted_mouse_x = 0;
+        float adjusted_mouse_y = 0;
 
         /**
          * Used for the Mouse Key Event for determining if the mouse has moved

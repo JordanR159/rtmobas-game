@@ -9,6 +9,7 @@ const char * SETTINGS_LOCATION = "./settings.cfg";
 
 using namespace sf;
 using namespace std;
+using namespace settings;
 
 Selector * selector = new(rpmalloc(sizeof(Selector))) Selector();
 
@@ -107,6 +108,11 @@ void rotate(Vector2f &vec, float x, float y, double angle) {
     vec.y = static_cast<float>(x * sin(angle) + y * cos(angle));
 }
 
+void rotate(Vector2i &vec, float x, float y, double angle) {
+    vec.x = static_cast<int>(x * cos(angle) - y * sin(angle));
+    vec.y = static_cast<int>(x * sin(angle) + y * cos(angle));
+}
+
 void clamp_vec(Vector2f &vec, float x, float y, float width, float height) {
     vec.x = clamp<float>(vec.x, x, x + width);
     vec.y = clamp<float>(vec.y, y, y + height);
@@ -127,7 +133,7 @@ Vector2f * rotateRectangle(Vector2f pivot, VertexArray * rect, double angle) {
 
 bool intersectPointRect(Vector2f point, VertexArray *quad){
     Vector2f difference = (*quad)[1].position - (*quad)[0].position;
-    double angle = (difference.y == 0) ? 0 : atan(difference.x/difference.y);
+    double angle = (difference.x == 0) ? 0 : atan(fabs(difference.y)/fabs(difference.x));
     Vector2f * points;
     if(angle == 0) {
         points = (Vector2f *)rpmalloc(sizeof(Vector2f) * 4);
@@ -159,4 +165,22 @@ bool intersectRectRect(VertexArray *quadOne, VertexArray *quadTwo){
         if(intersectPointRect((*quadTwo)[i].position, quadOne))
             return true;
     return false;
+}
+
+Vector2f alignMouseCursor(int x_position, int y_position) {
+    /** Scaling accomadates for fact that world view height does not match window height */
+    float height_scale = world_view.getSize().y / (window_height * 0.75f * window_zoom);
+
+    /** Rotates center to simplify translation between world view and window coordinates */
+    Vector2f center;
+    rotate(center, world_view.getCenter().x, world_view.getCenter().y, -M_PI_4);
+
+    /** The pivot point for when the selection box is rotated. Always location of initial click */
+    auto start_x = window_zoom * x_position + center.x - window_zoom * window_width / 2.0f;
+    auto start_y = window_zoom * y_position * height_scale + center.y - window_zoom * window_height;
+
+    Vector2f point;
+    rotate(point, start_x, start_y, M_PI_4);
+
+    return point;
 }

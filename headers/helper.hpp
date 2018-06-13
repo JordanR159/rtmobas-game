@@ -59,6 +59,7 @@ sf::VertexArray generateVertices(float xposition, float yposition, float xsize, 
 
 /** Rotate the coordinates (x,y) by the angle (in radians) and set the value to vec. */
 void rotate(sf::Vector2f &vec, float x, float y, double angle);
+void rotate(sf::Vector2i &vec, float x, float y, double angle);
 
 /** Clamp vec such that x <= vec.x <= x + width and y <= vec.y <= y + height */
 void clamp_vec(sf::Vector2f &vec, float x, float y, float width, float height);
@@ -77,5 +78,7 @@ bool intersectPointRect(sf::Vector2f point, sf::VertexArray *quad);
 
 /** Determines if two rectangles intersect, regardless of rotation on the rectangles */
 bool intersectRectRect(sf::VertexArray *quadOne, sf::VertexArray *quadTwo);
+
+sf::Vector2f alignMouseCursor(int x_position, int y_position);
 
 #endif //RTMOBAS_GAME_HELPER_HPP

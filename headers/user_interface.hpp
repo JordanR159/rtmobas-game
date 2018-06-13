@@ -20,8 +20,7 @@
 #define BUILD_COLLECTORS 200
 #define BUILD_FARM 201
 
-#define NUMBER_TILE_ENTITY_GROUPS 4
-#define NUMBER_ENTITY_GROUPS 6
+#define NUMBER_CONTROL_GROUPS 10
 
 class Panel : public sf::Drawable {
 private:

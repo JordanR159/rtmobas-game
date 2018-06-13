@@ -84,6 +84,8 @@ public:
 
     Tile *** owned_tiles;
 
+    sf::VertexArray rally_line;
+
     /** Position of entity on the map */
     int x_coord;
     int y_coord;
@@ -92,6 +94,11 @@ public:
     int width;
     int height;
 
+    /** Rally point for the structure, if it is a producer */
+    int rally_x;
+    int rally_y;
+    bool rally_set;
+
     ~TileEntity();
 
     /**
@@ -99,6 +106,11 @@ public:
      * Obtains the tiles that this tile entity would be over.
      */
     virtual void claim_tiles();
+
+    /** The default action taken when a right click occurs while tile entity is selected */
+    void rightClickAction(sf::Vector2f point);
+
+    void setRallyPoint(int x, int y);
 };
 
 class Resource : public TileEntity {
@@ -114,23 +126,17 @@ public:
 
     /** Deconstructor */
     ~Resource();
-
 };
 
 class Structure : public TileEntity {
-
 public:
     /** Units/Research that can be done at the building */
     // int *production = nullptr;
 
-    /** Rally point for the structure, if it is a producer */
-    // int xrally;
-    // int yrally;
-
     /** Constructors */
     Structure() = default;
 
-    virtual void claim_tiles();
+    void claim_tiles() override;
 
     virtual bool can_place();
 };

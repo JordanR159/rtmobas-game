@@ -20,4 +20,5 @@ Collector::Collector(World * world, int type, int x, int y) {
     }
 
     this->create_tile_entity(world, type, x, y, w, h, texture);
+    this->rally_set = false;
 }
