@@ -14,6 +14,7 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 public:
+    sf::VertexArray destination_point;
 
     entity_info info;
 
