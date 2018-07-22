@@ -26,8 +26,6 @@ CommandButton::CommandButton(World * world, Panel * parent, int type, int xpos, 
     float y_tex1 = (this->panel_type / (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
     float y_tex2 = y_tex1 + texSize;
 
-    std::cout << x_tex1 << " " << x_tex2 << " " << y_tex1 << " " << y_tex2 << " " << this->panel_type << std::endl;
-
     this->vao[0].texCoords = sf::Vector2f(x_tex1, y_tex1);
     this->vao[1].texCoords = sf::Vector2f(x_tex1, y_tex2);
     this->vao[2].texCoords = sf::Vector2f(x_tex2, y_tex2);
@@ -112,8 +110,6 @@ void CommandButton::set_panel_type(int new_panel_type) {
 
     float y_tex1 = (this->panel_type / (WIDTH_OF_BUTTON_TEXTURE)) * texSize;
     float y_tex2 = y_tex1 + texSize;
-
-    std::cout << x_tex1 << " " << x_tex2 << " " << y_tex1 << " " << y_tex2 << " " << this->panel_type << std::endl;
 
     this->vao[0].texCoords = sf::Vector2f(x_tex1, y_tex1);
     this->vao[1].texCoords = sf::Vector2f(x_tex1, y_tex2);
